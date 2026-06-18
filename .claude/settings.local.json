@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan:*)",
+      "Bash(php -l app/Livewire/Admin/Settings.php)",
+      "Bash(php -l app/Livewire/Admin/BarcodePrint.php)"
+    ]
+  }
+}
