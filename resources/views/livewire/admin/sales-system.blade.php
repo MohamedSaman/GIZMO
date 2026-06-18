@@ -399,12 +399,12 @@
                         <div class="p-1 bg-white border-bottom">
                             <div class="row align-items-center">
                                 <div class="col-3">
-                                    <img src="{{ asset('images/jg.png') }}" alt="Logo" class="img-fluid"
+                                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="img-fluid"
                                         style="max-height: 70px;">
                                 </div>
                                 <div class="col-6 text-center">
                                     <h2 class="mb-0 fw-black text-dark"
-                                        style="font-size: 1.8rem; letter-spacing: 1px; line-height: 1.2;">JAFFNA GOLD
+                                        style="font-size: 1.8rem; letter-spacing: 1px; line-height: 1.2;">GIZMO
                                         COVERING</h2>
                                 </div>
                                 <div class="col-3 text-end">

@@ -29,18 +29,18 @@
             --surface: #ffffff;
 
             /* JG Logo Blue Palette */
-            --primary: #161b97; /* Logo Blue */
-            --primary-600: #12167d; /* Deep Blue */
-            --primary-700: #0e1163; /* Darker Blue */
-            --primary-50: #f0f2ff; /* Light Blue Tint */
-            --primary-100: #e0e4ff;
+            --primary: #f59e0b; /* Logo Blue */
+            --primary-600: #d97706; /* Deep Blue */
+            --primary-700: #b45309; /* Darker Blue */
+            --primary-50: #fff7dd; /* Light Blue Tint */
+            --primary-100: #fef0c7;
 
             /* Functional Colors - JG Logo Red */
             --success: #1a1a1a;
             --success-real: #10b981;
             --warning: #f59e0b;
             --danger: #f30b1f; /* Logo Red */
-            --info: #3b82f6;
+            --info: #f59e0b;
 
             /* Refined Neutral Palette */
             --text-main: #000000;
@@ -153,7 +153,7 @@
 
         /* Standardized Color Palette Redefinition */
         :root {
-            --primary: #161b97;
+            --primary: #f59e0b;
             --primary-rgb: 22, 27, 151;
             --danger: #f30b1f;
             --danger-rgb: 243, 11, 31;
@@ -170,7 +170,7 @@
 
         .btn-primary:hover, .btn-success:hover, .btn-info:hover, .btn-jg-primary:hover {
             background-color: #12167d !important;
-            border-color: #12167d !important;
+            border-color: var(--primary-600) !important;
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(22, 27, 151, 0.3);
         }
@@ -1049,9 +1049,9 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <img src="{{ asset('images/jg.png') }}" alt="Logo" width="60">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" width="60">
                 <div class="sidebar-title"> 
-                    <div>JAFFNA GOLD</div>
+                    <div>GIZMO</div>
                 </div>
             </div>
             <div class="sidebar-separator"></div>

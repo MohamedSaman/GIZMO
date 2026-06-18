@@ -153,7 +153,7 @@
     <div class="header">
         <img src="{{ public_path('images/HARDMEN') }}" alt="HARDMEN Logo">
         <p>421/2, Doolmala, thihariya, Kalagedihena.</p>
-        <p><strong>TEL:</strong> (077) 9752950 | <strong>EMAIL:</strong> JaffnaGoldlanka@gmail.com</p>
+        <p><strong>TEL:</strong> (077) 9752950 | <strong>EMAIL:</strong> Gizmolanka@gmail.com</p>
         <h1>CLOSE REGISTER SUMMARY</h1>
     </div>
 
@@ -262,7 +262,7 @@
     {{-- Footer --}}
     <div class="footer">
         <p>Date: {{ now()->format('d/m/Y H:i:s') }}</p>
-        <p><strong>JaffnaGold (PVT) LTD (PVT) LTD</strong> - Point of Sale System</p>
+        <p><strong>Gizmo (PVT) LTD (PVT) LTD</strong> - Point of Sale System</p>
     </div>
 </body>
 

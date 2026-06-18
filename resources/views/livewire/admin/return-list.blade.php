@@ -131,9 +131,9 @@
                 <!-- Header – logo + company name -->
                 <div class="modal-header text-center border-0" style="background: linear-gradient(135deg, #2a83df 0%, #1a5fb8 100%); color: #fff;">
                     <div class="w-100">
-                        <img src="{{ asset('images/jg.png') }}" alt="Logo"
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo"
                              class="img-fluid mb-2" style="max-height:60px;">
-                        <h4 class="mb-0 fw-bold">JaffnaGold (PVT) LTD</h4>
+                        <h4 class="mb-0 fw-bold">Gizmo (PVT) LTD</h4>
                         
                     </div>
                     <button type="button" class="btn-close btn-close-white closebtn"
@@ -215,7 +215,7 @@
                         
                         <p class="mb-0">
                             <strong>ADDRESS :</strong> 421/2, Doolmala, thihariya, Kalagedihena.<br>
-                            <strong>TEL :</strong> (077) 9752950, <strong>EMAIL :</strong> JaffnaGoldlanka@gmail.com
+                            <strong>TEL :</strong> (077) 9752950, <strong>EMAIL :</strong> Gizmolanka@gmail.com
                             <br><strong>HOTLINE :</strong> 021 222 85 89
                         </p>
                         <p class="mt-1 text-muted">

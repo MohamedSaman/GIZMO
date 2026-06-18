@@ -266,11 +266,11 @@
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <!-- Left: Logo -->
                 <div style="flex: 0 0 150px;">
-                    <img src="{{ public_path('images/jg.png') }}" alt="Logo" style="max-height:80px;">
+                    <img src="{{ public_path('images/logo.png') }}" alt="Logo" style="max-height:80px;">
                 </div>
                 <!-- Center: Company Name -->
                 <div style="flex: 1; text-align: center;">
-                    <h2 style="font-size: 2.5rem; letter-spacing: 2px; font-weight: bold; margin-bottom: 0;">JaffnaGold (PVT) LTD</h2>
+                    <h2 style="font-size: 2.5rem; letter-spacing: 2px; font-weight: bold; margin-bottom: 0;">Gizmo (PVT) LTD</h2>
                     <p style="color: #666; font-size: 0.875rem; margin-bottom: 0;">Gold Shop</p>
                 </div>
                 <!-- Right:  & Invoice -->
@@ -421,7 +421,7 @@
             </div>
             <div style="border-top: 1px solid #000000; padding-top: 10px;">
                 <p style="text-align: center;"><strong>ADDRESS :</strong> 421/2, Doolmala, thihariya, Kalagedihena.</p>
-                <p style="text-align: center;"><strong>TEL :</strong> (077) 9752950, <strong>HOTLINE :</strong> 021 222 85 89, <strong>EMAIL :</strong> JaffnaGoldlanka@gmail.com</p>
+                <p style="text-align: center;"><strong>TEL :</strong> (077) 9752950, <strong>HOTLINE :</strong> 021 222 85 89, <strong>EMAIL :</strong> Gizmolanka@gmail.com</p>
                 <p style="text-align: center; font-size: 11px; margin-top: 8px;"><strong></strong></p>
             </div>
         </div>

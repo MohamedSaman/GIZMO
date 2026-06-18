@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'JaffnaGold PVT LTD' }}</title>
+    <title>{{ $title ?? 'Gizmo PVT LTD' }}</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -36,7 +36,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('../images/jgg.png');
+            background-image: url('../images/logo.png');
             background-size: cover;
             background-position: center;
             z-index: 0;
@@ -96,7 +96,7 @@
             width: 100%;
             border-radius: 25px;
             padding: 10px;
-            background-color: #161b97;
+            background-color: var(--primary);
             color: #ffffff;
             border: none;
             font-weight: 600;
@@ -105,7 +105,7 @@
         }
 
         .login-btn:hover {
-            background-color: #12167d;
+            background-color: var(--primary-600);
             color: #ffffff;
         }
 

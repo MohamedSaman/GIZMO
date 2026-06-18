@@ -577,7 +577,7 @@
     }
 
     .btn-primary:hover {
-        background-color: #12167d;
+        background-color: var(--primary-600);
         border-color: #12167d;
         transform: translateY(-2px);
     }

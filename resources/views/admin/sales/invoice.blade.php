@@ -312,10 +312,10 @@
             <table>
                 <tr>
                     <td class="logo-section">
-                        <img src="{{ public_path('images/jg.png') }}" alt="Logo">
+                        <img src="{{ public_path('images/logo.png') }}" alt="Logo">
                     </td>
                     <td class="company-section">
-                        <h2>JaffnaGold (PVT) LTD</h2>
+                        <h2>Gizmo (PVT) LTD</h2>
                         <p>Gold Shop</p>
                     </td>
                     <td class="invoice-section">
@@ -505,7 +505,7 @@
             </table>
             <div class="info-section">
                 <p><strong>ADDRESS:</strong> 421/2, Doolmala, thihariya, Kalagedihena.</p>
-                <p><strong>TEL:</strong> (077) 9752950 | <strong>HOTLINE:</strong> 021 222 85 89 | <strong>EMAIL:</strong> JaffnaGoldlanka@gmail.com</p>
+                <p><strong>TEL:</strong> (077) 9752950 | <strong>HOTLINE:</strong> 021 222 85 89 | <strong>EMAIL:</strong> Gizmolanka@gmail.com</p>
                 <p style="margin-top: 6px;"><strong>Goods return will be accepted within 10 days only. Electrical and body parts non-returnable.</strong></p>
             </div>
         </div>

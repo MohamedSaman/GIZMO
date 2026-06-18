@@ -539,7 +539,7 @@
     <!-- Header -->
     <div class="page-header">
         <h1><i class="bi bi-camera"></i> Product Image Upload</h1>
-        <p>Jaffna Gold (PVT) LTD</p>
+        <p>Gizmo (PVT) LTD</p>
     </div>
 
     <div class="main-content">

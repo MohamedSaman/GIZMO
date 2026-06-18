@@ -24,7 +24,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="company-name">JaffnaGold (PVT) LTD</div>
+        <div class="company-name">Gizmo (PVT) LTD</div>
         <div style="font-size: 12px; margin-top: 4px;"><strong>Hotline:</strong> 021 222 85 89</div>
         <div class="receipt-title">PAYMENT RECEIPT</div>
     </div>

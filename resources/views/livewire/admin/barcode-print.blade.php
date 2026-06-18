@@ -497,7 +497,7 @@
                 <body>
                     <div class="label-wrapper">
                         <div class="text-section">
-                            <div class="info-shop">Jaffna Gold</div>
+                            <div class="info-shop">Gizmo</div>
                             <div class="info-price">Rs.${retailPrice}</div>
                             <div class="info-barcode">${barcode}</div>
                         </div>
@@ -549,7 +549,7 @@
             const labelsHtml = labelData.map((item, idx) => `
                 <div class="label-wrapper">
                     <div class="text-section">
-                        <div class="info-shop">Jaffna Gold</div>
+                        <div class="info-shop">Gizmo</div>
                         <div class="info-price">${item.price}</div>
                         <div class="info-barcode">${item.barcode}</div>
                     </div>

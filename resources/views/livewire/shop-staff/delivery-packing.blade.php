@@ -129,7 +129,7 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
                         <div
-                            class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#161b97] to-[#4361ee] flex items-center justify-center shadow-lg shadow-blue-500/20">
+                            class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#161b97] to-[#4361ee] flex items-center justify-center shadow-lg shadow-amber-500/20">
                             <span class="material-symbols-outlined text-white text-xl">local_shipping</span>
                         </div>
                         <div>
@@ -166,16 +166,16 @@
             <div class="grid grid-cols-5 gap-3 mb-6">
                 {{-- All --}}
                 <button wire:click="setFilter('all')"
-                    class="stat-card group rounded-2xl border p-3 sm:p-4 text-left {{ $filterStatus === 'all' ? 'bg-gradient-to-br from-[#161b97] to-[#4361ee] border-transparent shadow-xl shadow-blue-500/20 active' : 'bg-white border-slate-200/60 hover:border-blue-200 hover:shadow-lg' }}">
+                    class="stat-card group rounded-2xl border p-3 sm:p-4 text-left {{ $filterStatus === 'all' ? 'bg-gradient-to-br from-[#161b97] to-[#4361ee] border-transparent shadow-xl shadow-amber-500/20 active' : 'bg-white border-slate-200/60 hover:border-amber-200 hover:shadow-lg' }}">
                     <div class="flex items-center gap-2 sm:gap-3">
                         <div
-                            class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center {{ $filterStatus === 'all' ? 'bg-white/15' : 'bg-blue-50' }} transition-colors shrink-0">
+                            class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center {{ $filterStatus === 'all' ? 'bg-white/15' : 'bg-amber-50' }} transition-colors shrink-0">
                             <span
-                                class="material-symbols-outlined {{ $filterStatus === 'all' ? 'text-white' : 'text-[#161b97]' }} text-base sm:text-lg">inventory_2</span>
+                                class="material-symbols-outlined {{ $filterStatus === 'all' ? 'text-white' : 'text-[#f59e0b]' }} text-base sm:text-lg">inventory_2</span>
                         </div>
                         <div>
                             <p
-                                class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest {{ $filterStatus === 'all' ? 'text-blue-200' : 'text-slate-400' }}">
+                                class="text-[8px] sm:text-[9px] font-black uppercase tracking-widest {{ $filterStatus === 'all' ? 'text-amber-200' : 'text-slate-400' }}">
                                 All</p>
                             <p
                                 class="text-xl sm:text-2xl font-black {{ $filterStatus === 'all' ? 'text-white' : 'text-slate-800' }}">
@@ -277,13 +277,13 @@
                             class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
                         <input type="text" wire:model.live.debounce.500ms="search"
                             placeholder="Search by barcode, order number or customer..."
-                            class="w-full pl-12 pr-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-[#161b97]/15 focus:border-[#161b97] transition-all placeholder:text-slate-400" />
+                            class="w-full pl-12 pr-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-[#161b97]/15 focus:border-[#f59e0b] transition-all placeholder:text-slate-400" />
                     </div>
                     <label
                         class="flex items-center gap-3 px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors shrink-0">
                         <div class="relative">
                             <input type="checkbox" wire:model.live="todayOnly" class="sr-only peer" />
-                            <div class="w-10 h-5 bg-slate-300 rounded-full peer-checked:bg-[#161b97] transition-colors">
+                            <div class="w-10 h-5 bg-slate-300 rounded-full peer-checked:bg-[#f59e0b] transition-colors">
                             </div>
                             <div
                                 class="absolute left-0.5 top-0.5 bg-white w-4 h-4 rounded-full shadow-sm transition-transform peer-checked:translate-x-5">
@@ -401,7 +401,7 @@
                         <div class="px-5 py-3.5">
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                                    <div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
                                         <span class="material-symbols-outlined text-blue-500 text-sm">person</span>
                                     </div>
                                     <div>
@@ -453,7 +453,7 @@
                                     @endforeach
                                     @if(count($sale->items) > 4)
                                         <span
-                                            class="inline-flex items-center px-2.5 py-1 bg-blue-50 border border-blue-200/60 rounded-lg text-[10px] font-black text-[#161b97]">+{{ count($sale->items) - 4 }}
+                                            class="inline-flex items-center px-2.5 py-1 bg-amber-50 border border-amber-200/60 rounded-lg text-[10px] font-black text-[#f59e0b]">+{{ count($sale->items) - 4 }}
                                             more</span>
                                     @endif
                                 </div>
@@ -469,7 +469,7 @@
                                             {{ $sale->deliverySale->delivery_method ?? 'N/A' }}
                                         </span>
                                         <span
-                                            class="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 border border-blue-200/60 rounded-lg text-[10px] font-bold text-blue-700">
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200/60 rounded-lg text-[10px] font-bold text-amber-700">
                                             <span class="material-symbols-outlined text-xs">credit_card</span>
                                             {{ $sale->deliverySale->payment_method ?? 'N/A' }}
                                         </span>
@@ -594,11 +594,11 @@
                     {{-- Products Table --}}
                     <div>
                         <div class="flex items-center gap-2 mb-3">
-                            <span class="material-symbols-outlined text-[#161b97] text-base">checklist</span>
+                            <span class="material-symbols-outlined text-[#f59e0b] text-base">checklist</span>
                             <h3 class="text-[10px] font-black text-slate-700 uppercase tracking-widest">Products to Pack
                             </h3>
                             <span
-                                class="bg-[#161b97] text-white text-[9px] font-black px-2 py-0.5 rounded-full">{{ count($modalSale->items) }}</span>
+                                class="bg-[#f59e0b] text-white text-[9px] font-black px-2 py-0.5 rounded-full">{{ count($modalSale->items) }}</span>
                         </div>
 
                         <div class="bg-slate-50 rounded-xl border border-slate-100 overflow-hidden">
@@ -630,7 +630,7 @@
                                                 @endif
                                             </td>
                                             <td class="px-4 py-3 text-center">
-                                                <span class="inline-flex items-center justify-center w-9 h-9 bg-white border-2 border-[#161b97]/15 rounded-xl text-base font-black text-[#161b97]">{{ $item->quantity }}</span>
+                                                <span class="inline-flex items-center justify-center w-9 h-9 bg-white border-2 border-[#f59e0b]/15 rounded-xl text-base font-black text-[#f59e0b]">{{ $item->quantity }}</span>
                                             </td>
                                             <td class="px-4 py-3 text-right">
                                                 <p class="text-sm font-medium text-slate-600">Rs. {{ number_format($item->unit_price, 2) }}</p>
@@ -658,9 +658,9 @@
                                             <td class="px-4 py-2 text-right text-sm font-bold text-slate-700">Rs. {{ number_format($modalSale->deliverySale->delivery_charge, 2) }}</td>
                                         </tr>
                                     @endif
-                                    <tr class="bg-[#161b97]/5 border-t-2 border-[#161b97]/20">
-                                        <td colspan="4" class="px-4 py-3 text-right text-xs font-black text-[#161b97] uppercase tracking-widest">Grand Total</td>
-                                        <td class="px-4 py-3 text-right text-base font-black text-[#161b97]">Rs. {{ number_format($modalSale->total_amount, 2) }}</td>
+                                    <tr class="bg-[#f59e0b]/5 border-t-2 border-[#f59e0b]/20">
+                                        <td colspan="4" class="px-4 py-3 text-right text-xs font-black text-[#f59e0b] uppercase tracking-widest">Grand Total</td>
+                                        <td class="px-4 py-3 text-right text-base font-black text-[#f59e0b]">Rs. {{ number_format($modalSale->total_amount, 2) }}</td>
                                     </tr>
                                 </tfoot>
                             </table>

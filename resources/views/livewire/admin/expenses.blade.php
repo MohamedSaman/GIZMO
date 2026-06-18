@@ -294,7 +294,7 @@
                                             wire:click="$set('deduction_staff_id', {{ $staff->id }})"
                                             class="btn btn-sm btn-pill px-3 py-2 border-0 d-flex align-items-center"
                                             style="border-radius: 30px; transition: all 0.2s; font-size: 0.85rem; 
-                                                   {{ $deduction_staff_id == $staff->id ? 'background-color: #161b97; color: white; box-shadow: 0 4px 8px rgba(22, 27, 151, 0.2);' : 'background-color: #e2e8f0; color: #475569;' }}">
+                                                   {{ $deduction_staff_id == $staff->id ? 'background-color: var(--primary); color: white; box-shadow: 0 4px 8px rgba(22, 27, 151, 0.2);' : 'background-color: #e2e8f0; color: #475569;' }}">
                                             @if($deduction_staff_id == $staff->id)
                                                 <i class="bi bi-check-circle-fill me-2"></i>
                                             @endif
@@ -738,7 +738,7 @@
 
     .btn-primary:hover, .btn-info:hover {
         background-color: #12167d !important;
-        border-color: #12167d !important;
+        border-color: var(--primary-600) !important;
         transform: translateY(-2px);
     }
 

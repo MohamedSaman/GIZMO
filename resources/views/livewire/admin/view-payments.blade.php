@@ -285,9 +285,9 @@
                         <div class="receipt-container">
                             <!-- Receipt Header -->
                             <div class="text-center mb-4">
-                                <h3 class="mb-0">JaffnaGold (PVT) LTD (PVT) LTD</h3>
+                                <h3 class="mb-0">Gizmo (PVT) LTD (PVT) LTD</h3>
                                 <p class="mb-0 text-muted small">103 H,Yatiyanthota Road,Seethawaka,avissawella.</p>
-                                <p class="mb-0 text-muted small">Phone: (077) 9752950 | Email: JaffnaGoldlanka@gmail.com</p>
+                                <p class="mb-0 text-muted small">Phone: (077) 9752950 | Email: Gizmolanka@gmail.com</p>
                                 <p class="mb-0 text-muted small">Hotline: 021 222 85 89</p>
                                 <h4 class="mt-3 border-bottom border-2 pb-2">PAYMENT RECEIPT</h4>
                             </div>
@@ -736,12 +736,12 @@
     }
 
     .btn-primary {
-        background-color: #161b97;
+        background-color: var(--primary);
         border-color: #161b97;
     }
 
     .btn-primary:hover {
-        background-color: #12167d;
+        background-color: var(--primary-600);
         border-color: #12167d;
         transform: translateY(-2px);
     }
@@ -752,7 +752,7 @@
     }
 
     .btn-outline-primary:hover {
-        background-color: #161b97;
+        background-color: var(--primary);
         border-color: #161b97;
         transform: translateY(-2px);
     }

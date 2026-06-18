@@ -242,10 +242,10 @@
     <div class="quotation-container">
         {{-- Header Section --}}
         <div class="header-section">
-            @if(file_exists(public_path('images/jg.png')))
-            <img src="{{ public_path('images/jg.png') }}" alt="Company Logo" class="logo">
+            @if(file_exists(public_path('images/logo.png')))
+            <img src="{{ public_path('images/logo.png') }}" alt="Company Logo" class="logo">
             @endif
-            <div class="company-name">JaffnaGold (PVT) LTD</div>
+            <div class="company-name">Gizmo (PVT) LTD</div>
             <div class="company-tagline">Gold Shop</div>
             <div class="quotation-title">QUOTATION</div>
         </div>
@@ -353,7 +353,7 @@
         {{-- Company Footer --}}
         <div class="company-footer">
             <p><strong>ADDRESS :</strong> 421/2, Doolmala, thihariya, Kalagedihena.</p>
-            <p><strong>TEL :</strong> (077) 9752950, <strong>EMAIL :</strong> JaffnaGoldlanka@gmail.com</p>
+            <p><strong>TEL :</strong> (077) 9752950, <strong>EMAIL :</strong> Gizmolanka@gmail.com</p>
             <p class="small-text">This quotation is valid until {{ \Carbon\Carbon::parse($quotation->valid_until)->format('d/m/Y') }}.</p>
         </div>
     </div>

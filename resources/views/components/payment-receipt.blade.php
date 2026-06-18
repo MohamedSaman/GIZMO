@@ -101,7 +101,7 @@
         {{-- Header --}}
         <div class="header">
             <div class="company-info">
-                <h2> JaffnaGold (PVT) LTD</h2>
+                <h2> Gizmo (PVT) LTD</h2>
                 <div><strong>Hotline:</strong> 021 222 85 89</div>
             </div>
             <div class="receipt-title">PAYMENT RECEIPT</div>

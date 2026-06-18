@@ -27,18 +27,18 @@
             --surface: #ffffff;
 
             /* JG Logo Blue Palette */
-            --primary: #161b97; /* Logo Blue */
-            --primary-600: #12167d; /* Deep Blue */
-            --primary-700: #0e1163; /* Darker Blue */
-            --primary-50: #f0f2ff; /* Light Blue Tint */
-            --primary-100: #e0e4ff;
+            --primary: #f59e0b; /* Logo Blue */
+            --primary-600: #d97706; /* Deep Blue */
+            --primary-700: #b45309; /* Darker Blue */
+            --primary-50: #fff7dd; /* Light Blue Tint */
+            --primary-100: #fef0c7;
 
             /* Functional Colors - JG Logo Red */
             --success: #1a1a1a;
             --success-real: #10b981;
             --warning: #f59e0b;
             --danger: #f30b1f; /* Logo Red */
-            --info: #3b82f6;
+            --info: #f59e0b;
 
             /* Refined Neutral Palette */
             --text-main: #000000;
@@ -550,9 +550,9 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <img src="{{ asset('images/jg.png') }}" alt="Logo" width="60" class="logo-img me-3">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" width="60" class="logo-img me-3">
                 <div class="sidebar-title">
-                    Jaffna Gold
+                    Gizmo
                 </div>
             </div>
             <div class="sidebar-separator"></div>
@@ -970,7 +970,7 @@
             </button>
 
             <div class="topbar-brand">
-                JaffnaGold
+                Gizmo
             </div>
 
             <div class="dropdown ms-auto">

@@ -11,7 +11,7 @@
         <!-- Scripts -->
         <style>
             :root {
-                --primary: #161b97;
+                --primary: #f59e0b;
                 --primary-dark: #12167d;
                 --black: #000000;
                 --white: #ffffff;
@@ -35,7 +35,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('{{ asset('/images/jgg.png') }}');
+                background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('{{ asset('/images/logo.png') }}');
                 background-size: cover;
                 background-position: center;
                 z-index: 0;
@@ -94,7 +94,7 @@
                 width: 100%;
                 border-radius: 12px;
                 padding: 12px;
-                background: linear-gradient(45deg, #161b97, #2b33c5);
+                background: linear-gradient(45deg, #f59e0b, #d97706);
                 color: #ffffff;
                 border: none;
                 font-weight: 700;

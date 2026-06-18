@@ -885,7 +885,7 @@
         let textY = Hpx * 0.28;
         let textSvg = '';
         if (showShop) {
-            textSvg += `<text x="${Ppx + 1}" y="${textY}" font-size="${fsPx}" font-weight="bold" font-family="'${ff}',monospace" fill="#000">JAFFNA GOLD</text>`;
+            textSvg += `<text x="${Ppx + 1}" y="${textY}" font-size="${fsPx}" font-weight="bold" font-family="'${ff}',monospace" fill="#000">GIZMO</text>`;
             textY += fsPx * 1.3;
         }
         textSvg += `<text x="${Ppx + 1}" y="${textY + fpPx*0.1}" font-size="${fpPx}" font-weight="bold" font-family="'${ff}',monospace" fill="#000">Rs.1,800</text>`;
