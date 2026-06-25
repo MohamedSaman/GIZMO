@@ -11,6 +11,7 @@ use App\Models\ProductStock;
 use App\Models\ProductVariant;
 use App\Models\BrandList;
 use App\Models\CategoryList;
+use App\Models\ProductType;
 use App\Models\ProductSupplier;
 use App\Models\Sale;
 use App\Models\SaleItem;
@@ -428,11 +429,14 @@ class Products extends Component
                 ->paginate($this->perPage);
         }
 
+        $productTypes = ProductType::orderBy('type_name')->get();
+
         return view('livewire.admin.Productes', [
             'products' => $products,
             'brands' => $brands,
             'categories' => $categories,
             'suppliers' => $suppliers,
+            'productTypes' => $productTypes,
             'isStaff' => $this->isStaff(),
             'staffType' => Auth::user()->staff_type ?? null,
         ])->layout($this->layout);

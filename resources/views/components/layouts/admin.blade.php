@@ -347,6 +347,13 @@
             margin-bottom: 5px;
             display: flex;
             align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img {
+            height:80px;
+            width: auto;
+            margin-right: 0;
         }
 
         .sidebar-title {
@@ -1048,6 +1055,11 @@
     <div class="d-flex">
         <!-- Sidebar -->
         <div class="sidebar">
+            <a href="{{ route('admin.dashboard') }}" class="sidebar-header text-decoration-none">
+                <img src="{{ asset('images/logo.png') }}" class="logo-img" alt="Logo">
+               
+            </a>
+            <div class="sidebar-separator"></div>
 
             <ul class="nav flex-column">
 

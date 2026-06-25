@@ -259,7 +259,7 @@ class DashboardDummyDataQaTest extends TestCase
         $this->resetTables();
 
         $admin = $this->createUser('Admin User', 'admin@example.com', 'admin', null);
-        $genericStaff = $this->createUser('Generic Staff', 'staff@example.com', 'staff', 'support');
+        $genericStaff = $this->createUser('Generic Staff', 'staff@example.com', 'staff', 'shop_staff');
         $salesman = $this->createUser('Sales Man', 'sales@example.com', 'staff', 'salesman');
         $delivery = $this->createUser('Delivery Man', 'delivery@example.com', 'staff', 'delivery_man');
         $shopStaff = $this->createUser('Shop Staff', 'shop@example.com', 'staff', 'shop_staff');
@@ -361,8 +361,6 @@ class DashboardDummyDataQaTest extends TestCase
             'status' => 'active',
             'brand_id' => $brandId,
             'category_id' => $categoryId,
-            'stock_id' => $stockOneId,
-            'price_id' => $priceOneId,
             'supplier_id' => $supplierId,
             'sale_bonus' => 0,
             'variant_id' => null,
@@ -380,8 +378,6 @@ class DashboardDummyDataQaTest extends TestCase
             'status' => 'active',
             'brand_id' => $brandId,
             'category_id' => $categoryId,
-            'stock_id' => $stockTwoId,
-            'price_id' => $priceTwoId,
             'supplier_id' => $supplierId,
             'sale_bonus' => 0,
             'variant_id' => null,
@@ -445,7 +441,6 @@ class DashboardDummyDataQaTest extends TestCase
 
         DB::table('staff_products')->insert([
             [
-                'staff_sale_id' => 1,
                 'product_id' => $productOneId,
                 'staff_id' => $genericStaff->id,
                 'quantity' => 5,
@@ -460,7 +455,6 @@ class DashboardDummyDataQaTest extends TestCase
                 'updated_at' => now(),
             ],
             [
-                'staff_sale_id' => 1,
                 'product_id' => $productTwoId,
                 'staff_id' => $genericStaff->id,
                 'quantity' => 8,
@@ -601,7 +595,6 @@ class DashboardDummyDataQaTest extends TestCase
         DB::table('purchase_orders')->insert([
             [
                 'order_code' => 'PO-001',
-                'product_id' => $productOneId,
                 'supplier_id' => $supplierId,
                 'order_date' => now()->toDateString(),
                 'received_date' => null,
@@ -613,7 +606,6 @@ class DashboardDummyDataQaTest extends TestCase
             ],
             [
                 'order_code' => 'PO-002',
-                'product_id' => $productTwoId,
                 'supplier_id' => $supplierId,
                 'order_date' => now()->toDateString(),
                 'received_date' => now()->toDateString(),
@@ -648,7 +640,7 @@ class DashboardDummyDataQaTest extends TestCase
                 'rejection_reason' => null,
                 'delivered_by' => null,
                 'delivered_at' => null,
-                'delivery_status' => null,
+                'delivery_status' => 'pending',
                 'created_at' => Carbon::parse('2026-04-07 08:00:00'),
                 'updated_at' => Carbon::parse('2026-04-07 08:00:00'),
             ],
@@ -674,7 +666,7 @@ class DashboardDummyDataQaTest extends TestCase
                 'rejection_reason' => null,
                 'delivered_by' => null,
                 'delivered_at' => null,
-                'delivery_status' => null,
+                'delivery_status' => 'pending',
                 'created_at' => Carbon::parse('2026-04-07 08:30:00'),
                 'updated_at' => Carbon::parse('2026-04-07 08:30:00'),
             ],
@@ -700,7 +692,7 @@ class DashboardDummyDataQaTest extends TestCase
                 'rejection_reason' => null,
                 'delivered_by' => null,
                 'delivered_at' => null,
-                'delivery_status' => null,
+                'delivery_status' => 'pending',
                 'created_at' => Carbon::parse('2026-03-15 09:00:00'),
                 'updated_at' => Carbon::parse('2026-03-15 09:00:00'),
             ],
@@ -778,7 +770,7 @@ class DashboardDummyDataQaTest extends TestCase
                 'rejection_reason' => 'Rejected for QA',
                 'delivered_by' => null,
                 'delivered_at' => null,
-                'delivery_status' => null,
+                'delivery_status' => 'pending',
                 'created_at' => Carbon::parse('2026-04-07 10:00:00'),
                 'updated_at' => Carbon::parse('2026-04-07 10:00:00'),
             ],
@@ -856,7 +848,7 @@ class DashboardDummyDataQaTest extends TestCase
                 'rejection_reason' => null,
                 'delivered_by' => null,
                 'delivered_at' => null,
-                'delivery_status' => null,
+                'delivery_status' => 'pending',
                 'created_at' => Carbon::parse('2026-04-07 11:30:00'),
                 'updated_at' => Carbon::parse('2026-04-07 11:30:00'),
             ],
@@ -882,7 +874,7 @@ class DashboardDummyDataQaTest extends TestCase
                 'rejection_reason' => null,
                 'delivered_by' => null,
                 'delivered_at' => null,
-                'delivery_status' => null,
+                'delivery_status' => 'pending',
                 'created_at' => Carbon::parse('2026-04-07 11:45:00'),
                 'updated_at' => Carbon::parse('2026-04-07 11:45:00'),
             ],
@@ -1336,6 +1328,7 @@ class DashboardDummyDataQaTest extends TestCase
             'staff_sales',
             'staff_expenses',
             'pos_sessions',
+            'purchase_order_items',
             'purchase_orders',
             'product_details',
             'product_prices',

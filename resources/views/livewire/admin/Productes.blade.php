@@ -1404,7 +1404,12 @@
                                     <div class="col-md-4">
                                         <div class="mb-1">
                                             <label for="brand" class="form-label fw-semibold">Brand:</label>
-                                            <input type="text" class="form-control" id="brand" wire:model="brand" placeholder="e.g. Philips">
+                                            <select class="form-select" id="brand" wire:model="brand">
+                                                <option value="">Select Brand</option>
+                                                @foreach ($brands as $b)
+                                                <option value="{{ $b->brand_name }}">{{ $b->brand_name }}</option>
+                                                @endforeach
+                                            </select>
                                             @error('brand')
                                             <span class="text-danger small">* {{ $message }}</span>
                                             @enderror
@@ -1427,7 +1432,12 @@
                                     <div class="col-md-4">
                                         <div class="mb-1">
                                             <label for="type" class="form-label fw-semibold">Type/Subcategory:</label>
-                                            <input type="text" class="form-control" id="type" wire:model="type" placeholder="e.g. LED Bulb">
+                                            <select class="form-select" id="type" wire:model="type">
+                                                <option value="">Select Type/Subcategory</option>
+                                                @foreach ($productTypes as $pt)
+                                                <option value="{{ $pt->type_name }}">{{ $pt->type_name }}</option>
+                                                @endforeach
+                                            </select>
                                             @error('type')
                                             <span class="text-danger small">* {{ $message }}</span>
                                             @enderror
@@ -1813,7 +1823,12 @@
                                     <div class="col-md-3">
                                         <div class="mb-1">
                                             <label for="editBrand" class="form-label fw-semibold">Brand:</label>
-                                            <input type="text" class="form-control" id="editBrand" wire:model="editBrand" placeholder="e.g. Philips">
+                                            <select class="form-select" id="editBrand" wire:model="editBrand">
+                                                <option value="">Select Brand</option>
+                                                @foreach ($brands as $b)
+                                                <option value="{{ $b->brand_name }}">{{ $b->brand_name }}</option>
+                                                @endforeach
+                                            </select>
                                             @error('editBrand')
                                             <span class="text-danger small">* {{ $message }}</span>
                                             @enderror
@@ -1822,7 +1837,12 @@
                                     <div class="col-md-3">
                                         <div class="mb-1">
                                             <label for="editType" class="form-label fw-semibold">Type/Subcategory:</label>
-                                            <input type="text" class="form-control" id="editType" wire:model="editType" placeholder="e.g. LED Bulb">
+                                            <select class="form-select" id="editType" wire:model="editType">
+                                                <option value="">Select Type/Subcategory</option>
+                                                @foreach ($productTypes as $pt)
+                                                <option value="{{ $pt->type_name }}">{{ $pt->type_name }}</option>
+                                                @endforeach
+                                            </select>
                                             @error('editType')
                                             <span class="text-danger small">* {{ $message }}</span>
                                             @enderror

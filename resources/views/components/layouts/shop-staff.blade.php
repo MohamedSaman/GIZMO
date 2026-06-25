@@ -157,6 +157,12 @@
             align-items: center;
         }
 
+        .logo-img {
+            height: 35px;
+            width: auto;
+            margin-right: 10px;
+        }
+
         .sidebar-title {
             font-weight: 800;
             font-size: 1.25rem;
@@ -422,11 +428,10 @@
     <div class="d-flex">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-title">
-                    Gizmo
-                </div>
-            </div>
+            <a href="{{ route('shop-staff.dashboard') }}" class="sidebar-header text-decoration-none">
+                <img src="{{ asset('images/logo.png') }}" class="logo-img" alt="Logo">
+                <span class="sidebar-title">Gizmo</span>
+            </a>
             <div class="sidebar-separator"></div>
             <ul class="nav flex-column">
                 <li>
