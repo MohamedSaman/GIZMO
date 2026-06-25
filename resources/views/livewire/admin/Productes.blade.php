@@ -1081,16 +1081,47 @@
                                     '-' }}</span>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12">
+                                                <div class="col-md-6">
                                                     <div class="info-item p-3 bg-light rounded-3">
                                                         <small class="text-muted d-block mb-1">Category</small>
-                                                        <span class="fw-semibold text-dark">{{ $viewProduct->category ??
-                                    '-' }}</span>
+                                                        <span class="fw-semibold text-dark">{{ $viewProduct->category ?? '-' }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="info-item p-3 bg-light rounded-3">
+                                                        <small class="text-muted d-block mb-1">Type</small>
+                                                        <span class="fw-semibold text-dark">{{ $viewProduct->type ?? '-' }}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    @if($viewProduct && !empty($viewProduct->specifications) && is_array($viewProduct->specifications))
+                                    <div class="info-section mb-4">
+                                        <div class="section-header d-flex align-items-center mb-1">
+                                            <div class="icon-box bg-info bg-opacity-10 text-info rounded-circle me-3"
+                                                style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-gear-wide-connected text-info"></i>
+                                            </div>
+                                            <h6 class="fw-bold mb-0 text-dark">Specifications</h6>
+                                        </div>
+                                        <div class="info-grid">
+                                            <div class="row g-3">
+                                                @foreach($viewProduct->specifications as $key => $val)
+                                                    @if(!empty($val))
+                                                    <div class="col-md-4">
+                                                        <div class="info-item p-3 bg-light rounded-3">
+                                                            <small class="text-muted d-block mb-1 text-capitalize">{{ str_replace('_', ' ', $key) }}</small>
+                                                            <span class="fw-semibold text-dark">{{ $val }}</span>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
 
                                     <div class="info-section mb-4">
                                         <div class="section-header d-flex align-items-center mb-1">
@@ -1357,8 +1388,7 @@
                                             <select class="form-select" id="supplier" wire:model="supplier">
                                                 <option value="">Select Supplier</option>
                                                 @foreach ($suppliers as $supplier)
-                                                <option value="{{ $supplier->id }}" {{ $supplier->id == 'Default
-                                                        Supplier' ? 'selected' : '' }}>
+                                                <option value="{{ $supplier->id }}" {{ $supplier->id == 'Default Supplier' ? 'selected' : '' }}>
                                                     {{ $supplier->name }}
                                                     @if($supplier->id == 'Default Supplier') (Default) @endif
                                                 </option>
@@ -1367,6 +1397,84 @@
                                             @error('supplier')
                                             <span class="text-danger small">* {{ $message }}</span>
                                             @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4">
+                                        <div class="mb-1">
+                                            <label for="brand" class="form-label fw-semibold">Brand:</label>
+                                            <input type="text" class="form-control" id="brand" wire:model="brand" placeholder="e.g. Philips">
+                                            @error('brand')
+                                            <span class="text-danger small">* {{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-1">
+                                            <label for="category" class="form-label fw-semibold">Category:</label>
+                                            <select class="form-select" id="category" wire:model="category">
+                                                <option value="">Select Category</option>
+                                                @foreach ($categories as $cat)
+                                                <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('category')
+                                            <span class="text-danger small">* {{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-1">
+                                            <label for="type" class="form-label fw-semibold">Type/Subcategory:</label>
+                                            <input type="text" class="form-control" id="type" wire:model="type" placeholder="e.g. LED Bulb">
+                                            @error('type')
+                                            <span class="text-danger small">* {{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-gear-wide-connected text-primary me-2"></i> Specifications
+                                </h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-1">
+                                            <label for="spec_voltage" class="form-label fw-semibold">Voltage:</label>
+                                            <input type="text" class="form-control" id="spec_voltage" wire:model="spec_voltage" placeholder="e.g. 220V">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-1">
+                                            <label for="spec_power" class="form-label fw-semibold">Power Rating:</label>
+                                            <input type="text" class="form-control" id="spec_power" wire:model="spec_power" placeholder="e.g. 9W / 1500W">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-1">
+                                            <label for="spec_warranty" class="form-label fw-semibold">Warranty:</label>
+                                            <input type="text" class="form-control" id="spec_warranty" wire:model="spec_warranty" placeholder="e.g. 2 Years">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-1">
+                                            <label for="spec_material" class="form-label fw-semibold">Material:</label>
+                                            <input type="text" class="form-control" id="spec_material" wire:model="spec_material" placeholder="e.g. Plastic / Copper">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-1">
+                                            <label for="spec_color" class="form-label fw-semibold">Color:</label>
+                                            <input type="text" class="form-control" id="spec_color" wire:model="spec_color" placeholder="e.g. Warm White / Black">
                                         </div>
                                     </div>
                                 </div>
@@ -1686,14 +1794,13 @@
                             </div>
                             <div class="card-body p-4">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="mb-1">
                                             <label for="editCategory" class="form-label fw-semibold">Category:</label>
                                             <select class="form-select" id="editCategory" wire:model="editCategory">
                                                 <option value="">Select Category</option>
                                                 @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}" {{ $category->id == 1 ? 'selected' :
-                                            '' }}>
+                                                <option value="{{ $category->id }}">
                                                     {{ $category->category_name }}
                                                 </option>
                                                 @endforeach
@@ -1703,24 +1810,25 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="mb-1">
                                             <label for="editBrand" class="form-label fw-semibold">Brand:</label>
-                                            <select class="form-select" id="editBrand" wire:model="editBrand">
-                                                <option value="">Select Brand</option>
-                                                @foreach ($brands as $brand)
-                                                <option value="{{ $brand->id }}" {{ $brand->id == 1 ? 'selected' : ''
-                                                        }}>
-                                                    {{ $brand->brand_name }}
-                                                </option>
-                                                @endforeach
-                                            </select>
+                                            <input type="text" class="form-control" id="editBrand" wire:model="editBrand" placeholder="e.g. Philips">
                                             @error('editBrand')
                                             <span class="text-danger small">* {{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <div class="mb-1">
+                                            <label for="editType" class="form-label fw-semibold">Type/Subcategory:</label>
+                                            <input type="text" class="form-control" id="editType" wire:model="editType" placeholder="e.g. LED Bulb">
+                                            @error('editType')
+                                            <span class="text-danger small">* {{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="mb-1">
                                             <label for="editSupplier" class="form-label fw-semibold">Supplier:</label>
                                             <select class="form-select" id="editSupplier" wire:model="editSupplier">
@@ -1734,6 +1842,50 @@
                                             @error('editSupplier')
                                             <span class="text-danger small">* {{ $message }}</span>
                                             @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-gear-wide-connected text-primary me-2"></i> Specifications
+                                </h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-1">
+                                            <label for="editSpecVoltage" class="form-label fw-semibold">Voltage:</label>
+                                            <input type="text" class="form-control" id="editSpecVoltage" wire:model="editSpecVoltage" placeholder="e.g. 220V">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-1">
+                                            <label for="editSpecPower" class="form-label fw-semibold">Power Rating:</label>
+                                            <input type="text" class="form-control" id="editSpecPower" wire:model="editSpecPower" placeholder="e.g. 9W / 1500W">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-1">
+                                            <label for="editSpecWarranty" class="form-label fw-semibold">Warranty:</label>
+                                            <input type="text" class="form-control" id="editSpecWarranty" wire:model="editSpecWarranty" placeholder="e.g. 2 Years">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-1">
+                                            <label for="editSpecMaterial" class="form-label fw-semibold">Material:</label>
+                                            <input type="text" class="form-control" id="editSpecMaterial" wire:model="editSpecMaterial" placeholder="e.g. Plastic / Copper">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-1">
+                                            <label for="editSpecColor" class="form-label fw-semibold">Color:</label>
+                                            <input type="text" class="form-control" id="editSpecColor" wire:model="editSpecColor" placeholder="e.g. Warm White / Black">
                                         </div>
                                     </div>
                                 </div>

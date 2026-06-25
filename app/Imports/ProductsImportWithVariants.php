@@ -102,11 +102,31 @@ class ProductsImportWithVariants implements ToCollection, WithHeadingRow, WithVa
                 $supplierId = $this->resolveSupplier($row['supplier'] ?? null);
                 $variantId = null;
 
+                // Build specifications
+                $specifications = [];
+                if (!empty($row['specifications'])) {
+                    $specifications = is_string($row['specifications']) 
+                        ? json_decode($row['specifications'], true) 
+                        : $row['specifications'];
+                } else {
+                    $specifications = [
+                        'voltage' => $row['voltage'] ?? $row['spec_voltage'] ?? null,
+                        'power' => $row['power'] ?? $row['power_rating'] ?? $row['spec_power'] ?? null,
+                        'warranty' => $row['warranty'] ?? $row['spec_warranty'] ?? null,
+                        'material' => $row['material'] ?? $row['spec_material'] ?? null,
+                        'color' => $row['color'] ?? $row['spec_color'] ?? null,
+                    ];
+                    $specifications = array_filter($specifications, fn($v) => !is_null($v) && $v !== '');
+                }
+
                 // Step 1: Create the product
                 $product = ProductDetail::create([
                     'code' => $row['code'],
                     'name' => $row['name'] ?? 'Unnamed Product',
                     'model' => $row['model'] ?? null,
+                    'brand' => $row['brand'] ?? null,
+                    'type' => $row['type'] ?? null,
+                    'specifications' => empty($specifications) ? null : $specifications,
                     'image' => $row['image'] ?? null,
                     'description' => $row['description'] ?? null,
                     'barcode' => $row['barcode'] ?? null,
@@ -361,6 +381,13 @@ class ProductsImportWithVariants implements ToCollection, WithHeadingRow, WithVa
         return [
             'code' => 'required|string|max:100',
             'name' => 'required|string|max:255',
+            'brand' => 'nullable|string|max:255',
+            'type' => 'nullable|string|max:255',
+            'voltage' => 'nullable|string|max:255',
+            'power' => 'nullable|string|max:255',
+            'warranty' => 'nullable|string|max:255',
+            'material' => 'nullable|string|max:255',
+            'color' => 'nullable|string|max:255',
             'supplier_price' => 'nullable|numeric|min:0',
             'retail_price' => 'nullable|numeric|min:0',
             'wholesale_price' => 'nullable|numeric|min:0',

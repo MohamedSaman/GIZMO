@@ -45,6 +45,7 @@ class Products extends Component
     // Create form fields
     public $code, $name, $model, $brand, $category, $image, $description, $barcode, $status, $supplier;
     public $supplier_price, $retail_price, $wholesale_price, $discount_price, $available_stock, $damage_stock;
+    public $type, $spec_voltage, $spec_power, $spec_material, $spec_color, $spec_warranty;
 
     // Barcode lookup mode: 'create' or 'edit'
     public $barcodeMode = 'create';
@@ -78,6 +79,7 @@ class Products extends Component
     public $editId, $editCode, $editName, $editModel, $editBrand, $editCategory, $editImage, $existingImage,
         $editDescription, $editBarcode, $editStatus, $editSupplier, $editSupplierPrice, $editRetailPrice, $editWholesalePrice,
         $editDiscountPrice, $editDamageStock, $editAvailableStock;
+    public $editType, $editSpecVoltage, $editSpecPower, $editSpecMaterial, $editSpecColor, $editSpecWarranty;
 
     // Track original pricing mode when opening edit modal so we don't accidentally delete variant rows
     public $original_pricing_mode = 'single';
@@ -233,7 +235,7 @@ class Products extends Component
     private function setDefaultValues()
     {
         // Set default brand
-        $this->brand = $this->defaultBrandId;
+        $this->brand = '';
 
         // Set default category
         $this->category = $this->defaultCategoryId;
@@ -463,9 +465,15 @@ class Products extends Component
             'name' => 'required|string|max:255',
             'code' => $codeUniqueRule,
             'model' => 'nullable|string|max:255',
-            'brand' => 'required|exists:brand_lists,id',
+            'brand' => 'nullable|string|max:255',
             'category' => 'required|exists:category_lists,id',
             'supplier' => 'nullable|exists:product_suppliers,id',
+            'type' => 'nullable|string|max:255',
+            'spec_voltage' => 'nullable|string|max:255',
+            'spec_power' => 'nullable|string|max:255',
+            'spec_material' => 'nullable|string|max:255',
+            'spec_color' => 'nullable|string|max:255',
+            'spec_warranty' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:10000',
             'description' => 'nullable|string|max:1000',
             'barcode' => $barcodeUniqueRule,
@@ -840,17 +848,39 @@ class Products extends Component
             // Generate product code if not provided
             $productCode = $this->code ?: 'PROD-' . strtoupper(Str::random(8));
 
+            // Resolve brand_id for backward compatibility
+            $brandId = null;
+            if (!empty($this->brand)) {
+                $brandObj = BrandList::firstOrCreate(['brand_name' => $this->brand]);
+                $brandId = $brandObj->id;
+            } else {
+                $brandId = $this->defaultBrandId;
+            }
+
+            // Build specifications JSON
+            $specifications = [
+                'voltage' => $this->spec_voltage,
+                'power' => $this->spec_power,
+                'material' => $this->spec_material,
+                'color' => $this->spec_color,
+                'warranty' => $this->spec_warranty,
+            ];
+            $specifications = array_filter($specifications, fn($v) => !is_null($v) && $v !== '');
+
             // Step 1: Create ProductDetail
             $product = ProductDetail::create([
                 'code' => $productCode,
                 'name' => $this->name,
                 'model' => $this->model,
+                'brand' => $this->brand,
+                'type' => $this->type,
+                'specifications' => empty($specifications) ? null : $specifications,
                 'image' => $this->image,
                 'description' => $this->description,
                 'barcode' => $this->barcode,
                 'barcode_printed' => $this->barcodeGenerated ? 'No' : 'Yes',
                 'status' => 'active',
-                'brand_id' => $this->brand,
+                'brand_id' => $brandId,
                 'category_id' => $this->category,
                 'supplier_id' => $this->supplier,
                 'variant_id' => null,
@@ -994,6 +1024,12 @@ class Products extends Component
             'model',
             'brand',
             'category',
+            'type',
+            'spec_voltage',
+            'spec_power',
+            'spec_material',
+            'spec_color',
+            'spec_warranty',
             'image',
             'description',
             'barcode',
@@ -1007,7 +1043,31 @@ class Products extends Component
             'damage_stock',
             'pricing_mode',
             'variant_id',
-            'variant_prices'
+            'variant_prices',
+            'editId',
+            'editCode',
+            'editName',
+            'editModel',
+            'editBrand',
+            'editCategory',
+            'editType',
+            'editSpecVoltage',
+            'editSpecPower',
+            'editSpecMaterial',
+            'editSpecColor',
+            'editSpecWarranty',
+            'editImage',
+            'existingImage',
+            'editDescription',
+            'editBarcode',
+            'editStatus',
+            'editSupplier',
+            'editSupplierPrice',
+            'editRetailPrice',
+            'editWholesalePrice',
+            'editDiscountPrice',
+            'editAvailableStock',
+            'editDamageStock'
         ]);
 
         // Reset pricing mode to single
@@ -1043,13 +1103,22 @@ class Products extends Component
         $this->editCode = $product->code;
         $this->editName = $product->name;
         $this->editModel = $product->model;
-        $this->editBrand = $product->brand_id;
+        $this->editBrand = $product->brand ? (string) $product->brand : '';
         $this->editCategory = $product->category_id;
+        $this->editType = $product->type;
         $this->existingImage = $product->image;
         $this->editDescription = $product->description;
         $this->editBarcode = $product->barcode;
         $this->editStatus = $product->status;
         $this->editSupplier = $product->supplier_id;
+
+        // Parse specifications
+        $specs = $product->specifications ?? [];
+        $this->editSpecVoltage = $specs['voltage'] ?? '';
+        $this->editSpecPower = $specs['power'] ?? '';
+        $this->editSpecMaterial = $specs['material'] ?? '';
+        $this->editSpecColor = $specs['color'] ?? '';
+        $this->editSpecWarranty = $specs['warranty'] ?? '';
         $singlePrice = $product->price
             ?? $product->prices->where('pricing_mode', 'single')->first()
             ?? $product->prices->first();
@@ -1083,16 +1152,21 @@ class Products extends Component
         ");
     }
 
-    // 🔹 Validation Rules for Update
     protected function updateRules()
     {
         return [
             'editName' => 'required|string|max:255',
             'editCode' => 'required|string|max:100|unique:product_details,code,' . $this->editId,
             'editModel' => 'nullable|string|max:255',
-            'editBrand' => 'required|exists:brand_lists,id',
+            'editBrand' => 'nullable|string|max:255',
             'editCategory' => 'required|exists:category_lists,id',
             'editSupplier' => 'nullable|exists:product_suppliers,id',
+            'editType' => 'nullable|string|max:255',
+            'editSpecVoltage' => 'nullable|string|max:255',
+            'editSpecPower' => 'nullable|string|max:255',
+            'editSpecMaterial' => 'nullable|string|max:255',
+            'editSpecColor' => 'nullable|string|max:255',
+            'editSpecWarranty' => 'nullable|string|max:255',
             'editImage' => 'nullable|string|max:100000',
             'editDescription' => 'nullable|string|max:1000',
             'editBarcode' => 'nullable|string|max:255|unique:product_details,barcode,' . $this->editId,
@@ -1131,12 +1205,34 @@ class Products extends Component
 
             $product = ProductDetail::findOrFail($this->editId);
 
+            // Resolve brand_id for backward compatibility
+            $brandId = null;
+            if (!empty($this->editBrand)) {
+                $brandObj = BrandList::firstOrCreate(['brand_name' => $this->editBrand]);
+                $brandId = $brandObj->id;
+            } else {
+                $brandId = $this->defaultBrandId;
+            }
+
+            // Build specifications JSON
+            $specifications = [
+                'voltage' => $this->editSpecVoltage,
+                'power' => $this->editSpecPower,
+                'material' => $this->editSpecMaterial,
+                'color' => $this->editSpecColor,
+                'warranty' => $this->editSpecWarranty,
+            ];
+            $specifications = array_filter($specifications, fn($v) => !is_null($v) && $v !== '');
+
             // Update basic product details
             $product->update([
                 'code' => $this->editCode,
                 'name' => $this->editName,
                 'model' => $this->editModel,
-                'brand_id' => $this->editBrand,
+                'brand' => $this->editBrand,
+                'type' => $this->editType,
+                'specifications' => empty($specifications) ? null : $specifications,
+                'brand_id' => $brandId,
                 'category_id' => $this->editCategory,
                 'image' => $this->editImage ?: $this->existingImage,
                 'description' => $this->editDescription,

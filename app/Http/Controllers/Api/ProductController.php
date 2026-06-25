@@ -153,8 +153,44 @@ class ProductController extends ApiController
         $description = $request->description ?? $request->product_description;
         $sellingPrice = $request->selling_price ?? $request->product_selling_price ?? 0;
         $supplierPrice = $request->supplier_price ?? $request->product_price ?? $request->cost_price ?? 0;
-        $brandId = $request->brand_id ?? $request->brand;
-        $categoryId = $request->category_id ?? $request->category;
+        // Resolve brand string & category string & brand_id & category_id
+        $brandStr = null;
+        $brandId = $request->brand_id;
+        if (is_numeric($request->brand)) {
+            $brandId = $request->brand;
+            $brandStr = \App\Models\BrandList::where('id', $brandId)->value('brand_name');
+        } elseif (is_string($request->brand) && !empty($request->brand)) {
+            $brandStr = $request->brand;
+            $brandObj = \App\Models\BrandList::firstOrCreate(['brand_name' => $brandStr]);
+            $brandId = $brandObj->id;
+        }
+        if (is_null($brandId) && !is_null($request->brand_id)) {
+            $brandId = $request->brand_id;
+            $brandStr = \App\Models\BrandList::where('id', $brandId)->value('brand_name');
+        }
+        if (is_null($brandId)) {
+            $defaultBrand = \App\Models\BrandList::firstOrCreate(['brand_name' => 'Default Brand']);
+            $brandId = $defaultBrand->id;
+        }
+
+        $categoryId = $request->category_id;
+        if (is_numeric($request->category)) {
+            $categoryId = $request->category;
+        } elseif (is_string($request->category) && !empty($request->category)) {
+            $catObj = \App\Models\CategoryList::firstOrCreate(['category_name' => $request->category]);
+            $categoryId = $catObj->id;
+        }
+        if (is_null($categoryId)) {
+            $defaultCategory = \App\Models\CategoryList::firstOrCreate(['category_name' => 'Default Category']);
+            $categoryId = $defaultCategory->id;
+        }
+
+        $type = $request->type;
+        $specifications = $request->specifications;
+        if (is_string($specifications)) {
+            $specifications = json_decode($specifications, true);
+        }
+
         $supplierId = $request->supplier_id ?? $request->supplier;
         $status = $request->status ?? ($request->is_active ? 'active' : 'inactive');
         $availableStock = $request->available_stock ?? 0;
@@ -182,6 +218,9 @@ class ProductController extends ApiController
                 'name' => $name,
                 'code' => $code,
                 'model' => $request->model,
+                'brand' => $brandStr,
+                'type' => $type,
+                'specifications' => $specifications,
                 'image' => $image,
                 'description' => $description,
                 'barcode' => $request->barcode ?? $code,
@@ -237,9 +276,49 @@ class ProductController extends ApiController
             $description = $request->description ?? $request->product_description;
             $sellingPrice = $request->selling_price ?? $request->product_selling_price;
             $supplierPrice = $request->supplier_price ?? $request->product_price ?? $request->cost_price;
-            $brandId = $request->brand_id ?? $request->brand;
-            $categoryId = $request->category_id ?? $request->category;
-            $supplierId = $request->supplier_id ?? $request->supplier;
+            // Resolve brand string & category string & brand_id & category_id
+            $brandStr = $product->brand ? (string) $product->brand : null;
+            $brandId = $product->brand_id;
+            
+            if ($request->has('brand')) {
+                if (is_numeric($request->brand)) {
+                    $brandId = $request->brand;
+                    $brandStr = \App\Models\BrandList::where('id', $brandId)->value('brand_name');
+                } elseif (is_string($request->brand) && !empty($request->brand)) {
+                    $brandStr = $request->brand;
+                    $brandObj = \App\Models\BrandList::firstOrCreate(['brand_name' => $brandStr]);
+                    $brandId = $brandObj->id;
+                } else {
+                    $brandStr = null;
+                    $brandId = null;
+                }
+            } elseif ($request->has('brand_id')) {
+                $brandId = $request->brand_id;
+                $brandStr = \App\Models\BrandList::where('id', $brandId)->value('brand_name');
+            }
+
+            $categoryId = $product->category_id;
+            if ($request->has('category')) {
+                if (is_numeric($request->category)) {
+                    $categoryId = $request->category;
+                } elseif (is_string($request->category) && !empty($request->category)) {
+                    $catObj = \App\Models\CategoryList::firstOrCreate(['category_name' => $request->category]);
+                    $categoryId = $catObj->id;
+                }
+            } elseif ($request->has('category_id')) {
+                $categoryId = $request->category_id;
+            }
+
+            $type = $request->has('type') ? $request->type : $product->type;
+            $specifications = $product->specifications;
+            if ($request->has('specifications')) {
+                $specifications = $request->specifications;
+                if (is_string($specifications)) {
+                    $specifications = json_decode($specifications, true);
+                }
+            }
+
+            $supplierId = $request->supplier_id ?? $request->supplier ?? $product->supplier_id;
             // Handle status/is_active: if is_active provided, use it to determine status, else fallback to status field
             $status = $request->has('is_active')
                 ? ($request->is_active ? 'active' : 'inactive')
@@ -253,13 +332,16 @@ class ProductController extends ApiController
                 'name' => $name ?? $product->name,
                 'code' => $code ?? $product->code,
                 'model' => $request->model ?? $product->model,
+                'brand' => $brandStr,
+                'type' => $type,
+                'specifications' => $specifications,
                 'image' => $image ?? $product->image,
                 'description' => $description ?? $product->description,
                 'barcode' => $request->barcode ?? $product->barcode,
                 'status' => $status,
-                'brand_id' => $brandId ?? $product->brand_id,
-                'category_id' => $categoryId ?? $product->category_id,
-                'supplier_id' => $supplierId ?? $product->supplier_id,
+                'brand_id' => $brandId,
+                'category_id' => $categoryId,
+                'supplier_id' => $supplierId,
             ]);
 
             // Update price if provided
@@ -364,6 +446,9 @@ class ProductController extends ApiController
             'brand_name' => $product->brand ? $product->brand->brand_name : null,
             'category_name' => $product->category ? $product->category->category_name : null,
             'supplier_name' => $product->supplier ? $product->supplier->name : null,
+            'brand_string' => $product->getAttributes()['brand'] ?? null,
+            'type' => $product->type,
+            'specifications' => $product->specifications,
 
             // Variant fields
             'variant_id' => $product->variant_id,

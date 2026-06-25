@@ -35,9 +35,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('{{ asset('/images/logo.png') }}');
-                background-size: cover;
-                background-position: center;
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
                 z-index: 0;
             }
 

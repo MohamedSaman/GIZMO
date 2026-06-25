@@ -1295,18 +1295,19 @@ class DashboardDummyDataQaTest extends TestCase
 
     private function createUser(string $name, string $email, string $role, ?string $staffType)
     {
-        return DB::table('users')->insertGetId([
+        $id = DB::table('users')->insertGetId([
             'name' => $name,
             'email' => $email,
             'password' => bcrypt('password'),
             'role' => $role,
-            'contact' => null,
+            'contact' => '0771234567',
             'staff_type' => $staffType,
             'email_verified_at' => now(),
             'remember_token' => null,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        return \App\Models\User::find($id);
     }
 
     private function createCustomer(string $name, string $type)

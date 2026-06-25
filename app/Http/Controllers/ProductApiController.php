@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ProductApiController extends Controller
 {
@@ -28,6 +29,9 @@ class ProductApiController extends Controller
                     'product_details.code',
                     'product_details.name as product_name',
                     'product_details.model',
+                    'product_details.brand as brand_string',
+                    'product_details.type',
+                    'product_details.specifications',
                     'product_details.image',
                     'product_details.description',
                     'product_details.barcode',
@@ -38,7 +42,7 @@ class ProductApiController extends Controller
                     'product_stocks.available_stock',
                     'product_stocks.damage_stock',
                     'product_stocks.total_stock',
-                    'brand_lists.brand_name as brand',
+                    DB::raw('COALESCE(product_details.brand, brand_lists.brand_name) as brand'),
                     'category_lists.category_name as category'
                 )
                 ->orderBy('product_details.created_at', 'desc')

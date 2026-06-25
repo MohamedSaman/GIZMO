@@ -1048,13 +1048,7 @@
     <div class="d-flex">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-header">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" width="60">
-                <div class="sidebar-title"> 
-                    <div>GIZMO</div>
-                </div>
-            </div>
-            <div class="sidebar-separator"></div>
+
             <ul class="nav flex-column">
 
                 <li>
@@ -1108,14 +1102,19 @@
                                     <i class="bi bi-card-list"></i> <span>List Product</span>
                                 </a>
                             </li>
-                            {{-- <li class="nav-item">
+                            <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.Product-brand') }}">
                                     <i class="bi bi-tags"></i> <span>Product Brand</span>
                                 </a>
-                            </li> --}}
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.Product-category') }}">
                                     <i class="bi bi-tags-fill"></i> <span>Product Category</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.Product-type') }}">
+                                    <i class="bi bi-tag-fill"></i> <span>Product Type</span>
                                 </a>
                             </li>
                             <li class="nav-item">

@@ -433,7 +433,6 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" width="60" class="logo-img me-3">
                 <div class="sidebar-title">
                     Gizmo
                 </div>

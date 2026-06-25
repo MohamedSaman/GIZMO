@@ -430,13 +430,7 @@
     <div class="d-flex">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-header">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" width="60" class="logo-img me-3">
-                <div class="sidebar-title">
-                    Gizmo
-                </div>
-            </div>
-            <div class="sidebar-separator"></div>
+
             <ul class="nav flex-column">
                 <li>
                     <a class="nav-link {{ request()->routeIs('delivery.dashboard') ? 'active' : '' }}" href="{{ route('delivery.dashboard') }}">

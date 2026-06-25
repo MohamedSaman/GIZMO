@@ -16,6 +16,9 @@ class ProductDetail extends Model
         'code',
         'name',
         'model',
+        'brand',
+        'type',
+        'specifications',
         'image',
         'description',
         'barcode',
@@ -28,6 +31,10 @@ class ProductDetail extends Model
         'variant_id',
     ];
 
+    protected $casts = [
+        'specifications' => 'array',
+    ];
+
     public function price(): HasOne
     {
         return $this->hasOne(ProductPrice::class, 'product_id');
@@ -38,9 +45,18 @@ class ProductDetail extends Model
         return $this->hasOne(ProductStock::class, 'product_id');
     }
 
-    public function brand(): BelongsTo
+    public function brandList(): BelongsTo
     {
         return $this->belongsTo(BrandList::class, 'brand_id');
+    }
+
+    public function getBrandAttribute($value)
+    {
+        $brandName = $value ?: ($this->brandList->brand_name ?? null);
+        if (is_null($brandName) && is_null($this->brand_id)) {
+            return null;
+        }
+        return new BrandValue($this->brand_id, $brandName);
     }
 
     public function category(): BelongsTo
@@ -118,5 +134,22 @@ class ProductDetail extends Model
     {
         // If image exists, return it; otherwise return default image path
         return $value ?: 'images/product.jpg';
+    }
+}
+
+class BrandValue
+{
+    public ?int $id;
+    public ?string $brand_name;
+
+    public function __construct(?int $id, ?string $brand_name)
+    {
+        $this->id = $id;
+        $this->brand_name = $brand_name;
+    }
+
+    public function __toString()
+    {
+        return $this->brand_name ?? '';
     }
 }

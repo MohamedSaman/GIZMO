@@ -241,6 +241,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/barcode-print', \App\Livewire\Admin\BarcodePrint::class)->name('barcode-print');
         Route::get('/add-Product-brand', ProductBrandlist::class)->name('Product-brand');
         Route::get('/Product-category', ProductCategorylist::class)->name('Product-category');
+        Route::get('/Product-type', ProductTypes::class)->name('Product-type');
         Route::get('/billing-page', BillingPage::class)->name('billing-page');
         Route::get('/manage-admin', ManageAdmin::class)->name('manage-admin');
         Route::get('/manage-staff', ManageStaff::class)->name('manage-staff');
@@ -322,6 +323,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/Product-list', Products::class)->name('Productes');
         Route::get('/add-Product-brand', ProductBrandlist::class)->name('Product-brand');
         Route::get('/Product-category', ProductCategorylist::class)->name('Product-category');
+        Route::get('/Product-type', ProductTypes::class)->name('Product-type');
         Route::get('/Product-stock-details', ProductStockDetails::class)->name('Product-stock-details');
 
         // Sales
