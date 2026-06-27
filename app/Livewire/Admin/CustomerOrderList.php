@@ -320,7 +320,7 @@ class CustomerOrderList extends Component
                     'subtotal' => $this->subtotal,
                     'discount_amount' => $totalCombinedDiscount,
                     'total_amount' => $this->grandTotal,
-                    'payment_type' => 'credit',
+                    'payment_type' => 'full',
                     'payment_status' => 'pending',
                     'due_amount' => $this->grandTotal,
                     'notes' => $this->saleData['notes'],
