@@ -265,7 +265,7 @@ class Quotation extends Model
      */
     public function getCanConvertAttribute(): bool
     {
-        return in_array($this->status, ['accepted']);
+        return in_array($this->status, ['accepted', 'sent', 'draft']);
     }
 
     /**

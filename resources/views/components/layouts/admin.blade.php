@@ -1175,6 +1175,11 @@
                                     <i class="bi bi-card-list"></i> <span>Quotation</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2 {{ request()->routeIs('admin.customer-orders') ? 'active' : '' }}" href="{{ route('admin.customer-orders') }}">
+                                    <i class="bi bi-cart-check"></i> <span>Customer Orders</span>
+                                </a>
+                            </li>
                             {{-- no need him  --}}
                             {{--
                             <li class="nav-item">
@@ -1258,11 +1263,11 @@
                                     <i class="bi bi-people-fill"></i> <span>List Customer Receipt</span>
                                 </a>
                             </li>
-                            <!-- <li class="nav-item">
+                            <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.add-supplier-receipt') }}">
                                     <i class="bi bi-truck-flatbed"></i> <span>Add Supplier Payment</span>
                                 </a>
-                            </li> -->
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.list-supplier-receipt') }}">
                                     <i class="bi bi-clipboard-data"></i> <span>List Supplier Payment</span>

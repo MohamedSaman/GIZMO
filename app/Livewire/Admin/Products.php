@@ -44,7 +44,7 @@ class Products extends Component
     public $search = '';
 
     // Create form fields
-    public $code, $name, $model, $brand, $category, $image, $description, $barcode, $status, $supplier;
+    public $code, $name, $model, $brand, $category, $image, $uploadImage, $description, $barcode, $status, $supplier;
     public $supplier_price, $retail_price, $wholesale_price, $discount_price, $available_stock, $damage_stock;
     public $type, $spec_voltage, $spec_power, $spec_material, $spec_color, $spec_warranty;
 
@@ -77,7 +77,7 @@ class Products extends Component
     public $importFile;
 
     // Edit form fields
-    public $editId, $editCode, $editName, $editModel, $editBrand, $editCategory, $editImage, $existingImage,
+    public $editId, $editCode, $editName, $editModel, $editBrand, $editCategory, $editImage, $editUploadImage, $existingImage,
         $editDescription, $editBarcode, $editStatus, $editSupplier, $editSupplierPrice, $editRetailPrice, $editWholesalePrice,
         $editDiscountPrice, $editDamageStock, $editAvailableStock;
     public $editType, $editSpecVoltage, $editSpecPower, $editSpecMaterial, $editSpecColor, $editSpecWarranty;
@@ -479,6 +479,7 @@ class Products extends Component
             'spec_color' => 'nullable|string|max:255',
             'spec_warranty' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:10000',
+            'uploadImage' => 'nullable|image|max:10000',
             'description' => 'nullable|string|max:1000',
             'barcode' => $barcodeUniqueRule,
             'pricing_mode' => 'required|in:single',
@@ -679,17 +680,34 @@ class Products extends Component
      */
     private function updateProductFromBarcode()
     {
+        // Normalize empty inputs to null to avoid SQL constraint violations
+        $this->barcode = !empty(trim($this->barcode ?? '')) ? trim($this->barcode) : null;
+        $this->supplier = !empty($this->supplier) ? $this->supplier : null;
+        $this->model = !empty(trim($this->model ?? '')) ? trim($this->model) : null;
+        $this->brand = !empty(trim($this->brand ?? '')) ? trim($this->brand) : null;
+        $this->type = !empty(trim($this->type ?? '')) ? trim($this->type) : null;
+        $this->description = !empty(trim($this->description ?? '')) ? trim($this->description) : null;
+
         try {
             DB::beginTransaction();
 
             $product = ProductDetail::findOrFail($this->barcodeLookupProductId);
+
+            // Resolve brand_id for backward compatibility
+            $brandId = null;
+            if (!empty($this->brand)) {
+                $brandObj = BrandList::firstOrCreate(['brand_name' => $this->brand]);
+                $brandId = $brandObj->id;
+            } else {
+                $brandId = $this->defaultBrandId;
+            }
 
             // Update product details
             $product->update([
                 'code' => $this->code,
                 'name' => $this->name,
                 'model' => $this->model,
-                'brand_id' => $this->brand,
+                'brand_id' => $brandId,
                 'category_id' => $this->category,
                 'image' => $this->image ?: $product->image,
                 'description' => $this->description,
@@ -831,9 +849,23 @@ class Products extends Component
         $this->variant_prices = [];
         $this->variant_key_map = [];
 
+        // Normalize empty inputs to null to avoid SQL constraint violations
+        $this->barcode = !empty(trim($this->barcode ?? '')) ? trim($this->barcode) : null;
+        $this->supplier = !empty($this->supplier) ? $this->supplier : null;
+        $this->model = !empty(trim($this->model ?? '')) ? trim($this->model) : null;
+        $this->brand = !empty(trim($this->brand ?? '')) ? trim($this->brand) : null;
+        $this->type = !empty(trim($this->type ?? '')) ? trim($this->type) : null;
+        $this->description = !empty(trim($this->description ?? '')) ? trim($this->description) : null;
+
         // Clean up image field - treat empty strings as null
         if (empty(trim($this->image ?? ''))) {
             $this->image = null;
+        }
+
+        // Handle uploaded image
+        if ($this->uploadImage) {
+            $path = $this->uploadImage->store('images', 'public');
+            $this->image = 'storage/' . $path;
         }
 
         // Ensure we have a product code before validation. The UI may let users omit
@@ -1035,6 +1067,7 @@ class Products extends Component
             'spec_color',
             'spec_warranty',
             'image',
+            'uploadImage',
             'description',
             'barcode',
             'status',
@@ -1061,6 +1094,7 @@ class Products extends Component
             'editSpecColor',
             'editSpecWarranty',
             'editImage',
+            'editUploadImage',
             'existingImage',
             'editDescription',
             'editBarcode',
@@ -1110,6 +1144,8 @@ class Products extends Component
         $this->editBrand = $product->brand ? (string) $product->brand : '';
         $this->editCategory = $product->category_id;
         $this->editType = $product->type;
+        $this->editImage = $product->image;
+        $this->editUploadImage = null;
         $this->existingImage = $product->image;
         $this->editDescription = $product->description;
         $this->editBarcode = $product->barcode;
@@ -1172,6 +1208,7 @@ class Products extends Component
             'editSpecColor' => 'nullable|string|max:255',
             'editSpecWarranty' => 'nullable|string|max:255',
             'editImage' => 'nullable|string|max:100000',
+            'editUploadImage' => 'nullable|image|max:10000',
             'editDescription' => 'nullable|string|max:1000',
             'editBarcode' => 'nullable|string|max:255|unique:product_details,barcode,' . $this->editId,
             'editStatus' => 'required|in:active,inactive',
@@ -1193,9 +1230,23 @@ class Products extends Component
         $this->variant_prices = [];
         $this->variant_key_map = [];
 
+        // Normalize empty inputs to null to avoid SQL constraint violations
+        $this->editBarcode = !empty(trim($this->editBarcode ?? '')) ? trim($this->editBarcode) : null;
+        $this->editSupplier = !empty($this->editSupplier) ? $this->editSupplier : null;
+        $this->editModel = !empty(trim($this->editModel ?? '')) ? trim($this->editModel) : null;
+        $this->editBrand = !empty(trim($this->editBrand ?? '')) ? trim($this->editBrand) : null;
+        $this->editType = !empty(trim($this->editType ?? '')) ? trim($this->editType) : null;
+        $this->editDescription = !empty(trim($this->editDescription ?? '')) ? trim($this->editDescription) : null;
+
         // Clean up image field - treat empty strings as null
         if (empty(trim($this->editImage ?? ''))) {
             $this->editImage = null;
+        }
+
+        // Handle uploaded image
+        if ($this->editUploadImage) {
+            $path = $this->editUploadImage->store('images', 'public');
+            $this->editImage = 'storage/' . $path;
         }
 
         // Build validation rules and validate the form data
@@ -1386,7 +1437,7 @@ class Products extends Component
                 'stocks' => function ($q) {
                     $q->orderBy('variant_value');
                 },
-                'brand',
+                'brandList',
                 'category'
             ])->find($id);
 
@@ -1419,7 +1470,7 @@ class Products extends Component
                 'stocks' => function ($q) {
                     $q->orderBy('variant_value');
                 },
-                'brand',
+                'brandList',
                 'category'
             ])->find($id);
 

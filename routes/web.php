@@ -55,6 +55,7 @@ use App\Livewire\Admin\Reports;
 use App\Livewire\Admin\Analytics;
 use App\Livewire\Admin\QuotationSystem;
 use App\Livewire\Admin\QuotationList;
+use App\Livewire\Admin\CustomerOrderList;
 use App\Livewire\Admin\SalesSystem;
 use App\Livewire\Admin\SalesList;
 use App\Livewire\Admin\PosSales;
@@ -287,6 +288,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/profit-loss', \App\Livewire\Admin\ProfitLoss::class)->name('profit-loss');
         Route::get('/quotation-system', QuotationSystem::class)->name('quotation-system');
         Route::get('/quotation-list', QuotationList::class)->name('quotation-list');
+        Route::get('/customer-orders', CustomerOrderList::class)->name('customer-orders');
         Route::get('/sales-list', SalesList::class)->name('sales-list');
         Route::get('/settings', Settings::class)->name('settings');
         Route::get('/return-product', ReturnProduct::class)->name('return-product');
@@ -627,3 +629,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::get('/delivery-packing', ShopStaffDeliveryPacking::class)->name('delivery-packing');
         Route::get('/manage-employees', \App\Livewire\ShopStaff\ManageEmployees::class)->name('manage-employees');
     });
+
+// Public Customer Order placement route
+Route::get('/create-order', \App\Livewire\CustomerOrder::class)->name('customer-order.create');

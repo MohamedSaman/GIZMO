@@ -622,6 +622,10 @@ class AddCustomerReceipt extends Component
                 ]);
             }
 
+            // Always update total_due to remain in sync with opening_balance + due_amount
+            $this->selectedCustomer->total_due = floatval($this->selectedCustomer->opening_balance ?? 0) + floatval($this->selectedCustomer->due_amount ?? 0);
+            $this->selectedCustomer->save();
+
             DB::commit();
 
             Log::info('Payment processed successfully', [

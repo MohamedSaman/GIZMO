@@ -162,15 +162,17 @@
         /* Modern form styling */
         .form-control,
         .form-select {
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            border: 1px solid #e2e8f0;
+            border-radius: 8px !important;
+            padding: 0.75rem 1rem !important;
+            border: 1px solid #e2e8f0 !important;
+            font-size: 1rem !important;
+            height: auto !important;
         }
 
         .form-control:focus,
         .form-select:focus {
-            box-shadow: 0 0 0 3px rgba(22, 27, 151, 0.15);
-            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(22, 27, 151, 0.15) !important;
+            border-color: var(--primary) !important;
         }
 
         /* Modern button styling */
@@ -306,8 +308,8 @@
 
             .form-select,
             .form-control {
-                font-size: 0.95rem;
-                padding: 0.375rem 0.5rem;
+                font-size: 0.95rem !important;
+                padding: 0.375rem 0.5rem !important;
             }
 
             .badge {
@@ -1444,6 +1446,17 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <div class="mb-1">
+                                            <label for="uploadImage" class="form-label fw-semibold">Upload Product Image (Optional):</label>
+                                            <input type="file" class="form-control" id="uploadImage" wire:model="uploadImage" accept="image/*">
+                                            @error('uploadImage')
+                                            <span class="text-danger small">* {{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1869,6 +1882,17 @@
                                                 @endforeach
                                             </select>
                                             @error('editSupplier')
+                                            <span class="text-danger small">* {{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <div class="mb-1">
+                                            <label for="editUploadImage" class="form-label fw-semibold">Update Product Image (Optional):</label>
+                                            <input type="file" class="form-control" id="editUploadImage" wire:model="editUploadImage" accept="image/*">
+                                            @error('editUploadImage')
                                             <span class="text-danger small">* {{ $message }}</span>
                                             @enderror
                                         </div>

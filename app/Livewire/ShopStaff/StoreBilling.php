@@ -1299,8 +1299,11 @@ class StoreBilling extends Component
         if (strlen($this->search) >= 2) {
             $searchTerm = trim($this->search);
 
-            // ── Barcode Auto-Add: exact barcode match → add to cart automatically ──
-            $barcodeMatch = ProductDetail::where('barcode', $searchTerm)
+            // ── Barcode Auto-Add: exact barcode or code match → add to cart automatically ──
+            $barcodeMatch = ProductDetail::where(function ($q) use ($searchTerm) {
+                    $q->where('barcode', $searchTerm)
+                      ->orWhere('code', $searchTerm);
+                })
                 ->where(function ($q) {
                     $q->whereHas('stock', function ($sq) {
                         $sq->where('available_stock', '>', 0);
@@ -2515,8 +2518,19 @@ class StoreBilling extends Component
                     'total' => $item['total'],
                     'variant_value' => $variantValue,
                     'variant_id' => $variantId,
-                    'has_warranty' => ($item['total'] / $item['quantity']) >= $warrantyThreshold,
-                    'warranty_duration' => ($item['total'] / $item['quantity']) >= $warrantyThreshold ? '6 Months' : null,
+                    'has_warranty' => (function() use ($baseProductId, $item, $warrantyThreshold) {
+                        $productDetail = \App\Models\ProductDetail::find($baseProductId);
+                        $prodWarranty = $productDetail ? ($productDetail->specifications['warranty'] ?? null) : null;
+                        return ($item['total'] / $item['quantity']) >= $warrantyThreshold || !empty($prodWarranty);
+                    })(),
+                    'warranty_duration' => (function() use ($baseProductId, $item, $warrantyThreshold) {
+                        $productDetail = \App\Models\ProductDetail::find($baseProductId);
+                        $prodWarranty = $productDetail ? ($productDetail->specifications['warranty'] ?? null) : null;
+                        if (!empty($prodWarranty)) {
+                            return $prodWarranty;
+                        }
+                        return ($item['total'] / $item['quantity']) >= $warrantyThreshold ? '6 Months' : null;
+                    })(),
                 ]);
 
                 // Deduct stock using FIFO method (updates both ProductBatch and ProductStock)

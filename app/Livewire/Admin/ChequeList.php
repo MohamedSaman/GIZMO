@@ -6,6 +6,9 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Cheque;
 use App\Models\Customer;
+use App\Models\Payment;
+use App\Models\PaymentAllocation;
+use App\Models\Sale;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Log;
@@ -149,6 +152,8 @@ class ChequeList extends Component
     public function returnCheque($id)
     {
         try {
+            \Illuminate\Support\Facades\DB::beginTransaction();
+
             $cheque = Cheque::find($id);
 
             if (!$cheque) {
@@ -159,21 +164,61 @@ class ChequeList extends Component
             $cheque->status = 'return';
             $cheque->save();
 
-            // Refresh the data
+            // Revert payments and allocations if linked
+            if ($cheque->payment_id) {
+                $payment = Payment::find($cheque->payment_id);
+                if ($payment) {
+                    $allocations = PaymentAllocation::where('payment_id', $payment->id)->get();
+                    $totalAllocated = 0;
 
+                    foreach ($allocations as $allocation) {
+                        $sale = Sale::find($allocation->sale_id);
+                        if ($sale) {
+                            $sale->due_amount = floatval($sale->due_amount) + floatval($allocation->allocated_amount);
+                            // Adjust payment status
+                            if ($sale->due_amount >= $sale->total_amount) {
+                                $sale->payment_status = 'pending';
+                            } else {
+                                $sale->payment_status = 'partial';
+                            }
+                            $sale->save();
+                        }
+                        $totalAllocated += floatval($allocation->allocated_amount);
+                    }
+
+                    $paymentAmount = floatval($payment->amount);
+                    $remainder = max(0, $paymentAmount - $totalAllocated);
+
+                    $customer = Customer::find($cheque->customer_id);
+                    if ($customer) {
+                        $customer->due_amount = floatval($customer->due_amount) + $totalAllocated;
+                        if ($remainder > 0) {
+                            $customer->opening_balance = floatval($customer->opening_balance) + $remainder;
+                        }
+                        $customer->total_due = floatval($customer->opening_balance) + floatval($customer->due_amount);
+                        $customer->save();
+                    }
+
+                    $payment->status = 'returned';
+                    $payment->save();
+                }
+            }
+
+            \Illuminate\Support\Facades\DB::commit();
 
             $this->js("
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
-                    text: 'Cheque returned successfully!',
+                    text: 'Cheque returned successfully and customer balances updated!',
                     timer: 2000,
                     showConfirmButton: false
                 });
             ");
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
             Log::error("Error returning cheque: " . $e->getMessage());
-            $this->js("Swal.fire('Error', 'Failed to return cheque!', 'error');");
+            $this->js("Swal.fire('Error', 'Failed to return cheque: " . addslashes($e->getMessage()) . "', 'error');");
         }
     }
 

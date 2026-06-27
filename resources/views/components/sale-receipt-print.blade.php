@@ -28,6 +28,9 @@
                     <td>{{ $sale->created_at->format('H:i') }}</td>
                 </tr>
             </table>
+            <div style="margin-top: 10px;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data={{ urlencode(route('admin.print.sale', $sale->id)) }}" alt="Invoice QR" style="width: 90px; height: 90px; border: 1px solid #ddd; padding: 3px; background: white;">
+            </div>
         </div>
     </div>
 
@@ -93,6 +96,20 @@
                 <td colspan="6" class="text-end"><strong>Due Amount</strong></td>
                 <td class="text-end"><strong>Rs.{{ number_format($sale->due_amount, 2) }}</strong></td>
             </tr>
+            @endif
+            @if($sale->customer && $sale->customer->name !== 'Walking Customer')
+                @php
+                    $totalDueBalance = floatval($sale->customer->total_due ?? 0);
+                    $previousDue = max(0, $totalDueBalance - floatval($sale->due_amount ?? 0));
+                @endphp
+                <tr class="totals-row">
+                    <td colspan="6" class="text-end" style="border-top: 1px dashed #ddd;"><strong>Previous Due</strong></td>
+                    <td class="text-end" style="border-top: 1px dashed #ddd;"><strong>Rs.{{ number_format($previousDue, 2) }}</strong></td>
+                </tr>
+                <tr class="totals-row bg-light">
+                    <td colspan="6" class="text-end"><strong>Total Outstanding Due</strong></td>
+                    <td class="text-end"><strong>Rs.{{ number_format($totalDueBalance, 2) }}</strong></td>
+                </tr>
             @endif
         </tfoot>
     </table>
