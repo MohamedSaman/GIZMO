@@ -1510,6 +1510,9 @@
                                                 <input type="number" step="0.01" class="form-control"
                                                     id="supplier_price" wire:model="supplier_price" placeholder="0">
                                             </div>
+                                            @error('supplier_price')
+                                            <span class="text-danger small">* {{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -1522,6 +1525,9 @@
                                                 <input type="number" step="0.01" class="form-control" id="retail_price"
                                                     wire:model="retail_price" placeholder="0">
                                             </div>
+                                            @error('retail_price')
+                                            <span class="text-danger small">* {{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -1534,6 +1540,9 @@
                                                 <input type="number" step="0.01" class="form-control" id="wholesale_price"
                                                     wire:model="wholesale_price" placeholder="0">
                                             </div>
+                                            @error('wholesale_price')
+                                            <span class="text-danger small">* {{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
