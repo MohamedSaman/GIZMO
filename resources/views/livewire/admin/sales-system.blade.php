@@ -84,57 +84,57 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        function copyLinkToClipboard() {
+            const copyText = document.getElementById("generatedLinkInput");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: 'Link copied to clipboard.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    </script>
+    @endpush
+
+    @push('styles')
+    <style>
+        .premium-card {
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1) !important;
+        }
+        .header-icon {
+            background: #c5a02c !important;
+            box-shadow: 0 4px 10px rgba(197, 160, 44, 0.4);
+        }
+        .border-gold {
+            border-color: #c5a02c !important;
+        }
+        .bg-light-gold {
+            background-color: #fffdf6;
+        }
+        .text-gold {
+            color: #c5a02c !important;
+        }
+        .btn-gold-premium {
+            background: linear-gradient(135deg, #161b97 0%, #0d0f5e 100%);
+            border: none;
+            box-shadow: 0 4px 15px rgba(22, 27, 151, 0.3);
+            transition: all 0.3s;
+        }
+        .btn-gold-premium:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 27, 151, 0.5);
+        }
+        .select-all {
+            user-select: all;
+        }
+    </style>
+    @endpush
 </div>
-
-@push('scripts')
-<script>
-    function copyLinkToClipboard() {
-        const copyText = document.getElementById("generatedLinkInput");
-        copyText.select();
-        copyText.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(copyText.value);
-
-        Swal.fire({
-            icon: 'success',
-            title: 'Copied!',
-            text: 'Link copied to clipboard.',
-            timer: 1500,
-            showConfirmButton: false
-        });
-    }
-</script>
-@endpush
-
-@push('styles')
-<style>
-    .premium-card {
-        box-shadow: 0 15px 40px rgba(0,0,0,0.1) !important;
-    }
-    .header-icon {
-        background: #c5a02c !important;
-        box-shadow: 0 4px 10px rgba(197, 160, 44, 0.4);
-    }
-    .border-gold {
-        border-color: #c5a02c !important;
-    }
-    .bg-light-gold {
-        background-color: #fffdf6;
-    }
-    .text-gold {
-        color: #c5a02c !important;
-    }
-    .btn-gold-premium {
-        background: linear-gradient(135deg, #161b97 0%, #0d0f5e 100%);
-        border: none;
-        box-shadow: 0 4px 15px rgba(22, 27, 151, 0.3);
-        transition: all 0.3s;
-    }
-    .btn-gold-premium:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(22, 27, 151, 0.5);
-    }
-    .select-all {
-        user-select: all;
-    }
-</style>
-@endpush

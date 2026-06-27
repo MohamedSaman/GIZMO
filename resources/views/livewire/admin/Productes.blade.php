@@ -166,13 +166,23 @@
             padding: 0.75rem 1rem !important;
             border: 1px solid #e2e8f0 !important;
             font-size: 1rem !important;
-            height: auto !important;
+            min-height: 48px !important;
         }
 
         .form-control:focus,
         .form-select:focus {
             box-shadow: 0 0 0 3px rgba(22, 27, 151, 0.15) !important;
             border-color: var(--primary) !important;
+        }
+
+        /* Remove arrows from number inputs */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield; /* Firefox */
         }
 
         /* Modern button styling */
