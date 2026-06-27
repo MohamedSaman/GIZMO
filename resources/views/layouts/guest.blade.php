@@ -35,7 +35,8 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+                background: url('{{ asset('images/bgimage.webp') }}') no-repeat center center;
+                background-size: cover;
                 z-index: 0;
             }
 
