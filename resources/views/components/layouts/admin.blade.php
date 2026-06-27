@@ -1175,8 +1175,9 @@
                                 <a class="nav-link py-2 {{ request()->routeIs('admin.customer-orders') ? 'active' : '' }}" href="{{ route('admin.customer-orders') }}">
                                     <i class="bi bi-cart-check"></i> <span>Customer Orders</span>
                                 </a>
+
                             </li>
-                                                        <li class="nav-item">
+                            <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.quotation-list') }}">
                                     <i class="bi bi-card-list"></i> <span>Quotation</span>
                                 </a>

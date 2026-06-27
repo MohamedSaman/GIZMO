@@ -67,7 +67,7 @@
                             <div class="col-sm-6">
                                 <div class="card h-100 border rounded-3 product-card bg-white shadow-xs overflow-hidden transition-all">
                                     <div class="position-relative bg-light text-center" style="height: 120px; overflow: hidden;">
-                                        <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] }}" class="img-fluid h-100 object-fit-cover">
+                                        <img src="{{ route('product-image.serve', ['filename' => basename($product['image']) ?: 'product.jpg']) }}" alt="{{ $product['name'] }}" class="img-fluid h-100 object-fit-cover">
                                         <span class="position-absolute bottom-0 end-0 bg-black text-white px-2 py-1 small rounded-start fw-bold" style="font-size: 0.75rem;">
                                             Rs.{{ number_format($product['price'], 2) }}
                                         </span>
