@@ -1157,7 +1157,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.sales-list') }}">
-                                    <i class="bi bi-table"></i> <span>Delivery Sales</span>
+                                    <i class="bi bi-table"></i> <span>Customer Sales</span>
                                 </a>
                             </li>
                             <!-- <li class="nav-item">
