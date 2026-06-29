@@ -9,6 +9,8 @@ use App\Models\Customer;
 use App\Models\Payment;
 use App\Models\PaymentAllocation;
 use App\Models\Sale;
+use App\Models\HistoricalCheque;
+use App\Models\ProductSupplier;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Log;
@@ -23,6 +25,18 @@ class ChequeList extends Component
     public $perPage = 10;
     public $search = '';
     public $statusFilter = 'all';
+
+    public $activeTab = 'system'; // 'system' or 'historical'
+    public $showHistoricalModal = false;
+    public $historicalChequeId = null;
+    public $h_type = 'received';
+    public $h_party_name = '';
+    public $h_cheque_number = '';
+    public $h_bank_name = '';
+    public $h_cheque_date = '';
+    public $h_cheque_amount = '';
+    public $h_status = 'pending';
+    public $h_note = '';
 
     public function updatedPerPage()
     {
@@ -53,6 +67,36 @@ class ChequeList extends Component
         }
 
         return $query->paginate($this->perPage);
+    }
+
+    public function getHistoricalChequesProperty()
+    {
+        $query = HistoricalCheque::orderByDesc('cheque_date');
+
+        if (!empty($this->search)) {
+            $term = '%' . $this->search . '%';
+            $query->where(function ($q) use ($term) {
+                $q->where('cheque_number', 'like', $term)
+                    ->orWhere('bank_name', 'like', $term)
+                    ->orWhere('party_name', 'like', $term)
+                    ->orWhere('note', 'like', $term);
+            });
+        }
+
+        if (!empty($this->statusFilter) && $this->statusFilter !== 'all') {
+            $query->where('status', $this->statusFilter);
+        }
+
+        return $query->paginate($this->perPage);
+    }
+
+    public function getPartySuggestionsProperty()
+    {
+        if ($this->h_type === 'received') {
+            return Customer::select('name')->distinct()->pluck('name')->toArray();
+        } else {
+            return ProductSupplier::select('name')->distinct()->pluck('name')->toArray();
+        }
     }
 
     public function updatedSearch()
@@ -113,6 +157,44 @@ class ChequeList extends Component
             }).then((result) => {
                 if (result.isConfirmed) {
                     \$wire.returnCheque({$id});
+                }
+            });
+        ");
+    }
+
+    public function confirmHistoricalComplete($id)
+    {
+        $this->js("
+            Swal.fire({
+                title: 'Mark as Complete?',
+                text: 'Are you sure you want to mark this historical cheque as complete?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#198754',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, mark as complete!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    \$wire.completeHistoricalCheque({$id});
+                }
+            });
+        ");
+    }
+
+    public function confirmHistoricalReturn($id)
+    {
+        $this->js("
+            Swal.fire({
+                title: 'Return Cheque?',
+                text: 'Are you sure you want to return this historical cheque?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, return cheque!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    \$wire.returnHistoricalCheque({$id});
                 }
             });
         ");
@@ -222,10 +304,127 @@ class ChequeList extends Component
         }
     }
 
+    public function completeHistoricalCheque($id)
+    {
+        try {
+            $cheque = HistoricalCheque::find($id);
+            if ($cheque) {
+                $cheque->status = 'complete';
+                $cheque->save();
+                $this->js("Swal.fire({icon: 'success', title: 'Success!', text: 'Historical cheque marked as complete!', timer: 2000, showConfirmButton: false});");
+            }
+        } catch (\Exception $e) {
+            $this->js("Swal.fire('Error', 'Failed to mark cheque as complete.', 'error');");
+        }
+    }
+
+    public function returnHistoricalCheque($id)
+    {
+        try {
+            $cheque = HistoricalCheque::find($id);
+            if ($cheque) {
+                $cheque->status = 'return';
+                $cheque->save();
+                $this->js("Swal.fire({icon: 'success', title: 'Success!', text: 'Historical cheque marked as returned!', timer: 2000, showConfirmButton: false});");
+            }
+        } catch (\Exception $e) {
+            $this->js("Swal.fire('Error', 'Failed to return cheque.', 'error');");
+        }
+    }
+
+    public function editHistoricalCheque($id)
+    {
+        $cheque = HistoricalCheque::find($id);
+        if ($cheque) {
+            $this->historicalChequeId = $cheque->id;
+            $this->h_type = $cheque->type;
+            $this->h_party_name = $cheque->party_name;
+            $this->h_cheque_number = $cheque->cheque_number;
+            $this->h_bank_name = $cheque->bank_name;
+            $this->h_cheque_date = $cheque->cheque_date;
+            $this->h_cheque_amount = $cheque->cheque_amount;
+            $this->h_status = $cheque->status;
+            $this->h_note = $cheque->note;
+            $this->showHistoricalModal = true;
+        }
+    }
+
+    public function openHistoricalModal()
+    {
+        $this->resetHistoricalForm();
+        $this->showHistoricalModal = true;
+    }
+
+    public function closeHistoricalModal()
+    {
+        $this->showHistoricalModal = false;
+        $this->resetHistoricalForm();
+    }
+
+    public function resetHistoricalForm()
+    {
+        $this->historicalChequeId = null;
+        $this->h_type = 'received';
+        $this->h_party_name = '';
+        $this->h_cheque_number = '';
+        $this->h_bank_name = '';
+        $this->h_cheque_date = '';
+        $this->h_cheque_amount = '';
+        $this->h_status = 'pending';
+        $this->h_note = '';
+    }
+
+    public function saveHistoricalCheque()
+    {
+        $this->validate([
+            'h_type' => 'required|in:received,issued',
+            'h_party_name' => 'required|string|max:255',
+            'h_cheque_number' => 'required|string|max:255',
+            'h_bank_name' => 'required|string|max:255',
+            'h_cheque_date' => 'required|date',
+            'h_cheque_amount' => 'required|numeric|min:0',
+            'h_status' => 'required|in:pending,complete,return,cancelled',
+        ]);
+
+        try {
+            if ($this->historicalChequeId) {
+                $cheque = HistoricalCheque::find($this->historicalChequeId);
+                $cheque->update([
+                    'type' => $this->h_type,
+                    'party_name' => $this->h_party_name,
+                    'cheque_number' => $this->h_cheque_number,
+                    'bank_name' => $this->h_bank_name,
+                    'cheque_date' => $this->h_cheque_date,
+                    'cheque_amount' => $this->h_cheque_amount,
+                    'status' => $this->h_status,
+                    'note' => $this->h_note,
+                ]);
+            } else {
+                HistoricalCheque::create([
+                    'type' => $this->h_type,
+                    'party_name' => $this->h_party_name,
+                    'cheque_number' => $this->h_cheque_number,
+                    'bank_name' => $this->h_bank_name,
+                    'cheque_date' => $this->h_cheque_date,
+                    'cheque_amount' => $this->h_cheque_amount,
+                    'status' => $this->h_status,
+                    'note' => $this->h_note,
+                ]);
+            }
+
+            $this->closeHistoricalModal();
+            $this->js("Swal.fire('Success!', 'Historical cheque saved successfully!', 'success');");
+        } catch (\Exception $e) {
+            Log::error('Error saving historical cheque: ' . $e->getMessage());
+            $this->js("Swal.fire('Error', 'Failed to save historical cheque.', 'error');");
+        }
+    }
+
     public function render()
     {
         return view('livewire.admin.cheque-list', [
             'cheques' => $this->cheques,
+            'historicalCheques' => $this->historicalCheques,
             'pendingCount' => $this->pendingCount,
             'completeCount' => $this->completeCount,
             'overdueCount' => $this->overdueCount,
