@@ -46,6 +46,9 @@
                                 <th>Business Name</th>
                                 <th>Contact</th>
                                 <th>Email</th>
+                                <th>Opening Bal.</th>
+                                <th>Due Amount</th>
+                                <th>Total Payable</th>
                                 <th class="text-end pe-4">Actions</th>
                             </tr>
                         </thead>
@@ -59,6 +62,9 @@
                                 <td>{{ $supplier->businessname }}</td>
                                 <td>{{ $supplier->contact }}</td>
                                 <td>{{ $supplier->email }}</td>
+                                <td>{{ number_format($supplier->opening_balance ?? 0, 2) }}</td>
+                                <td>{{ number_format($supplier->due_amount ?? 0, 2) }}</td>
+                                <td><span class="badge bg-danger">{{ number_format($supplier->total_due ?? 0, 2) }}</span></td>
                                 <td class="text-end pe-2">
                                     <div class="dropdown">
                                         <button class="btn btn-outline-secondary dropdown-toggle"
@@ -270,6 +276,10 @@
                         </div>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted">Opening Balance</label>
+                        <p class="form-control-plaintext fw-bold text-danger">{{ number_format($opening_balance ?? 0, 2) }}</p>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-semibold text-muted">Address</label>
                         <p class="form-control-plaintext">{{ $address ?: 'N/A' }}</p>
                     </div>
@@ -351,6 +361,13 @@
                                     <div class="invalid-feedback d-block">{{ $message }}</div> 
                                 @enderror
                             </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Opening Balance</label>
+                            <input type="number" step="0.01" class="form-control @error('opening_balance') is-invalid @enderror" wire:model.blur="opening_balance">
+                            @error('opening_balance') 
+                                <div class="invalid-feedback d-block">{{ $message }}</div> 
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Address</label>

@@ -26,6 +26,7 @@ class SupplierManage extends Component
     public $phone;
     public $status = 'active';
     public $notes;
+    public $opening_balance = 0;
     
     public $showCreateModal = false;
     public $showEditModal = false;
@@ -41,6 +42,7 @@ class SupplierManage extends Component
         'phone' => 'nullable|string|max:10',
         'status' => 'required|in:active,inactive',
         'notes' => 'nullable|string|max:500',
+        'opening_balance' => 'nullable|numeric|min:0',
     ];
 
     protected $messages = [
@@ -61,6 +63,8 @@ class SupplierManage extends Component
         'status.in' => 'The selected status is invalid.',
         'notes.string' => 'The notes must be a valid string.',
         'notes.max' => 'The notes may not be greater than 500 characters.',
+        'opening_balance.numeric' => 'The opening balance must be a number.',
+        'opening_balance.min' => 'The opening balance cannot be negative.',
     ];
 
     // -------------------- CREATE MODAL --------------------
@@ -84,6 +88,7 @@ class SupplierManage extends Component
             'phone' => $this->phone,
             'status' => $this->status,
             'notes' => $this->notes,
+            'opening_balance' => $this->opening_balance ?: 0,
         ]);
 
         $this->resetForm();
@@ -107,6 +112,7 @@ class SupplierManage extends Component
         $this->phone = $supplier->phone;
         $this->status = $supplier->status;
         $this->notes = $supplier->notes;
+        $this->opening_balance = $supplier->opening_balance;
 
         $this->showViewModal = true;
     }
@@ -125,6 +131,7 @@ class SupplierManage extends Component
         $this->phone = $supplier->phone;
         $this->status = $supplier->status;
         $this->notes = $supplier->notes;
+        $this->opening_balance = $supplier->opening_balance;
 
         $this->showEditModal = true;
     }
@@ -150,6 +157,7 @@ class SupplierManage extends Component
             'phone' => $this->phone,
             'status' => $this->status,
             'notes' => $this->notes,
+            'opening_balance' => $this->opening_balance ?: 0,
         ]);
 
         $this->resetForm();
@@ -197,8 +205,9 @@ class SupplierManage extends Component
 
     public function resetForm()
     {
-        $this->reset(['supplierId', 'name', 'businessname', 'contact', 'address', 'email', 'phone', 'status', 'notes']);
+        $this->reset(['supplierId', 'name', 'businessname', 'contact', 'address', 'email', 'phone', 'status', 'notes', 'opening_balance']);
         $this->status = 'active';
+        $this->opening_balance = 0;
         $this->resetValidation();
     }
     public function updatedPerPage()

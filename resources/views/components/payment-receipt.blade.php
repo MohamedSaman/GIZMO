@@ -200,6 +200,20 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $totalPaymentForReceipt = $payment->amount + ($payment->overpayment_used ?? 0);
+                        $allocatedToOrders = $payment->allocations->sum('allocated_amount');
+                        $openingBalancePaid = $totalPaymentForReceipt - $allocatedToOrders;
+                    @endphp
+                    @if(round($openingBalancePaid, 2) > 0)
+                    <tr>
+                        <td><strong>Opening Balance</strong></td>
+                        <td class="text-right">Rs. {{ number_format($openingBalancePaid, 2) }}</td>
+                        <td class="text-right">Rs. {{ number_format($openingBalancePaid, 2) }}</td>
+                        <td class="text-right">Rs. 0.00</td>
+                        <td><span class="status-paid">PAID</span></td>
+                    </tr>
+                    @endif
                     @foreach($payment->allocations as $allocation)
                     @php
                         $order = $allocation->order;
@@ -224,8 +238,8 @@
                 <tfoot>
                     <tr class="total-row">
                         <td><strong>TOTAL</strong></td>
-                        <td class="text-right"><strong>Rs. {{ number_format($payment->allocations->sum(function($alloc) { return $alloc->order->due_amount + $alloc->allocated_amount; }), 2) }}</strong></td>
-                        <td class="text-right"><strong>Rs. {{ number_format($payment->amount, 2) }}</strong></td>
+                        <td class="text-right"><strong>Rs. {{ number_format($payment->allocations->sum(function($alloc) { return $alloc->order->due_amount + $alloc->allocated_amount; }) + $openingBalancePaid, 2) }}</strong></td>
+                        <td class="text-right"><strong>Rs. {{ number_format($totalPaymentForReceipt, 2) }}</strong></td>
                         <td class="text-right"><strong>Rs. {{ number_format($payment->allocations->sum('order.due_amount'), 2) }}</strong></td>
                         <td></td>
                     </tr>

@@ -64,6 +64,13 @@ class AddSupplierReceipt extends Component
 
     public $allocations = [];
 
+    public function hydrate()
+    {
+        if ($this->selectedSupplier) {
+            $this->loadSupplierOrders();
+        }
+    }
+
     public function mount()
     {
         $this->paymentData['payment_date'] = now()->format('Y-m-d');
@@ -162,6 +169,17 @@ class AddSupplierReceipt extends Component
             ->where('due_amount', '>', 0)
             ->orderBy('order_date', 'asc')
             ->get();
+
+        if ($this->selectedSupplier->opening_balance > 0) {
+            $openingBalanceOrder = new PurchaseOrder([
+                'order_number' => 'Opening Balance',
+                'order_date' => clone ($this->selectedSupplier->created_at ?? now()),
+                'total_amount' => $this->selectedSupplier->opening_balance,
+                'due_amount' => $this->selectedSupplier->opening_balance,
+            ]);
+            $openingBalanceOrder->setAttribute('id', -1);
+            $orders->prepend($openingBalanceOrder);
+        }
 
         $this->supplierOrders = $orders;
     }
@@ -451,8 +469,8 @@ class AddSupplierReceipt extends Component
                     'payment_reference' => $this->paymentData['reference_number'] ?? null,
                     'payment_date' => $this->paymentData['payment_date'],
                     'notes' => $this->paymentData['notes'] . ($overpaymentUsed > 0 ? " (Overpayment credit applied: " . number_format($overpaymentUsed, 2) . ")" : ""),
-                    'status' => $this->paymentData['payment_method'] === 'cash' ? 'paid' : 'pending',
-                    'is_completed' => $this->paymentData['payment_method'] === 'cash' ? 1 : 0,
+                    'status' => 'paid',
+                    'is_completed' => 1,
                     'overpayment_used' => $overpaymentUsed,
                 ];
 
@@ -489,17 +507,23 @@ class AddSupplierReceipt extends Component
 
             foreach ($this->allocations as $orderId => $allocation) {
                 if ($allocation['payment_amount'] > 0) {
-                    PurchasePaymentAllocation::create([
-                        'purchase_payment_id' => $payment->id,
-                        'purchase_order_id' => $orderId,
-                        'allocated_amount' => $allocation['payment_amount'],
-                    ]);
+                    if ($orderId == -1) {
+                        $this->selectedSupplier->opening_balance -= $allocation['payment_amount'];
+                        $this->selectedSupplier->opening_balance = max(0, round($this->selectedSupplier->opening_balance, 2));
+                        $this->selectedSupplier->save();
+                    } else {
+                        PurchasePaymentAllocation::create([
+                            'purchase_payment_id' => $payment->id,
+                            'purchase_order_id' => $orderId,
+                            'allocated_amount' => $allocation['payment_amount'],
+                        ]);
 
-                    $order = PurchaseOrder::find($orderId);
-                    if ($order) {
-                        $order->due_amount -= $allocation['payment_amount'];
-                        $order->due_amount = max(0, round($order->due_amount, 2));
-                        $order->save();
+                        $order = PurchaseOrder::find($orderId);
+                        if ($order) {
+                            $order->due_amount -= $allocation['payment_amount'];
+                            $order->due_amount = max(0, round($order->due_amount, 2));
+                            $order->save();
+                        }
                     }
                 }
             }
@@ -577,8 +601,10 @@ class AddSupplierReceipt extends Component
         return ProductSupplier::with(['orders' => function ($query) {
             $query->where('due_amount', '>', 0);
         }])
-            ->whereHas('orders', function ($query) {
-                $query->where('due_amount', '>', 0);
+            ->where(function ($query) {
+                $query->whereHas('orders', function ($q) {
+                    $q->where('due_amount', '>', 0);
+                })->orWhere('opening_balance', '>', 0);
             })
             ->when($this->search, function ($query) {
                 $query->where('name', 'like', "%{$this->search}%");

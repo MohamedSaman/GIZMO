@@ -10,10 +10,11 @@ class ProductSupplier extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'businessname', 'contact', 'address', 'email', 'phone', 'status', 'notes', 'overpayment'];
+    protected $fillable = ['name', 'businessname', 'contact', 'address', 'email', 'phone', 'status', 'notes', 'overpayment', 'opening_balance'];
 
     protected $casts = [
         'overpayment' => 'decimal:2',
+        'opening_balance' => 'decimal:2',
     ];
 
     public function detail()
@@ -55,5 +56,21 @@ class ProductSupplier extends Model
     public function getAvailableOverpayment()
     {
         return $this->overpayment ?? 0;
+    }
+
+    /**
+     * Get due amount from unpaid orders
+     */
+    public function getDueAmountAttribute()
+    {
+        return $this->orders()->where('due_amount', '>', 0)->sum('due_amount');
+    }
+
+    /**
+     * Get total due including opening balance and order due amount
+     */
+    public function getTotalDueAttribute()
+    {
+        return ($this->opening_balance ?? 0) + $this->due_amount;
     }
 }

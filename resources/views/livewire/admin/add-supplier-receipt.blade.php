@@ -483,6 +483,18 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $totalPaymentForReceipt = $lastPayment->amount + ($lastPayment->overpayment_used ?? 0);
+                                    $allocatedToOrders = $lastPayment->allocations->sum('allocated_amount');
+                                    $openingBalancePaid = $totalPaymentForReceipt - $allocatedToOrders;
+                                @endphp
+                                @if(round($openingBalancePaid, 2) > 0)
+                                <tr>
+                                    <td class="fw-bold">Opening Balance</td>
+                                    <td class="text-end text-success">Rs.{{ number_format($openingBalancePaid, 2) }}</td>
+                                    <td><span class="badge bg-success">Paid</span></td>
+                                </tr>
+                                @endif
                                 @foreach($lastPayment->allocations as $allocation)
                                 <tr>
                                     <td class="fw-bold">{{ $allocation->order->order_code }}</td>
@@ -640,9 +652,8 @@
                         <tbody>
                             @forelse($suppliers as $supplier)
                             @php
-                            $dueOrders = $supplier->orders->count();
-                            // due_amount already has returns deducted, just sum it
-                            $totalDue = $supplier->orders->sum('due_amount');
+                            $dueOrders = $supplier->orders->count() + ($supplier->opening_balance > 0 ? 1 : 0);
+                            $totalDue = $supplier->total_due;
                             @endphp
                             <tr wire:key="supplier-{{ $supplier->id }}">
                                 <td class="ps-4 fw-semibold">{{ $supplier->name }}</td>
