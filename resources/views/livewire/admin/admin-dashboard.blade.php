@@ -86,14 +86,14 @@
     <!-- Overview Content -->
     <div class="container-fluid p-0">
         <!-- Header Section -->
-        <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-3">
             <div>
-                <h3 class="fw-bold text-dark mb-2">
+                <h3 class="fw-bold text-dark mb-1">
                     <i class="bi bi-speedometer2 text-jg-blue me-2"></i> Overview
                 </h3>
-                <p class="text-muted mb-0">Get a complete view performance and .</p>
+                <p class="text-muted mb-0">Get a complete view of your product performance and stock activity.</p>
             </div>
-            <div class="d-flex gap-2">
+            <div class="d-flex flex-wrap gap-2">
                 <a href="/admin/store-billing" class="btn btn-warning text-white rounded-pill px-4 shadow-sm fw-bold border-0 d-flex align-items-center justify-content-center">
                     <i class="bi bi-shop me-2"></i> Store Billing
                 </a>
