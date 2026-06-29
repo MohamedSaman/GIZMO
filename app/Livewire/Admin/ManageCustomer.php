@@ -140,14 +140,14 @@ class ManageCustomer extends Component
     public function openSmsModal($id)
     {
         $customer = Customer::find($id);
-        if (!$customer) {
-            $this->js("Swal.fire('Error!', 'Customer Not Found', 'error')");
-            return;
-        }
+        if (!$customer) return;
 
         $this->smsCustomerId = $customer->id;
         $this->smsCustomerName = $customer->name;
-        $this->smsMessage = '';
+        
+        $due = number_format($customer->total_due ?? $customer->due_amount ?? 0, 2);
+        
+        $this->smsMessage = "Dear {$customer->name},\n\nYour current account balance due is Rs. {$due}.\nPlease settle your balance at your earliest convenience.\n\nThank you,\nGIZMO COVERING";
         $this->showSmsModal = true;
     }
 
