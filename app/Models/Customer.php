@@ -57,4 +57,21 @@ class Customer extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get due amount from unpaid sales
+     */
+    public function getDueAmountAttribute()
+    {
+        return $this->sales()->where('due_amount', '>', 0)->sum('due_amount');
+    }
+
+    /**
+     * Get total due including opening balance and sale due amount, deducting overpayments
+     */
+    public function getTotalDueAttribute()
+    {
+        $total = ($this->attributes['opening_balance'] ?? 0) + $this->due_amount - ($this->attributes['overpaid_amount'] ?? 0);
+        return max(0, $total);
+    }
 }

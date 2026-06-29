@@ -1252,6 +1252,14 @@
                     class="px-6 py-2.5 bg-white border-2 border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-colors"
                     wire:click="createNewSale">Close &amp; New</button>
                 <button
+                    class="px-8 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 transition-colors"
+                    wire:click="sendSmsInvoice"
+                    wire:loading.attr="disabled"
+                    wire:target="sendSmsInvoice">
+                    <span wire:loading.remove wire:target="sendSmsInvoice" class="flex items-center gap-2"><span class="material-symbols-outlined text-base">sms</span> Send SMS</span>
+                    <span wire:loading wire:target="sendSmsInvoice" class="flex items-center gap-2"><i class="spinner-border spinner-border-sm"></i> Sending...</span>
+                </button>
+                <button
                     class="px-8 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-slate-300 flex items-center gap-2 transition-colors"
                     onclick="printInvoice()">
                     <span class="material-symbols-outlined text-base">print</span> Print Invoice

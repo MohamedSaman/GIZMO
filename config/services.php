@@ -31,4 +31,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'smslenz' => [
+        'enabled' => env('SMSLENZ_ENABLED', false),
+        'endpoint' => env('SMSLENZ_ENDPOINT'),
+        'user_id' => env('SMSLENZ_USER_ID'),
+        'api_key' => env('SMSLENZ_API_KEY'),
+        'sender_id' => env('SMSLENZ_SENDER_ID'),
+    ],
+
 ];

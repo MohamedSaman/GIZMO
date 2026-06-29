@@ -126,6 +126,8 @@ Route::get('/', CustomLogin::class)->name('welcome')->middleware('guest');
 Route::get('/product-image/{identifier}', [ProductImageController::class, 'show'])->name('product-image.show');
 Route::post('/product-image/{identifier}/upload', [ProductImageController::class, 'upload'])->name('product-image.upload');
 Route::get('/product-image-serve/{filename}', [ProductImageController::class, 'serveImage'])->name('product-image.serve');
+// Public Invoice View
+Route::get('/invoice/{id}', [\App\Http\Controllers\InvoiceController::class, 'showPublic'])->name('public.invoice')->middleware('signed');
 
 // Public proxy route for gold price (avoids CORS and rate-limit from browser)
 Route::get('/api/gold-price', function () {

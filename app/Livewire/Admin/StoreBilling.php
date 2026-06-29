@@ -3473,6 +3473,41 @@ class StoreBilling extends Component
         return $assetUrl;
     }
 
+    /**
+     * Send SMS Invoice to customer
+     */
+    public function sendSmsInvoice(\App\Services\SmsService $smsService)
+    {
+        if (!$this->createdSale) {
+            $this->showToast('error', 'No recent sale found.');
+            return;
+        }
+
+        $customer = $this->createdSale->customer;
+        
+        // Ensure customer exists and is not the default 'Walk-in Customer' (assuming default doesn't have a valid phone or has a specific generic phone number)
+        if (!$customer || empty($customer->phone) || $customer->phone === '0000000000') {
+            $this->showToast('error', 'Customer does not have a valid phone number.');
+            return;
+        }
+
+        // Generate the signed URL for the public invoice
+        $invoiceUrl = \Illuminate\Support\Facades\URL::signedRoute('public.invoice', ['id' => $this->createdSale->id]);
+        
+        // Build the SMS message
+        $message = "Dear {$customer->name}, thank you for your purchase (Inv #{$this->createdSale->invoice_number}). View your invoice here: {$invoiceUrl}";
+
+        // Send the SMS
+        $result = $smsService->sendSms($customer->phone, $message);
+
+        if ($result['success'] ?? false) {
+            $this->showToast('success', 'SMS invoice sent successfully.');
+        } else {
+            $error = $result['error'] ?? 'Unknown error';
+            $this->showToast('error', "Failed to send SMS: {$error}");
+        }
+    }
+
     public function render()
     {
         return view('livewire.admin.store-billing', [

@@ -50,6 +50,10 @@ class ManageCustomer extends Component
     public $showCreateModal = false;
     public $showDeleteModal = false;
     public $showViewModal = false;
+    public $showSmsModal = false;
+    public $smsCustomerId;
+    public $smsCustomerName;
+    public $smsMessage = '';
     public $viewCustomerDetail = [];
     public $viewCustomerSales = [];
     public $viewCustomerPayments = [];
@@ -125,7 +129,49 @@ class ManageCustomer extends Component
         $this->showEditModal = false;
         $this->showDeleteModal = false;
         $this->showViewModal = false;
+        $this->showSmsModal = false;
+        $this->smsMessage = '';
         $this->resetForm();
+    }
+
+    /** ----------------------------
+     * Send SMS
+     * ---------------------------- */
+    public function openSmsModal($id)
+    {
+        $customer = Customer::find($id);
+        if (!$customer) {
+            $this->js("Swal.fire('Error!', 'Customer Not Found', 'error')");
+            return;
+        }
+
+        $this->smsCustomerId = $customer->id;
+        $this->smsCustomerName = $customer->name;
+        $this->smsMessage = '';
+        $this->showSmsModal = true;
+    }
+
+    public function sendCustomSms(\App\Services\SmsService $smsService)
+    {
+        $this->validate([
+            'smsMessage' => 'required|min:2'
+        ]);
+
+        $customer = Customer::find($this->smsCustomerId);
+        if (!$customer || !$customer->phone) {
+            $this->js("Swal.fire('Error!', 'Customer or valid phone number not found.', 'error')");
+            return;
+        }
+
+        $result = $smsService->sendSms($customer->phone, $this->smsMessage);
+
+        if ($result['success'] ?? false) {
+            $this->js("Swal.fire('Success!', 'SMS sent successfully.', 'success')");
+            $this->closeModal();
+        } else {
+            $error = $result['error'] ?? 'Unknown error';
+            $this->js("Swal.fire('Error!', 'Failed to send SMS: {$error}', 'error')");
+        }
     }
 
     /** ----------------------------

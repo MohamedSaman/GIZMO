@@ -167,6 +167,20 @@
                     </span>
                 </button>
             </li>
+            <!-- Send SMS -->
+            <li>
+                <button class="dropdown-item"
+                        wire:click="openSmsModal({{ $customer->id }})"
+                        wire:loading.attr="disabled"
+                        title="Send SMS">
+                    <span wire:loading wire:target="openSmsModal({{ $customer->id }})">
+                        <i class="spinner-border spinner-border-sm me-2"></i> Loading...
+                    </span>
+                    <span wire:loading.remove wire:target="openSmsModal({{ $customer->id }})">
+                        <i class="bi bi-chat-text text-success me-2"></i> Send SMS
+                    </span>
+                </button>
+            </li>
         </ul>
     </div>
 </td>
@@ -311,6 +325,39 @@
             </div>
         </div>
     </div>
+
+    {{-- Send SMS Modal --}}
+    @if($showSmsModal)
+    <div class="modal fade show d-block" tabindex="-1" aria-hidden="false" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-chat-text text-success me-2"></i> Send SMS to {{ $smsCustomerName }}
+                    </h5>
+                    <button type="button" class="btn-close" wire:click="closeModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Message</label>
+                        <textarea class="form-control @error('smsMessage') is-invalid @enderror" 
+                                  wire:model="smsMessage" rows="4" placeholder="Type your SMS message here..."></textarea>
+                        @error('smsMessage') <span class="text-danger small">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="d-grid mt-3">
+                        <button type="button" class="btn btn-success py-2" wire:click="sendCustomSms" wire:loading.attr="disabled">
+                            <i class="bi bi-send me-2"></i>
+                            <span wire:loading.remove wire:target="sendCustomSms">Send Message</span>
+                            <span wire:loading wire:target="sendCustomSms">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Sending...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 @endif
 
@@ -1011,6 +1058,39 @@
                                 <button type="button" class="btn btn-secondary" wire:click="closeImportModal">Cancel</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Send SMS Modal --}}
+    @if($showSmsModal)
+    <div class="modal fade show d-block" tabindex="-1" aria-hidden="false" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-chat-text text-success me-2"></i> Send SMS to {{ $smsCustomerName }}
+                    </h5>
+                    <button type="button" class="btn-close" wire:click="closeModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Message</label>
+                        <textarea class="form-control @error('smsMessage') is-invalid @enderror" 
+                                  wire:model="smsMessage" rows="4" placeholder="Type your SMS message here..."></textarea>
+                        @error('smsMessage') <span class="text-danger small">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="d-grid mt-3">
+                        <button type="button" class="btn btn-success py-2" wire:click="sendCustomSms" wire:loading.attr="disabled">
+                            <i class="bi bi-send me-2"></i>
+                            <span wire:loading.remove wire:target="sendCustomSms">Send Message</span>
+                            <span wire:loading wire:target="sendCustomSms">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Sending...
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
