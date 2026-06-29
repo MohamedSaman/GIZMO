@@ -93,8 +93,11 @@
                 </h3>
                 <p class="text-muted mb-0">Get a complete view of your product performance and stock activity.</p>
             </div>
-            <div>
-                <button wire:click="openTodaySummary" class="btn bg-jg-blue text-white rounded-pill px-4 shadow-sm fw-bold border-0">
+            <div class="d-flex gap-2">
+                <a href="/admin/store-billing" class="btn btn-warning text-white rounded-pill px-4 shadow-sm fw-bold border-0 d-flex align-items-center justify-content-center">
+                    <i class="bi bi-shop me-2"></i> Store Billing
+                </a>
+                <button wire:click="openTodaySummary" class="btn bg-jg-blue text-white rounded-pill px-4 shadow-sm fw-bold border-0 d-flex align-items-center justify-content-center">
                     <i class="bi bi-clipboard-data me-2"></i> View Today Summary
                 </button>
             </div>

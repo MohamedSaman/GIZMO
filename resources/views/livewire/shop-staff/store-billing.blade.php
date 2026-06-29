@@ -1195,6 +1195,13 @@
                 </button>
                 <button class="px-8 py-2.5 bg-[#f59e0b] hover:bg-yellow-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-yellow-500/20 transition-colors"
                     wire:click="downloadInvoice">Download PDF</button>
+                <button
+                    class="px-6 py-2.5 bg-white border-2 border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-sm group"
+                    wire:click="sendSmsInvoice" wire:loading.attr="disabled" wire:target="sendSmsInvoice">
+                    <span class="material-symbols-outlined text-base group-hover:scale-110 transition-transform">sms</span>
+                    <span wire:loading.remove wire:target="sendSmsInvoice">SMS Invoice</span>
+                    <span wire:loading wire:target="sendSmsInvoice">Sending...</span>
+                </button>
             </div>
         </div>
         @endif

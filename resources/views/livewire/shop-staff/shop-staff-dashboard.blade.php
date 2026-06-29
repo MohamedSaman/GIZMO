@@ -145,9 +145,9 @@
         <div class="row align-items-center mb-4">
             <div class="col">
                 <h3 class="fw-bold text-dark mb-1">
-                    <i class="bi bi-speedometer2 text-jg-blue me-2"></i> Shop Staff Dashboard
+                    <i class="bi bi-speedometer2 text-jg-blue me-2"></i>Staff Dashboard
                 </h3>
-                <p class="text-muted mb-0">Overview of your sales performance and current inventory.</p>
+                <p class="text-muted mb-0">Overview of your sales performance.</p>
             </div>
             <div class="col-auto">
                 <a href="{{ route('shop-staff.store-billing') }}"
