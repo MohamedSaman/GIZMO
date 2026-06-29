@@ -3484,9 +3484,21 @@ class StoreBilling extends Component
         }
 
         $customer = $this->createdSale->customer;
+        $phoneNumber = null;
+        $customerName = null;
         
-        // Ensure customer exists and is not the default 'Walk-in Customer' (assuming default doesn't have a valid phone or has a specific generic phone number)
-        if (!$customer || empty($customer->phone) || $customer->phone === '0000000000') {
+        // Handle Walk-in Customer specific phone and name if provided
+        if ($customer && $customer->name === 'Walking Customer' && !empty($this->createdSale->walking_customer_phone)) {
+            $phoneNumber = $this->createdSale->walking_customer_phone;
+            $customerName = !empty($this->createdSale->walking_customer_name) ? $this->createdSale->walking_customer_name : 'Valued Customer';
+        } 
+        // Handle regular customer with a valid phone number
+        elseif ($customer && !empty($customer->phone) && $customer->phone !== '0000000000') {
+            $phoneNumber = $customer->phone;
+            $customerName = $customer->name;
+        }
+
+        if (!$phoneNumber) {
             $this->showToast('error', 'Customer does not have a valid phone number.');
             return;
         }
@@ -3495,10 +3507,10 @@ class StoreBilling extends Component
         $invoiceUrl = \Illuminate\Support\Facades\URL::signedRoute('public.invoice', ['id' => $this->createdSale->id]);
         
         // Build the SMS message
-        $message = "Dear {$customer->name}, thank you for your purchase (Inv #{$this->createdSale->invoice_number}). View your invoice here: {$invoiceUrl}";
+        $message = "Dear {$customerName}, thank you for your purchase (Inv #{$this->createdSale->invoice_number}). View your invoice here: {$invoiceUrl}";
 
         // Send the SMS
-        $result = $smsService->sendSms($customer->phone, $message);
+        $result = $smsService->sendSms($phoneNumber, $message);
 
         if ($result['success'] ?? false) {
             $this->showToast('success', 'SMS invoice sent successfully.');
