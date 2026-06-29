@@ -629,7 +629,7 @@
                               "🛍️ *Product Cost:* Rs. " . number_format($summaryData['totalCost'], 2) . "\n" .
                               "💹 *Gross Profit:* Rs. " . number_format($summaryData['grossProfit'], 2) . "\n" .
                               "🏆 *Net Profit:* Rs. " . number_format($summaryData['netProfit'], 2);
-                    $waUrl = "https://wa.me/94752919654?text=" . urlencode($waText);
+                    $waUrl = "https://wa.me/94777005897?text=" . urlencode($waText);
                 @endphp
 
                 <div class="modal-footer border-top-0 pt-0 pb-3 px-4 d-flex justify-content-between">
