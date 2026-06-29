@@ -544,7 +544,7 @@
                         </div>
                         <div class="border-top pt-3">
                             <p class="text-center mb-0"><strong>ADDRESS :</strong> 421/2, Doolmala, thihariya, Kalagedihena.</p>
-                            <p class="text-center mb-0"><strong>TEL :</strong> (077) 9752950, <strong>EMAIL :</strong> Gizmolanka@gmail.com</p>
+                            <p class="text-center mb-0"><strong>TEL :</strong> 0777005897, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com</p>
                             <p class="text-center" style="font-size: 11px;"><strong></strong></p>
                         </div>
                     </div>

@@ -147,7 +147,7 @@ class ManageCustomer extends Component
         
         $due = number_format($customer->total_due ?? $customer->due_amount ?? 0, 2);
         
-        $this->smsMessage = "Dear {$customer->name},\n\nYour current account balance due is Rs. {$due}.\nPlease settle your balance at your earliest convenience.\n\nThank you,\nGIZMO COVERING";
+        $this->smsMessage = "Dear {$customer->name},\n\nYour current account balance due is Rs. {$due}.\nPlease settle your balance at your earliest convenience.\n\nThank you,\nGIZMO ELECTRONICS";
         $this->showSmsModal = true;
     }
 

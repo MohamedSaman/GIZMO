@@ -208,7 +208,7 @@
             <!-- HEADER -->
             <div class="header">
                 <div class="company-name">
-                    GIZMO COVERING <br><span>World Wide Delivery</span>
+                    GIZMO ELECTRONICS <br><span>World Wide Delivery</span>
                 </div>
                 <div class="meta">
                     <div class="method">
@@ -330,7 +330,7 @@
 
             <!-- FOOTER -->
             <div class="footer">
-                <div>NO: 237 KKS ROAD, JAFFNA | NO: 37 NEW MARKET JAFFNA</div>
+                <div>No-10 Keyzer Street, Colombo 11</div>
                 <div>076 1919 650 | 077 5287 556</div>
                 <div>Return will be accepted within 3 days</div>
                 <div>Thank you for your purchase!</div>

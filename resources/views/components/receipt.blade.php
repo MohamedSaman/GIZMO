@@ -1,7 +1,7 @@
 {{-- components/receipt.blade.php --}}
 <div class="receipt-container">
     <h4>Invoice #{{ $receipt->invoice_number }}</h4>
-    <p><strong>Hotline:</strong> 021 222 85 89</p>
+    <p><strong>Hotline:</strong> 0112337242</p>
     <p>Date: {{ $receipt->created_at->format('d-m-Y H:i') }}</p>
     <p>Customer: {{ $receipt->customer->name ?? '' }}</p>
     <hr>

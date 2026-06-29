@@ -522,7 +522,7 @@
             </table>
             <div class="info-section">
                 <p><strong>ADDRESS:</strong> 421/2, Doolmala, thihariya, Kalagedihena.</p>
-                <p><strong>TEL:</strong> (077) 9752950 | <strong>HOTLINE:</strong> 021 222 85 89 | <strong>EMAIL:</strong> Gizmolanka@gmail.com</p>
+                <p><strong>TEL:</strong> 0777005897 | <strong>HOTLINE:</strong> 0112337242 | <strong>EMAIL:</strong> gizmoelectronicsofficial@gmail.com</p>
                 <p style="margin-top: 6px;"><strong>Goods return will be accepted within 10 days only. Electrical and body parts non-returnable.</strong></p>
             </div>
         </div>

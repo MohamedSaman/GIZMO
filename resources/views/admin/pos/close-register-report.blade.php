@@ -153,7 +153,7 @@
     <div class="header">
         <img src="{{ public_path('images/HARDMEN') }}" alt="HARDMEN Logo">
         <p>421/2, Doolmala, thihariya, Kalagedihena.</p>
-        <p><strong>TEL:</strong> (077) 9752950 | <strong>EMAIL:</strong> Gizmolanka@gmail.com</p>
+        <p><strong>TEL:</strong> 0777005897 | <strong>EMAIL:</strong> gizmoelectronicsofficial@gmail.com</p>
         <h1>CLOSE REGISTER SUMMARY</h1>
     </div>
 

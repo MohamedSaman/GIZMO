@@ -215,8 +215,8 @@
                         
                         <p class="mb-0">
                             <strong>ADDRESS :</strong> 421/2, Doolmala, thihariya, Kalagedihena.<br>
-                            <strong>TEL :</strong> (077) 9752950, <strong>EMAIL :</strong> Gizmolanka@gmail.com
-                            <br><strong>HOTLINE :</strong> 021 222 85 89
+                            <strong>TEL :</strong> 0777005897, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com
+                            <br><strong>HOTLINE :</strong> 0112337242
                         </p>
                         <p class="mt-1 text-muted">
                             

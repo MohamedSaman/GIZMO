@@ -1001,11 +1001,11 @@
                     <!-- Thermal Receipt Header -->
                     <div style="text-align:center; font-weight:bold; padding-top: 3mm;">
                         <div style="border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 5px 0; margin-bottom: 5px; font-size: 16px; text-transform: uppercase;">
-                            GIZMO COVERING
+                            GIZMO ELECTRONICS
                         </div>
-                        <div style="font-size: 11px;">237 KKS ROAD, JAFFNA</div>
-                        <div style="font-size: 11px;">Tel: 0761919650</div>
-                        <div style="font-size: 11px;">Hotline: 021 222 85 89</div>
+                        <div style="font-size: 11px;">No-10 Keyzer Street, Colombo 11</div>
+                        <div style="font-size: 11px;">Tel: 0777005897 / 0112337242</div>
+                        <div style="font-size: 11px;">Hotline: 0112337242</div>
                     </div>
 
                     <div style="border-bottom: 1px dashed #000; margin: 8px 0;"></div>

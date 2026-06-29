@@ -353,7 +353,7 @@
         {{-- Company Footer --}}
         <div class="company-footer">
             <p><strong>ADDRESS :</strong> 421/2, Doolmala, thihariya, Kalagedihena.</p>
-            <p><strong>TEL :</strong> (077) 9752950, <strong>EMAIL :</strong> Gizmolanka@gmail.com</p>
+            <p><strong>TEL :</strong> 0777005897, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com</p>
             <p class="small-text">This quotation is valid until {{ \Carbon\Carbon::parse($quotation->valid_until)->format('d/m/Y') }}.</p>
         </div>
     </div>

@@ -102,7 +102,7 @@
         <div class="header">
             <div class="company-info">
                 <h2> Gizmo (PVT) LTD</h2>
-                <div><strong>Hotline:</strong> 021 222 85 89</div>
+                <div><strong>Hotline:</strong> 0112337242</div>
             </div>
             <div class="receipt-title">PAYMENT RECEIPT</div>
         </div>
@@ -259,7 +259,7 @@
         <div class="footer">
             <p>This is a computer-generated receipt. No signature required.</p>
             <p>Thank you for your payment!</p>
-            <p><strong>Hotline:</strong> 021 222 85 89</p>
+            <p><strong>Hotline:</strong> 0112337242</p>
             <p>Generated on: {{ now()->format('d-m-Y H:i:s') }}</p>
         </div>
     </div>

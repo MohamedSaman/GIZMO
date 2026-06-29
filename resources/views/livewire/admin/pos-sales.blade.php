@@ -286,8 +286,8 @@ use App\Models\Sale;
                                     <h2 class="mb-0">Gizmo (PVT) LTD</h2>
                                     <p class="mb-0 text-muted" style="color:#666; font-size:12px;">Gold Shop</p>
                                     <p style="margin:0; text-align:center;"><strong>421/2, Doolmala, thihariya, Kalagedihena.</strong></p>
-                                    <p style="margin:0; text-align:center;"><strong>TEL:</strong> (077) 9752950, <strong>EMAIL:</strong> Gizmolanka@gmail.com</p>
-                                    <p style="margin:0; text-align:center;"><strong>HOTLINE:</strong> 021 222 85 89</p>
+                                    <p style="margin:0; text-align:center;"><strong>TEL:</strong> 0777005897, <strong>EMAIL:</strong> gizmoelectronicsofficial@gmail.com</p>
+                                    <p style="margin:0; text-align:center;"><strong>HOTLINE:</strong> 0112337242</p>
                                 </div>
                             </div>
                         </div>
