@@ -113,10 +113,15 @@ class SmsService
             return;
         }
 
+        $alertPhone = (string) (Setting::where('key', 'sms_low_balance_alert_phone')->value('value') ?? '');
+        if (empty($alertPhone)) {
+            return;
+        }
+
         $balanceFormatted = number_format($balanceAfter, 2);
         $alertMessage     = "GIZMO Alert: Your SMS balance is low (Rs. {$balanceFormatted}). Please top up to continue sending SMS.";
 
-        $this->sendSms('0770000000', $alertMessage, 'low_balance');
+        $this->sendSms($alertPhone, $alertMessage, 'low_balance');
 
         Setting::updateOrCreate(
             ['key' => 'sms_low_balance_alerted'],

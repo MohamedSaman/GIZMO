@@ -165,13 +165,18 @@
                 <div class="panel-body" style="display:flex;flex-direction:column;gap:1.25rem;">
                     <div>
                         <label class="sms-label">Rate Per SMS Message (Rs.)</label>
-                        <input type="number" step="0.01" min="0" wire:model="smsRate" class="sms-input" placeholder="2.00">
+                        <input type="number" step="0.01" min="0" wire:model="smsRate" class="sms-input" placeholder="0.70">
                         <p style="font-size:0.68rem;color:var(--sms-muted);margin-top:4px;">Cost per single SMS (160 chars). Multi-part = parts × rate.</p>
                     </div>
                     <div>
                         <label class="sms-label">Low Balance Alert Threshold (Rs.)</label>
                         <input type="number" step="1" min="0" wire:model="lowBalanceThreshold" class="sms-input" placeholder="50">
-                        <p style="font-size:0.68rem;color:var(--sms-muted);margin-top:4px;">Alert sent when balance drops below this.</p>
+                        <p style="font-size:0.68rem;color:var(--sms-muted);margin-top:4px;">Alert SMS sent when balance drops below this.</p>
+                    </div>
+                    <div>
+                        <label class="sms-label">Low Balance Alert Phone Number</label>
+                        <input type="text" wire:model="lowBalanceAlertPhone" class="sms-input" placeholder="e.g. 0759037101">
+                        <p style="font-size:0.68rem;color:var(--sms-muted);margin-top:4px;">Phone number to receive low balance alert SMS.</p>
                     </div>
                     <div>
                         <label class="sms-label">Double Charge When Balance = 0</label>

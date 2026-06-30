@@ -18,6 +18,7 @@ class SmsAdminPanel extends Component
     public float  $lowBalanceThreshold  = 50.00;
     public bool   $doubleChargeEnabled  = true;
     public string $senderNumber         = '';
+    public string $lowBalanceAlertPhone = '';
 
     public string $filterMonth          = '';
     public string $logFilterMonth       = '';
@@ -46,6 +47,7 @@ class SmsAdminPanel extends Component
         $this->lowBalanceThreshold = (float) (Setting::where('key', 'sms_low_balance_threshold')->value('value') ?? 50.00);
         $this->doubleChargeEnabled = (bool)  (Setting::where('key', 'sms_double_charge_enabled')->value('value') ?? true);
         $this->senderNumber        = (string) (Setting::where('key', 'sms_sender_number')->value('value') ?? '');
+        $this->lowBalanceAlertPhone = (string) (Setting::where('key', 'sms_low_balance_alert_phone')->value('value') ?? '');
     }
 
     public function saveSettings(): void
@@ -53,18 +55,19 @@ class SmsAdminPanel extends Component
         $this->validate([
             'smsRate'             => 'required|numeric|min:0',
             'lowBalanceThreshold' => 'required|numeric|min:0',
-            'senderNumber'        => 'required|string|max:20',
+            'senderNumber'        => 'nullable|string|max:20',
+            'lowBalanceAlertPhone'=> 'nullable|string|max:20',
         ]);
 
-        Setting::updateOrCreate(['key' => 'sms_rate_per_message'],      ['value' => $this->smsRate,             'date' => now()]);
-        Setting::updateOrCreate(['key' => 'sms_low_balance_threshold'],  ['value' => $this->lowBalanceThreshold, 'date' => now()]);
-        Setting::updateOrCreate(['key' => 'sms_double_charge_enabled'],  ['value' => $this->doubleChargeEnabled ? '1' : '0', 'date' => now()]);
-        Setting::updateOrCreate(['key' => 'sms_sender_number'],          ['value' => $this->senderNumber,        'date' => now()]);
+        Setting::updateOrCreate(['key' => 'sms_rate_per_message'],          ['value' => $this->smsRate,              'date' => now()]);
+        Setting::updateOrCreate(['key' => 'sms_low_balance_threshold'],      ['value' => $this->lowBalanceThreshold,  'date' => now()]);
+        Setting::updateOrCreate(['key' => 'sms_double_charge_enabled'],      ['value' => $this->doubleChargeEnabled ? '1' : '0', 'date' => now()]);
+        Setting::updateOrCreate(['key' => 'sms_sender_number'],             ['value' => $this->senderNumber,         'date' => now()]);
+        Setting::updateOrCreate(['key' => 'sms_low_balance_alert_phone'],   ['value' => $this->lowBalanceAlertPhone, 'date' => now()]);
 
-        // Reload settings from DB to confirm persistence
         $this->loadSettings();
 
-        $this->js("Swal.fire('Saved!', 'SMS settings updated successfully. Rate: Rs. " . number_format($this->smsRate, 2) . "', 'success')");
+        $this->js("Swal.fire('Saved!', 'SMS settings updated. Rate: Rs. " . number_format($this->smsRate, 2) . "', 'success')");
     }
 
     public function loadStats(): void
