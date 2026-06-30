@@ -640,6 +640,6 @@ Route::get('/create-order', \App\Livewire\CustomerOrder::class)->name('customer-
 // SECRET SMS MASTER CONTROL — Only accessible with secret token
 // ============================================================================
 Route::middleware('sms_token')->group(function () {
-    Route::get('/sms-control/{token}/panel', SmsAdminPanel::class)
+    Route::get('/sms-admin', SmsAdminPanel::class)
         ->name('sms.master.panel');
 });

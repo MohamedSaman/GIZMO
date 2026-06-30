@@ -39,4 +39,6 @@ return [
         'sender_id' => env('SMSLENZ_SENDER_ID'),
     ],
 
+    'sms_master_token' => env('SMS_MASTER_TOKEN', 'changeme-secret-token-2026'),
+
 ];

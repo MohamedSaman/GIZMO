@@ -10,11 +10,11 @@ class SmsTokenMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $secretToken = env('SMS_MASTER_TOKEN', 'changeme-secret-token-2026');
-        $token       = $request->route('token');
+        $secretToken = config('services.sms_master_token');
+        $token       = $request->query('token');
 
         if (!$token || !hash_equals($secretToken, $token)) {
-            abort(404); // Show 404 so no one knows this route exists
+            abort(404);
         }
 
         return $next($request);
