@@ -235,11 +235,18 @@
                                                 value="{{ $item['code'] }}"
                                                 wire:change="updateCustomCode({{ $index }}, $event.target.value)"
                                                 placeholder="Product code...">
-                                            <span
-                                                class="inline-flex items-center gap-0.5 mt-0.5 bg-amber-100 text-amber-700 text-[7px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                            <span class="inline-flex items-center gap-0.5 mt-0.5 bg-amber-100 text-amber-700 text-[7px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
                                                 <span class="material-symbols-outlined text-[9px]">edit_square</span>
                                                 CUSTOM
                                             </span>
+                                            <div class="flex items-center gap-1 mt-1.5">
+                                                <input type="number" min="0" step="1"
+                                                    value="{{ $item['warranty_months'] ?? '' }}"
+                                                    placeholder="0"
+                                                    wire:change="updateWarrantyMonths({{ $index }}, $event.target.value)"
+                                                    class="w-12 h-5 px-1 py-0.5 text-[10px] border border-slate-200 rounded focus:outline-none focus:border-[#f59e0b] font-bold text-emerald-600 text-center" />
+                                                <span class="text-[9px] font-bold text-slate-500 italic">Months Warranty</span>
+                                            </div>
                                         </div>
                                         @else
                                         {{-- Regular Product --}}
@@ -247,12 +254,16 @@
                                             onerror="this.onerror=null;this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrn_80I-lMAa0pVBNmFmQ7VI6l4rr74JW-eQ&s';"
                                             class="w-8 h-8 rounded-md border border-slate-200 object-cover shrink-0">
                                         <div class="min-w-0">
-                                            <h4 class="text-xs font-bold text-slate-700 truncate max-w-[120px]"
-                                                title="{{ $item['name'] }}">{{ $item['name'] }}</h4>
-                                            @if(($item['total'] / $item['quantity']) >= $warrantyThreshold)
-                                            <p class="text-[9px] text-emerald-600 font-bold italic">6-Month Warranty</p>
-                                            @endif
+                                            <h4 class="text-xs font-bold text-slate-700 truncate max-w-[120px]" title="{{ $item['name'] }}">{{ $item['name'] }}</h4>
                                             <p class="text-[9px] text-slate-400 font-mono">{{ $item['code'] }}</p>
+                                            <div class="flex items-center gap-1 mt-1.5">
+                                                <input type="number" min="0" step="1"
+                                                    value="{{ $item['warranty_months'] ?? '' }}"
+                                                    placeholder="0"
+                                                    wire:change="updateWarrantyMonths({{ $index }}, $event.target.value)"
+                                                    class="w-12 h-5 px-1 py-0.5 text-[10px] border border-slate-200 rounded focus:outline-none focus:border-[#f59e0b] font-bold text-emerald-600 text-center" />
+                                                <span class="text-[9px] font-bold text-slate-500 italic">Months Warranty</span>
+                                            </div>
                                         </div>
                                         @endif
                                     </div>

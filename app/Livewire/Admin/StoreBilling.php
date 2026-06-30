@@ -272,6 +272,20 @@ class StoreBilling extends Component
                         'wholesale_price' => 0,
                         'distributor_price' => 0,
                         'sale_item_id' => $item->id,
+                        'warranty_months' => (function() use ($item) {
+                            if ($item->has_warranty && $item->warranty_duration) {
+                                if (preg_match('/(\d+)\s*year/i', $item->warranty_duration, $matches)) {
+                                    return (int)$matches[1] * 12;
+                                }
+                                if (preg_match('/(\d+)\s*month/i', $item->warranty_duration, $matches)) {
+                                    return (int)$matches[1];
+                                }
+                                if (preg_match('/^\d+$/', trim($item->warranty_duration))) {
+                                    return (int)trim($item->warranty_duration);
+                                }
+                            }
+                            return null;
+                        })(),
                     ];
                 }
 
@@ -1807,6 +1821,27 @@ class StoreBilling extends Component
 
             $discountPrice = ($product['price'] * $discountPercentage) / 100;
 
+            // Calculate default warranty months
+            $defaultWarrantyMonths = (function() use ($baseProductId, $product, $discountPrice) {
+                $productDetail = \App\Models\ProductDetail::find($baseProductId);
+                $prodWarranty = $productDetail ? ($productDetail->specifications['warranty'] ?? null) : null;
+                if (!empty($prodWarranty)) {
+                    if (preg_match('/(\d+)\s*year/i', $prodWarranty, $matches)) {
+                        return (int)$matches[1] * 12;
+                    }
+                    if (preg_match('/(\d+)\s*month/i', $prodWarranty, $matches)) {
+                        return (int)$matches[1];
+                    }
+                    if (preg_match('/^\d+$/', trim($prodWarranty))) {
+                        return (int)trim($prodWarranty);
+                    }
+                }
+                
+                $unitPrice = $product['price'] - round($discountPrice, 2);
+                $warrantyThreshold = Setting::where('key', 'warranty_min_amount')->value('value') ?? 1000;
+                return ($unitPrice >= $warrantyThreshold) ? 6 : null;
+            })();
+
             $newItem = [
                 'key' => uniqid('cart_'),
                 'id' => $cartId,
@@ -1826,6 +1861,7 @@ class StoreBilling extends Component
                 'pending' => $product['pending'] ?? 0,
                 'image' => $product['image'] ?? null,
                 'batch_numbers' => $batchNumbers, // Store batch info for later reference
+                'warranty_months' => $defaultWarrantyMonths,
             ];
 
             // Prepend new item to the beginning of the cart so latest appears at top
@@ -1912,6 +1948,14 @@ class StoreBilling extends Component
 
         // After price update, return focus to search input
         $this->dispatch('price-updated');
+    }
+
+    // Update Warranty Months
+    public function updateWarrantyMonths($index, $months)
+    {
+        if (isset($this->cart[$index])) {
+            $this->cart[$index]['warranty_months'] = $months !== '' ? (int)$months : null;
+        }
     }
 
     // Update Discount - Auto-detects "10" as Rs.10 or "10%" as 10%
@@ -2473,8 +2517,8 @@ class StoreBilling extends Component
                         'total' => $item['total'],
                         'variant_value' => null,
                         'variant_id' => null,
-                        'has_warranty' => false,
-                        'warranty_duration' => null,
+                        'has_warranty' => !empty($item['warranty_months']) && $item['warranty_months'] > 0,
+                        'warranty_duration' => (!empty($item['warranty_months']) && $item['warranty_months'] > 0) ? $item['warranty_months'] . ($item['warranty_months'] == 1 ? ' Month' : ' Months') : null,
                     ]);
 
                     Log::info('Custom Product added to Sale', [
@@ -2507,19 +2551,8 @@ class StoreBilling extends Component
                     'total' => $item['total'],
                     'variant_value' => $variantValue,
                     'variant_id' => $variantId,
-                    'has_warranty' => (function() use ($baseProductId, $item, $warrantyThreshold) {
-                        $productDetail = \App\Models\ProductDetail::find($baseProductId);
-                        $prodWarranty = $productDetail ? ($productDetail->specifications['warranty'] ?? null) : null;
-                        return ($item['total'] / $item['quantity']) >= $warrantyThreshold || !empty($prodWarranty);
-                    })(),
-                    'warranty_duration' => (function() use ($baseProductId, $item, $warrantyThreshold) {
-                        $productDetail = \App\Models\ProductDetail::find($baseProductId);
-                        $prodWarranty = $productDetail ? ($productDetail->specifications['warranty'] ?? null) : null;
-                        if (!empty($prodWarranty)) {
-                            return $prodWarranty;
-                        }
-                        return ($item['total'] / $item['quantity']) >= $warrantyThreshold ? '6 Months' : null;
-                    })(),
+                    'has_warranty' => !empty($item['warranty_months']) && $item['warranty_months'] > 0,
+                    'warranty_duration' => (!empty($item['warranty_months']) && $item['warranty_months'] > 0) ? $item['warranty_months'] . ($item['warranty_months'] == 1 ? ' Month' : ' Months') : null,
                 ]);
 
                 // Deduct stock using FIFO method (updates both ProductBatch and ProductStock)

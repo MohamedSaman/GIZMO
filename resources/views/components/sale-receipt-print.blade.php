@@ -52,7 +52,12 @@
             <tr>
                 <td class="text-center">{{ $index + 1 }}</td>
                 <td>{{ $item->product_code }}</td>
-                <td>{{ $item->product_name }}</td>
+                <td>
+                    {{ $item->product_name }}
+                    @if($item->has_warranty)
+                    <div style="font-size: 8pt; color: #161b97; font-weight: bold; margin-top: 2px;">- {{ $item->warranty_duration }} Warranty</div>
+                    @endif
+                </td>
                 <td class="text-center">{{ $item->quantity }}</td>
                 <td class="text-end">Rs.{{ number_format($item->unit_price, 2) }}</td>
                 <td class="text-end">
