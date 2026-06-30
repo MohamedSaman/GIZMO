@@ -15,8 +15,8 @@
     .sms-title { font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0; }
     .sms-subtitle { font-size: 0.75rem; color: var(--sms-muted); margin: 0; }
     .secret-badge { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: var(--sms-red); padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 1px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-    .stat-card { background: var(--sms-card); border: 1px solid var(--sms-border); border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: column; justify-content: space-between; min-height: 120px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--sms-card); border: 1px solid var(--sms-border); border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: column; justify-content: flex-start; min-height: 130px; }
     .stat-card:hover { transform: translateY(-2px); border-color: var(--sms-accent); }
     .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; border-radius: 16px 16px 0 0; }
     .stat-card.accent::before { background: linear-gradient(90deg, var(--sms-accent), #8b5cf6); }
