@@ -14,7 +14,7 @@ class SmsAdminPanel extends Component
 {
     use WithPagination;
 
-    public float  $smsRate              = 2.00;
+    public float  $smsRate              = 0.70;
     public float  $lowBalanceThreshold  = 50.00;
     public bool   $doubleChargeEnabled  = true;
     public string $senderNumber         = '';

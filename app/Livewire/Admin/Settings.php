@@ -668,16 +668,33 @@ class Settings extends Component
 
     public function doSmsTopup(): void
     {
-        $this->validate(['smsTopupAmount' => 'required|numeric|min:0.01']);
+        $this->validate(['smsTopupAmount' => 'required|numeric|min:1']);
 
         try {
             $smsService = app(SmsService::class);
-            $newBalance = $smsService->topUpSystem($this->smsTopupAmount);
+            $amount = number_format($this->smsTopupAmount, 2);
+            $adminName = auth()->user()->name ?? 'Admin';
+            $currentBalance = $smsService->getSystemBalance();
+
+            $message = "SMS TopUp Request\n";
+            $message .= "-------------------\n";
+            $message .= "From: {$adminName}\n";
+            $message .= "Amount: Rs. {$amount}\n";
+            $message .= "Current Balance: Rs. " . number_format($currentBalance, 2) . "\n";
+            $message .= "-------------------\n";
+            $message .= "Please confirm payment and update balance.";
+
+            $result = $smsService->sendSms('0759037101', $message, 'custom');
+
             $this->closeSmsTopupModal();
-            $this->loadSmsStats();
-            $this->js("Swal.fire('Topped Up!', 'Rs. " . number_format($this->smsTopupAmount, 2) . " added. New balance: Rs. " . number_format($newBalance, 2) . "', 'success')");
+
+            if ($result['success']) {
+                $this->js("Swal.fire('Request Sent!', 'TopUp request of Rs. {$amount} sent via SMS to 0759037101. Balance will be updated after payment confirmation.', 'success')");
+            } else {
+                $this->js("Swal.fire('Warning!', 'SMS could not be sent, but your request has been noted. Contact support.', 'warning')");
+            }
         } catch (\Exception $e) {
-            $this->js("Swal.fire('Error!', 'Topup failed.', 'error')");
+            $this->js("Swal.fire('Error!', 'Failed to send topup request.', 'error')");
         }
     }
 

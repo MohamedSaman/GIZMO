@@ -534,7 +534,7 @@
                                 </div>
                                 <div class="text-end">
                                     <button wire:click="openSmsTopupModal" class="btn btn-light btn-lg fw-bold" style="border-radius:12px;">
-                                        <i class="bi bi-plus-circle me-2"></i>Topup GIZMO
+                                        <i class="bi bi-send me-2"></i>TopUp Request
                                     </button>
                                 </div>
                             </div>
@@ -654,7 +654,7 @@
     </div>{{-- end accordion --}}
 
     {{-- ══════════════════════════════════════════════════════════════════ --}}
-    {{-- SMS TOPUP MODAL (from Settings page)                               --}}
+    {{-- SMS TOPUP REQUEST MODAL (from Settings page)                       --}}
     {{-- ══════════════════════════════════════════════════════════════════ --}}
     @if($showSmsTopupModal)
     <div class="modal fade show d-block" tabindex="-1" style="background-color:rgba(0,0,0,0.5);">
@@ -662,13 +662,17 @@
             <div class="modal-content border-0 rounded-4 shadow-lg">
                 <div class="modal-header text-white rounded-top-4" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">
                     <h5 class="modal-title fw-bold">
-                        <i class="bi bi-plus-circle me-2"></i>Top Up GIZMO SMS Balance
+                        <i class="bi bi-send me-2"></i>SMS TopUp Request
                     </h5>
                     <button type="button" class="btn-close btn-close-white" wire:click="closeSmsTopupModal"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="alert alert-info border-0 mb-3" style="background:#eef2ff; border-radius:10px;">
+                        <i class="bi bi-info-circle me-1"></i>
+                        An SMS request will be sent to <strong>0759037101</strong>. After payment confirmation, your balance will be updated.
+                    </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Amount to Add (Rs.)</label>
+                        <label class="form-label fw-semibold">Amount to Request (Rs.)</label>
                         <div class="input-group">
                             <span class="input-group-text">Rs.</span>
                             <input type="number" step="1" min="1" wire:model="smsTopupAmount"
@@ -689,12 +693,12 @@
                 </div>
                 <div class="modal-footer border-top">
                     <button wire:click="closeSmsTopupModal" class="btn btn-secondary">Cancel</button>
-                    <button wire:click="doSmsTopup" class="btn btn-success" wire:loading.attr="disabled">
+                    <button wire:click="doSmsTopup" class="btn btn-primary" wire:loading.attr="disabled">
                         <span wire:loading.remove wire:target="doSmsTopup">
-                            <i class="bi bi-check-circle me-1"></i>Confirm Topup
+                            <i class="bi bi-send me-1"></i>Send Request
                         </span>
                         <span wire:loading wire:target="doSmsTopup">
-                            <span class="spinner-border spinner-border-sm me-1"></span>Processing...
+                            <span class="spinner-border spinner-border-sm me-1"></span>Sending...
                         </span>
                     </button>
                 </div>
