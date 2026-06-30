@@ -1158,7 +1158,12 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.sales-list') }}">
-                                    <i class="bi bi-table"></i> <span>Customer Sales</span>
+                                    <i class="bi bi-table"></i> <span>All Sales List</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2 {{ request()->routeIs('admin.due-sales') ? 'active' : '' }}" href="{{ route('admin.due-sales') }}">
+                                    <i class="bi bi-exclamation-triangle text-danger"></i> <span>Due Sales</span>
                                 </a>
                             </li>
                             <!-- <li class="nav-item">

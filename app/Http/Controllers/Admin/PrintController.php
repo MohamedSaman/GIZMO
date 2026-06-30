@@ -12,13 +12,13 @@ class PrintController extends Controller
 {
     public function printSale($id)
     {
-        // Load sale with all necessary relationships including returns and deliverySale
-        $sale = Sale::with(['customer', 'items.product', 'payments', 'deliverySale', 'returns' => function ($q) {
+        // Load sale with all necessary relationships
+        $sale = Sale::with(['customer', 'items.product', 'payments', 'returns' => function ($q) {
             $q->with('product');
         }])->findOrFail($id);
 
-        // Return the print view
-        return view('components.sale-receipt-print', compact('sale'));
+        // Return thermal receipt print view (80mm format)
+        return view('components.sale-thermal-receipt-print', compact('sale'));
     }
 
     public function printDeliveryLabel($id)

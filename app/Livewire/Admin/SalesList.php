@@ -773,7 +773,7 @@ class SalesList extends Component
             $query->where('user_id', Auth::id())
                 ->where('sale_type', 'staff');
         } else {
-            $query->where('sale_type', 'admin');
+            $query->whereIn('sale_type', ['pos', 'admin', 'staff']);
         }
 
         return $query->when($this->search, function ($query) {
@@ -783,6 +783,9 @@ class SalesList extends Component
                     ->orWhereHas('customer', function ($customerQuery) {
                         $customerQuery->where('name', 'like', '%' . $this->search . '%')
                             ->orWhere('phone', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhereHas('user', function ($userQuery) {
+                        $userQuery->where('name', 'like', '%' . $this->search . '%');
                     })
                     ->orWhereHas('deliverySale', function ($deliveryQuery) {
                         $deliveryQuery->where('delivery_barcode', 'like', '%' . $this->search . '%');
@@ -815,8 +818,8 @@ class SalesList extends Component
             $baseSales = Sale::where('sale_type', 'staff')->where('user_id', Auth::id());
             $todaySales = Sale::where('sale_type', 'staff')->where('user_id', Auth::id())->whereDate('created_at', today());
         } else {
-            $baseSales = Sale::where('sale_type', 'admin');
-            $todaySales = Sale::where('sale_type', 'admin')->whereDate('created_at', today());
+            $baseSales = Sale::whereIn('sale_type', ['pos', 'admin', 'staff']);
+            $todaySales = Sale::whereIn('sale_type', ['pos', 'admin', 'staff'])->whereDate('created_at', today());
         }
 
         return [

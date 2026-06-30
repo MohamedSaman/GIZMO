@@ -155,6 +155,7 @@
                             <th class="ps-4">Invoice</th>
                             <th>Delivery Barcode</th>
                             <th>Customer Details</th>
+                            <th class="text-center">Made By</th>
                             <th class="text-center">Date</th>
                             <th class="text-center">Amount</th>
                             <th class="text-center">Delivery</th>
@@ -185,6 +186,13 @@
                                 @elseif($sale->customer)
                                 <div class="fw-medium">{{ $sale->customer->name }}</div>
                                 <small class="text-muted">{{ $sale->customer->phone }}</small>
+                                @else
+                                <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center" wire:click="viewSale({{ $sale->id }})" style="cursor:pointer">
+                                @if($sale->user)
+                                <span class="badge bg-dark">{{ $sale->user->name }}</span>
                                 @else
                                 <span class="text-muted">-</span>
                                 @endif

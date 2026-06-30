@@ -85,6 +85,7 @@ use App\Livewire\Admin\ProfitLoss;
 use App\Livewire\Admin\StaffSalesView;
 use App\Livewire\Admin\StaffPaymentApproval;
 use App\Livewire\Admin\SmsAdminPanel;
+use App\Livewire\Admin\AdminDueSales;
 
 // Staff Type Components
 use App\Livewire\Admin\SaleApproval;
@@ -293,6 +294,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/quotation-list', QuotationList::class)->name('quotation-list');
         Route::get('/customer-orders', CustomerOrderList::class)->name('customer-orders');
         Route::get('/sales-list', SalesList::class)->name('sales-list');
+        Route::get('/due-sales', AdminDueSales::class)->name('due-sales');
         Route::get('/settings', Settings::class)->name('settings');
         Route::get('/return-product', ReturnProduct::class)->name('return-product');
         Route::get('/purchase-order-list', PurchaseOrderList::class)->name('purchase-order-list');
