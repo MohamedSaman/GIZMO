@@ -61,7 +61,10 @@ class SmsAdminPanel extends Component
         Setting::updateOrCreate(['key' => 'sms_double_charge_enabled'],  ['value' => $this->doubleChargeEnabled ? '1' : '0', 'date' => now()]);
         Setting::updateOrCreate(['key' => 'sms_sender_number'],          ['value' => $this->senderNumber,        'date' => now()]);
 
-        $this->js("Swal.fire('Saved!', 'SMS settings updated successfully.', 'success')");
+        // Reload settings from DB to confirm persistence
+        $this->loadSettings();
+
+        $this->js("Swal.fire('Saved!', 'SMS settings updated successfully. Rate: Rs. " . number_format($this->smsRate, 2) . "', 'success')");
     }
 
     public function loadStats(): void
