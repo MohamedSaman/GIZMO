@@ -1,5 +1,18 @@
 <div class="container-fluid py-3">
 
+    <style>
+        [x-cloak] { display: none !important; }
+        .modal.fade.show { display: block !important; }
+        .modal-dialog { pointer-events: auto; }
+        .modal { z-index: 9999; }
+        .list-group-item { background-color: #fff; transition: all 0.2s ease-in-out; border: 1px solid #dee2e6; }
+        .list-group-item:hover { transform: translateY(-2px); box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.1); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .accordion-button:not(.collapsed) { background-color: #fff; color: #000; box-shadow: none; }
+        .accordion-button:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25); }
+        .accordion-body { padding: 1.5rem; }
+    </style>
+
     {{-- Page Header --}}
     <div class="d-flex align-items-center mb-4">
         <i class="bi bi-gear-fill text-success fs-2"></i>
@@ -649,63 +662,57 @@
         </div>
     </div>
 
-      
-
-    </div>{{-- end accordion --}}
-
     {{-- ══════════════════════════════════════════════════════════════════ --}}
     {{-- SMS TOPUP REQUEST MODAL (from Settings page)                       --}}
     {{-- ══════════════════════════════════════════════════════════════════ --}}
-    @if($showSmsTopupModal)
-    <div class="modal fade show d-block" tabindex="-1" style="background-color:rgba(0,0,0,0.5);">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 rounded-4 shadow-lg">
-                <div class="modal-header text-white rounded-top-4" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">
-                    <h5 class="modal-title fw-bold">
-                        <i class="bi bi-send me-2"></i>SMS TopUp Request
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" wire:click="closeSmsTopupModal"></button>
+    <div x-data="{ get open() { return $wire.get('showSmsTopupModal') } }"
+        x-show="open" x-cloak
+        wire:click="closeSmsTopupModal"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; display:flex; align-items:center; justify-content:center;">
+        <div wire:click.stop
+            style="background:#fff; border-radius:16px; width:90%; max-width:440px; box-shadow:0 25px 60px rgba(0,0,0,0.4); overflow:hidden;">
+            <div style="padding:1.25rem 1.5rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; display:flex; align-items:center; justify-content:space-between;">
+                <h5 style="margin:0; font-weight:700; font-size:1.1rem;">
+                    <i class="bi bi-send me-2"></i>SMS TopUp Request
+                </h5>
+                <button type="button" wire:click="closeSmsTopupModal"
+                    style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer; line-height:1;">&times;</button>
+            </div>
+            <div style="padding:1.5rem;">
+                <div style="background:#eef2ff; border-radius:10px; padding:0.75rem 1rem; margin-bottom:1rem; font-size:0.85rem; color:#333;">
+                    <i class="bi bi-info-circle me-1"></i>
+                    An SMS request will be sent to <strong>0759037101</strong>. After payment confirmation, your balance will be updated.
                 </div>
-                <div class="modal-body">
-                    <div class="alert alert-info border-0 mb-3" style="background:#eef2ff; border-radius:10px;">
-                        <i class="bi bi-info-circle me-1"></i>
-                        An SMS request will be sent to <strong>0759037101</strong>. After payment confirmation, your balance will be updated.
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; font-weight:600; font-size:0.85rem; margin-bottom:0.4rem; color:#333;">Amount to Request (Rs.)</label>
+                    <div style="display:flex; align-items:center; border:1px solid #dee2e6; border-radius:8px; overflow:hidden;">
+                        <span style="padding:0.5rem 0.75rem; background:#f8f9fa; border-right:1px solid #dee2e6; font-size:0.85rem; color:#555;">Rs.</span>
+                        <input type="number" step="1" min="1" wire:model="smsTopupAmount"
+                            style="flex:1; padding:0.5rem 0.75rem; border:none; outline:none; font-size:0.85rem;"
+                            placeholder="e.g. 500">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Amount to Request (Rs.)</label>
-                        <div class="input-group">
-                            <span class="input-group-text">Rs.</span>
-                            <input type="number" step="1" min="1" wire:model="smsTopupAmount"
-                                class="form-control @error('smsTopupAmount') is-invalid @enderror"
-                                placeholder="e.g. 500" autofocus>
-                            @error('smsTopupAmount')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    {{-- Quick amount buttons --}}
-                    <div class="d-flex gap-2">
-                        @foreach([100, 250, 500, 1000] as $q)
-                        <button wire:click="$set('smsTopupAmount', {{ $q }})"
-                            class="btn btn-outline-secondary btn-sm flex-fill">Rs. {{ $q }}</button>
-                        @endforeach
-                    </div>
+                    @error('smsTopupAmount')
+                        <p style="color:#ef4444; font-size:0.75rem; margin-top:4px;">{{ $message }}</p>
+                    @enderror
                 </div>
-                <div class="modal-footer border-top">
-                    <button wire:click="closeSmsTopupModal" class="btn btn-secondary">Cancel</button>
-                    <button wire:click="doSmsTopup" class="btn btn-primary" wire:loading.attr="disabled">
-                        <span wire:loading.remove wire:target="doSmsTopup">
-                            <i class="bi bi-send me-1"></i>Send Request
-                        </span>
-                        <span wire:loading wire:target="doSmsTopup">
-                            <span class="spinner-border spinner-border-sm me-1"></span>Sending...
-                        </span>
-                    </button>
+                <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+                    @foreach([100, 250, 500, 1000] as $q)
+                    <button type="button" wire:click="$set('smsTopupAmount', {{ $q }})"
+                        style="flex:1; padding:0.4rem; border:1px solid #dee2e6; border-radius:8px; background:#fff; cursor:pointer; font-size:0.8rem; font-weight:600; color:#333;">Rs. {{ $q }}</button>
+                    @endforeach
                 </div>
+            </div>
+            <div style="padding:1rem 1.5rem; border-top:1px solid #eee; display:flex; gap:0.75rem; justify-content:flex-end;">
+                <button type="button" wire:click="closeSmsTopupModal"
+                    style="padding:0.5rem 1rem; border:1px solid #dee2e6; border-radius:8px; background:#fff; cursor:pointer; font-size:0.85rem; color:#333;">Cancel</button>
+                <button type="button" wire:click="doSmsTopup" wire:loading.attr="disabled"
+                    style="padding:0.5rem 1rem; border:none; border-radius:8px; background:#6366f1; color:#fff; cursor:pointer; font-size:0.85rem; font-weight:600;">
+                    <span wire:loading.remove wire:target="doSmsTopup"><i class="bi bi-send me-1"></i>Send Request</span>
+                    <span wire:loading wire:target="doSmsTopup"><span class="spinner-border spinner-border-sm me-1"></span>Sending...</span>
+                </button>
             </div>
         </div>
     </div>
-    @endif
 
 
     @if($showModal)
@@ -1252,12 +1259,12 @@
 
     if (typeof Livewire !== 'undefined') {
         // Before Livewire updates: snapshot open panels
-        Livewire.hook('morph.updating', () => {
+        try { Livewire.hook('morph.initial', () => {
             _openAccordions = [];
             document.querySelectorAll('.accordion-collapse.show').forEach(p => _openAccordions.push(p.id));
-        });
+        }); } catch(e) {}
         // After Livewire updates: restore open panels & refresh preview
-        Livewire.hook('morph.updated', () => {
+        try { Livewire.hook('morph.updated', () => {
             _openAccordions.forEach(function(id) {
                 const el = document.getElementById(id);
                 if (el && !el.classList.contains('show')) {
@@ -1266,7 +1273,7 @@
                 }
             });
             setTimeout(renderSettingsPreview, 50);
-        });
+        }); } catch(e) {}
     }
 </script>
 <script>

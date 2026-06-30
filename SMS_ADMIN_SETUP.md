@@ -5,6 +5,23 @@
 
 ---
 
+## File Summary
+
+| # | File Path | Type |
+|---|-----------|------|
+| 1 | `app/Http/Middleware/SmsTokenMiddleware.php` | New |
+| 2 | `app/Livewire/Admin/SmsAdminPanel.php` | New |
+| 3 | `resources/views/livewire/admin/sms-admin-panel.blade.php` | New |
+| 4 | `app/Services/SmsService.php` | New |
+| 5 | `app/Models/SmsLog.php` | New |
+| 6 | `database/migrations/2026_06_30_090000_create_sms_logs_table.php` | New |
+| 7 | `routes/web.php` | Modify |
+| 8 | `app/Http/Kernel.php` | Modify |
+| 9 | `config/services.php` | Modify |
+| 10 | `.env` | Modify |
+
+---
+
 ## Files to Create
 
 ### 1. `app/Http/Middleware/SmsTokenMiddleware.php`
@@ -55,12 +72,14 @@ class SmsAdminPanel extends Component
 {
     use WithPagination;
 
-    public float  $smsRate              = 2.00;
+    public float  $smsRate              = 0.70;
     public float  $lowBalanceThreshold  = 50.00;
     public bool   $doubleChargeEnabled  = true;
     public string $senderNumber         = '';
+    public string $lowBalanceAlertPhone = '';
 
     public string $filterMonth          = '';
+    public string $filterYear           = '';
     public string $logFilterMonth       = '';
     public string $logSearch            = '';
 
@@ -69,13 +88,14 @@ class SmsAdminPanel extends Component
 
     public bool   $showTestModal        = false;
     public string $testPhone            = '';
-    public string $testMessage          = 'Test SMS from system.';
+    public string $testMessage          = 'Test SMS from GIZMO system.';
 
     public array  $stats                = [];
 
     public function mount(): void
     {
         $this->filterMonth    = now()->format('Y-m');
+        $this->filterYear     = now()->format('Y');
         $this->logFilterMonth = now()->format('Y-m');
         $this->loadSettings();
         $this->loadStats();
@@ -87,6 +107,7 @@ class SmsAdminPanel extends Component
         $this->lowBalanceThreshold = (float) (Setting::where('key', 'sms_low_balance_threshold')->value('value') ?? 50.00);
         $this->doubleChargeEnabled = (bool)  (Setting::where('key', 'sms_double_charge_enabled')->value('value') ?? true);
         $this->senderNumber        = (string) (Setting::where('key', 'sms_sender_number')->value('value') ?? '');
+        $this->lowBalanceAlertPhone = (string) (Setting::where('key', 'sms_low_balance_alert_phone')->value('value') ?? '');
     }
 
     public function saveSettings(): void
@@ -94,15 +115,19 @@ class SmsAdminPanel extends Component
         $this->validate([
             'smsRate'             => 'required|numeric|min:0',
             'lowBalanceThreshold' => 'required|numeric|min:0',
-            'senderNumber'        => 'required|string|max:20',
+            'senderNumber'        => 'nullable|string|max:20',
+            'lowBalanceAlertPhone'=> 'nullable|string|max:20',
         ]);
 
-        Setting::updateOrCreate(['key' => 'sms_rate_per_message'],      ['value' => $this->smsRate,             'date' => now()]);
-        Setting::updateOrCreate(['key' => 'sms_low_balance_threshold'],  ['value' => $this->lowBalanceThreshold, 'date' => now()]);
-        Setting::updateOrCreate(['key' => 'sms_double_charge_enabled'],  ['value' => $this->doubleChargeEnabled ? '1' : '0', 'date' => now()]);
-        Setting::updateOrCreate(['key' => 'sms_sender_number'],          ['value' => $this->senderNumber,        'date' => now()]);
+        Setting::updateOrCreate(['key' => 'sms_rate_per_message'],          ['value' => $this->smsRate,              'date' => now()]);
+        Setting::updateOrCreate(['key' => 'sms_low_balance_threshold'],      ['value' => $this->lowBalanceThreshold,  'date' => now()]);
+        Setting::updateOrCreate(['key' => 'sms_double_charge_enabled'],      ['value' => $this->doubleChargeEnabled ? '1' : '0', 'date' => now()]);
+        Setting::updateOrCreate(['key' => 'sms_sender_number'],             ['value' => $this->senderNumber,         'date' => now()]);
+        Setting::updateOrCreate(['key' => 'sms_low_balance_alert_phone'],   ['value' => $this->lowBalanceAlertPhone, 'date' => now()]);
 
-        $this->js("Swal.fire('Saved!', 'SMS settings updated successfully.', 'success')");
+        $this->loadSettings();
+
+        $this->js("Swal.fire('Saved!', 'SMS settings updated. Rate: Rs. " . number_format($this->smsRate, 2) . "', 'success')");
     }
 
     public function loadStats(): void
@@ -122,6 +147,16 @@ class SmsAdminPanel extends Component
 
     public function updatedFilterMonth(): void
     {
+        $this->loadStats();
+    }
+
+    public function updatedFilterYear(): void
+    {
+        if ($this->filterYear === now()->format('Y')) {
+            $this->filterMonth = now()->format('Y-m');
+        } else {
+            $this->filterMonth = $this->filterYear . '-01';
+        }
         $this->loadStats();
     }
 
@@ -177,7 +212,7 @@ class SmsAdminPanel extends Component
     {
         $this->showTestModal = false;
         $this->testPhone     = '';
-        $this->testMessage   = 'Test SMS from system.';
+        $this->testMessage   = 'Test SMS from GIZMO system.';
         $this->resetErrorBag();
     }
 
@@ -215,11 +250,22 @@ class SmsAdminPanel extends Component
 
     public function getAvailableMonthsProperty(): array
     {
+        $year = $this->filterYear ?: now()->format('Y');
         $months = [];
-        for ($i = 0; $i < 12; $i++) {
-            $months[] = now()->subMonths($i)->format('Y-m');
+        for ($m = 1; $m <= 12; $m++) {
+            $months[] = $year . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
         }
         return $months;
+    }
+
+    public function getAvailableYearsProperty(): array
+    {
+        $currentYear = (int) now()->format('Y');
+        $years = [];
+        for ($y = $currentYear; $y >= $currentYear - 3; $y--) {
+            $years[] = (string) $y;
+        }
+        return $years;
     }
 
     public function render()
@@ -235,231 +281,16 @@ class SmsAdminPanel extends Component
 
 ### 3. `resources/views/livewire/admin/sms-admin-panel.blade.php`
 
-```blade
-<div class="container-fluid py-4" style="background: #0f172a; min-height: 100vh;">
-    {{-- Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold text-white mb-1">
-                <i class="bi bi-chat-dots text-warning me-2"></i> SMS Master Control
-            </h3>
-            <p class="text-secondary mb-0">
-                <span class="badge bg-warning text-dark me-2">SECRET PANEL</span>
-                Manage SMS settings, balance & logs
-            </p>
-        </div>
-        <div class="d-flex gap-2">
-            <button wire:click="openTestSmsModal" class="btn btn-outline-info btn-sm">
-                <i class="bi bi-send me-1"></i> Test SMS
-            </button>
-            <button wire:click="openTopupModal" class="btn btn-warning btn-sm">
-                <i class="bi bi-plus-circle me-1"></i> Top Up
-            </button>
-        </div>
-    </div>
+Full Blade view with dark theme UI. See actual file at `resources/views/livewire/admin/sms-admin-panel.blade.php` (329 lines).
 
-    {{-- Stats Cards --}}
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="mb-1 opacity-75" style="font-size:11px;">SYSTEM BALANCE</p>
-                            <h3 class="fw-bold mb-0">Rs. {{ number_format($stats['system_balance'] ?? 0, 2) }}</h3>
-                        </div>
-                        <i class="bi bi-wallet2 fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="mb-1 opacity-75" style="font-size:11px;">ALL TIME SMS</p>
-                            <h3 class="fw-bold mb-0">{{ number_format($stats['total_sms_all_time'] ?? 0) }}</h3>
-                        </div>
-                        <i class="bi bi-envelope-check fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #10b981, #059669);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="mb-1 opacity-75" style="font-size:11px;">THIS MONTH SMS</p>
-                            <h3 class="fw-bold mb-0">{{ number_format($stats['total_sms_this_month'] ?? 0) }}</h3>
-                        </div>
-                        <i class="bi bi-calendar-check fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="mb-1 opacity-75" style="font-size:11px;">MONTH COST</p>
-                            <h3 class="fw-bold mb-0">Rs. {{ number_format($stats['total_cost_this_month'] ?? 0, 2) }}</h3>
-                        </div>
-                        <i class="bi bi-currency-exchange fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Settings Card --}}
-    <div class="card border-0 shadow-sm mb-4" style="background: #1e293b;">
-        <div class="card-header bg-transparent border-bottom border-secondary">
-            <h6 class="text-white mb-0"><i class="bi bi-gear me-2"></i>SMS Settings</h6>
-        </div>
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label text-secondary" style="font-size:11px;">Rate per SMS (Rs.)</label>
-                    <input type="number" wire:model="smsRate" class="form-control bg-dark text-white border-secondary" step="0.01">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label text-secondary" style="font-size:11px;">Low Balance Alert (Rs.)</label>
-                    <input type="number" wire:model="lowBalanceThreshold" class="form-control bg-dark text-white border-secondary" step="0.01">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label text-secondary" style="font-size:11px;">Sender Number</label>
-                    <input type="text" wire:model="senderNumber" class="form-control bg-dark text-white border-secondary" placeholder="e.g. 94771234567">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label text-secondary" style="font-size:11px;">Double Charge</label>
-                    <div class="form-check form-switch mt-2">
-                        <input class="form-check-input" type="checkbox" wire:model="doubleChargeEnabled" id="doubleCharge">
-                        <label class="form-check-label text-white" for="doubleCharge" style="font-size:11px;">Enabled</label>
-                    </div>
-                </div>
-                <div class="col-md-1 d-flex align-items-end">
-                    <button wire:click="saveSettings" class="btn btn-warning w-100">
-                        <i class="bi bi-check-lg"></i> Save
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- SMS Logs --}}
-    <div class="card border-0 shadow-sm" style="background: #1e293b;">
-        <div class="card-header bg-transparent border-bottom border-secondary d-flex justify-content-between align-items-center">
-            <h6 class="text-white mb-0"><i class="bi bi-list-ul me-2"></i>SMS Logs</h6>
-            <div class="d-flex gap-2">
-                <select wire:model="logFilterMonth" class="form-select form-select-sm bg-dark text-white border-secondary" style="width:140px;">
-                    <option value="">All Months</option>
-                    @foreach($this->availableMonths as $m)
-                    <option value="{{ $m }}">{{ $m }}</option>
-                    @endforeach
-                </select>
-                <input type="text" wire:model.live.debounce.300ms="logSearch" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Search phone..." style="width:180px;">
-            </div>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover mb-0">
-                    <thead>
-                        <tr class="text-secondary" style="font-size:11px;">
-                            <th>Date</th>
-                            <th>Phone</th>
-                            <th>Message</th>
-                            <th>SMS Parts</th>
-                            <th>Cost</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($smsLogs as $log)
-                        <tr>
-                            <td style="font-size:11px;">{{ $log->created_at->format('M d, Y H:i') }}</td>
-                            <td style="font-size:11px;">{{ $log->phone }}</td>
-                            <td style="font-size:11px; max-width:300px;" class="text-truncate">{{ $log->message }}</td>
-                            <td style="font-size:11px;">{{ $log->sms_parts }}</td>
-                            <td style="font-size:11px;">Rs. {{ number_format($log->total_cost, 2) }}</td>
-                            <td>
-                                <span class="badge bg-{{ $log->status === 'sent' ? 'success' : 'danger' }}" style="font-size:10px;">
-                                    {{ ucfirst($log->status) }}
-                                </span>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-4 text-secondary">No SMS logs found.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            @if($smsLogs->hasPages())
-            <div class="p-3 border-top border-secondary">
-                {{ $smsLogs->links() }}
-            </div>
-            @endif
-        </div>
-    </div>
-
-    {{-- Topup Modal --}}
-    @if($showTopupModal)
-    <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.7); z-index:1050;">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0" style="background:#1e293b;">
-                <div class="modal-header border-bottom border-secondary">
-                    <h5 class="modal-title text-white fw-bold">Top Up Balance</h5>
-                    <button type="button" class="btn-close btn-close-white" wire:click="closeTopupModal"></button>
-                </div>
-                <div class="modal-body">
-                    <label class="form-label text-secondary">Amount (Rs.)</label>
-                    <input type="number" wire:model="topupAmount" class="form-control bg-dark text-white border-secondary" step="0.01" placeholder="Enter amount">
-                    @error('topupAmount') <span class="text-danger small">{{ $message }}</span> @enderror
-                </div>
-                <div class="modal-footer border-top border-secondary">
-                    <button class="btn btn-secondary" wire:click="closeTopupModal">Cancel</button>
-                    <button class="btn btn-warning" wire:click="doTopup">Top Up</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-
-    {{-- Test SMS Modal --}}
-    @if($showTestModal)
-    <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.7); z-index:1050;">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0" style="background:#1e293b;">
-                <div class="modal-header border-bottom border-secondary">
-                    <h5 class="modal-title text-white fw-bold">Send Test SMS</h5>
-                    <button type="button" class="btn-close btn-close-white" wire:click="closeTestSmsModal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label text-secondary">Phone Number</label>
-                        <input type="text" wire:model="testPhone" class="form-control bg-dark text-white border-secondary" placeholder="e.g. 0771234567">
-                        @error('testPhone') <span class="text-danger small">{{ $message }}</span> @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-secondary">Message</label>
-                        <textarea wire:model="testMessage" class="form-control bg-dark text-white border-secondary" rows="3"></textarea>
-                        @error('testMessage') <span class="text-danger small">{{ $message }}</span> @enderror
-                    </div>
-                </div>
-                <div class="modal-footer border-top border-secondary">
-                    <button class="btn btn-secondary" wire:click="closeTestSmsModal">Cancel</button>
-                    <button class="btn btn-info" wire:click="sendTestSms">Send Test</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-</div>
-```
+**Key sections:**
+- Header with logo + "Test SMS" button
+- Year + Month filter chips
+- System Balance gradient card with "Topup GIZMO" button
+- 5-column stats grid (Total SMS All Time, SMS This Month, Revenue This Month, Total Revenue, Double-Charged SMS)
+- Two-column layout: Left = SMS Rate Settings panel, Right = SMS Activity Log table
+- Topup modal with quick amount buttons (100, 250, 500, 1000)
+- Test SMS modal (phone + message)
 
 ---
 
@@ -477,15 +308,6 @@ use Illuminate\Support\Facades\Log;
 
 class SmsService
 {
-    private float $smsRate;
-    private float $doubleChargeRate;
-
-    public function __construct()
-    {
-        $this->smsRate          = (float) (Setting::where('key', 'sms_rate_per_message')->value('value') ?? 2.00);
-        $this->doubleChargeRate = $this->smsRate * 2;
-    }
-
     public function getSystemBalance(): float
     {
         return (float) (Setting::where('key', 'sms_system_balance')->value('value') ?? 0);
@@ -493,88 +315,152 @@ class SmsService
 
     public function setSystemBalance(float $balance): void
     {
-        Setting::updateOrCreate(['key' => 'sms_system_balance'], ['value' => $balance, 'date' => now()]);
+        Setting::updateOrCreate(
+            ['key' => 'sms_system_balance'],
+            ['value' => $balance, 'date' => now()]
+        );
     }
 
     public function topUpSystem(float $amount): float
     {
-        $current    = $this->getSystemBalance();
-        $newBalance = $current + $amount;
-        $this->setSystemBalance($newBalance);
-        return $newBalance;
+        $current = $this->getSystemBalance();
+        $new     = $current + $amount;
+        $this->setSystemBalance($new);
+
+        Log::info("SMS system topup: +{$amount}. New balance: {$new}");
+        return $new;
     }
 
-    public function sendSms(string $phone, string $message, string $type = 'custom'): array
+    public function sendSms(string $to, string $message, string $type = 'custom'): array
     {
-        $balance      = $this->getSystemBalance();
-        $smsParts     = $this->calculateSmsParts($message);
-        $doubleCharge = (bool) (Setting::where('key', 'sms_double_charge_enabled')->value('value') ?? true);
-        $cost         = $doubleCharge ? ($smsParts * $this->doubleChargeRate) : ($smsParts * $this->smsRate);
+        $ratePerSms      = (float) (Setting::where('key', 'sms_rate_per_message')->value('value') ?? 2.00);
+        $lowBalanceLimit = (float) (Setting::where('key', 'sms_low_balance_threshold')->value('value') ?? 50.00);
+        $doubleCharge    = (bool)  (Setting::where('key', 'sms_double_charge_enabled')->value('value') ?? true);
 
-        if ($balance < $cost) {
-            return ['success' => false, 'error' => 'Insufficient SMS balance. Required: Rs. ' . number_format($cost, 2)];
+        $smsParts      = $this->calculateSmsParts($message);
+        $balanceBefore = $this->getSystemBalance();
+
+        $isDoubleCharged = false;
+        if ($doubleCharge && $balanceBefore <= 0 && $type !== 'low_balance') {
+            $costPerSms      = $ratePerSms * 2;
+            $isDoubleCharged = true;
+        } else {
+            $costPerSms = $ratePerSms;
         }
+        $totalCost = $costPerSms * $smsParts;
+
+        $apiResult = $this->callSmsApi($to, $message);
+        $status    = $apiResult['success'] ? 'sent' : 'failed';
+
+        $balanceAfter = $balanceBefore;
+        if ($status === 'sent' && $type !== 'low_balance') {
+            $balanceAfter = max(-9999, $balanceBefore - $totalCost);
+            $this->setSystemBalance($balanceAfter);
+        }
+
+        SmsLog::create([
+            'phone'          => $to,
+            'message'        => $message,
+            'sms_parts'      => $smsParts,
+            'cost_per_sms'   => $costPerSms,
+            'total_cost'     => $status === 'sent' ? $totalCost : 0,
+            'double_charged' => $isDoubleCharged,
+            'balance_before' => $balanceBefore,
+            'balance_after'  => $balanceAfter,
+            'type'           => $type,
+            'status'         => $status,
+            'api_response'   => json_encode($apiResult['response'] ?? null),
+            'sent_at'        => now(),
+        ]);
+
+        if ($status === 'sent' && $type !== 'low_balance') {
+            $this->maybeSendLowBalanceAlert($balanceAfter, $lowBalanceLimit);
+        }
+
+        return $apiResult + [
+            'cost'           => $totalCost,
+            'balance_before' => $balanceBefore,
+            'balance_after'  => $balanceAfter,
+            'double_charged' => $isDoubleCharged,
+        ];
+    }
+
+    protected function maybeSendLowBalanceAlert(float $balanceAfter, float $threshold): void
+    {
+        if ($balanceAfter > $threshold) {
+            return;
+        }
+
+        $alreadyNotified = (bool) Setting::where('key', 'sms_low_balance_alerted')->value('value');
+        if ($alreadyNotified) {
+            return;
+        }
+
+        $alertPhone = (string) (Setting::where('key', 'sms_low_balance_alert_phone')->value('value') ?? '');
+        if (empty($alertPhone)) {
+            return;
+        }
+
+        $balanceFormatted = number_format($balanceAfter, 2);
+        $alertMessage     = "GIZMO Alert: Your SMS balance is low (Rs. {$balanceFormatted}). Please top up to continue sending SMS.";
+
+        $this->sendSms($alertPhone, $alertMessage, 'low_balance');
+
+        Setting::updateOrCreate(
+            ['key' => 'sms_low_balance_alerted'],
+            ['value' => '1', 'date' => now()]
+        );
+    }
+
+    protected function calculateSmsParts(string $message): int
+    {
+        $len = mb_strlen($message);
+        if ($len <= 160) {
+            return 1;
+        }
+        return (int) ceil($len / 153);
+    }
+
+    protected function callSmsApi(string $to, string $message): array
+    {
+        if (!config('services.smslenz.enabled')) {
+            Log::info("SMS disabled. Would have sent to {$to}: {$message}");
+            return ['success' => true, 'response' => ['simulated' => true]];
+        }
+
+        $endpoint = config('services.smslenz.endpoint');
+        $userId   = config('services.smslenz.user_id');
+        $apiKey   = config('services.smslenz.api_key');
+        $senderId = Setting::where('key', 'sms_sender_number')->value('value');
+        if (empty(trim($senderId ?? ''))) {
+            $senderId = config('services.smslenz.sender_id');
+        }
+        $senderId = trim($senderId);
 
         try {
-            $result = $this->callSmsApi($phone, $message);
-
-            $balanceBefore = $balance;
-            $newBalance    = $balance - $cost;
-            $this->setSystemBalance($newBalance);
-
-            SmsLog::create([
-                'phone'          => $phone,
-                'message'        => $message,
-                'sms_parts'      => $smsParts,
-                'cost_per_sms'   => $doubleCharge ? $this->doubleChargeRate : $this->smsRate,
-                'total_cost'     => $cost,
-                'double_charged' => $doubleCharge,
-                'balance_before' => $balanceBefore,
-                'balance_after'  => $newBalance,
-                'type'           => $type,
-                'status'         => $result['success'] ? 'sent' : 'failed',
-                'api_response'   => $result['response'] ?? null,
-                'sent_at'        => now(),
-                'user_id'        => auth()->id(),
-            ]);
-
-            return $result;
-        } catch (\Exception $e) {
-            Log::error('SMS send failed', ['phone' => $phone, 'error' => $e->getMessage()]);
-            return ['success' => false, 'error' => $e->getMessage()];
-        }
-    }
-
-    public function calculateSmsParts(string $message): int
-    {
-        $length = mb_strlen($message);
-        if ($length <= 160) return 1;
-        if ($length <= 306) return 2;
-        return (int) ceil($length / 153);
-    }
-
-    private function callSmsApi(string $phone, string $message): array
-    {
-        $config = config('services.smslenz');
-
-        if (!$config['enabled']) {
-            return ['success' => true, 'response' => 'SMS disabled in config', 'debug' => true];
-        }
-
-        $response = Http::timeout(15)
-            ->post($config['endpoint'], [
-                'user_id'   => $config['user_id'],
-                'api_key'   => $config['api_key'],
-                'sender_id' => $config['sender_id'],
-                'mobile'    => $phone,
+            $response = Http::asForm()->acceptJson()->post($endpoint, [
+                'user_id'   => $userId,
+                'api_key'   => $apiKey,
+                'sender_id' => $senderId,
+                'contact'   => $to,
                 'message'   => $message,
             ]);
 
-        if ($response->successful()) {
-            return ['success' => true, 'response' => $response->body()];
-        }
+            if ($response->successful()) {
+                Log::info("SMS sent to {$to}. Response: " . $response->body());
+                return ['success' => true, 'response' => $response->json()];
+            }
 
-        return ['success' => false, 'error' => 'API error: ' . $response->body(), 'response' => $response->body()];
+            Log::error("SMS failed to {$to}. HTTP {$response->status()}: " . $response->body());
+            return [
+                'success'  => false,
+                'error'    => "HTTP {$response->status()}",
+                'response' => $response->body(),
+            ];
+        } catch (\Exception $e) {
+            Log::error("SMS exception to {$to}: " . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
     }
 }
 ```
@@ -588,8 +474,8 @@ class SmsService
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SmsLog extends Model
 {
@@ -598,16 +484,29 @@ class SmsLog extends Model
     protected $table = 'sms_logs';
 
     protected $fillable = [
-        'customer_id', 'phone', 'message', 'sms_parts',
-        'cost_per_sms', 'total_cost', 'double_charged',
-        'balance_before', 'balance_after', 'type', 'status',
-        'api_response', 'sent_at', 'user_id',
+        'customer_id',
+        'user_id',
+        'phone',
+        'message',
+        'sms_parts',
+        'cost_per_sms',
+        'total_cost',
+        'double_charged',
+        'balance_before',
+        'balance_after',
+        'type',
+        'status',
+        'api_response',
+        'sent_at',
     ];
 
     protected $casts = [
-        'double_charged' => 'boolean',
-        'sms_parts'      => 'integer',
-        'sent_at'        => 'datetime',
+        'cost_per_sms'    => 'decimal:4',
+        'total_cost'      => 'decimal:4',
+        'balance_before'  => 'decimal:4',
+        'balance_after'   => 'decimal:4',
+        'double_charged'  => 'boolean',
+        'sent_at'         => 'datetime',
     ];
 
     public function customer()
@@ -620,9 +519,14 @@ class SmsLog extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scopeForMonth($query, $month)
+    public function scopeForMonth($query, string $month)
     {
         return $query->where('created_at', 'like', $month . '%');
+    }
+
+    public function scopeForUser($query, int $userId)
+    {
+        return $query->where('user_id', $userId);
     }
 }
 ```
@@ -644,21 +548,23 @@ return new class extends Migration
     {
         Schema::create('sms_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('phone');
+            $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
+            $table->string('phone', 20);
             $table->text('message');
             $table->integer('sms_parts')->default(1);
-            $table->decimal('cost_per_sms', 8, 2)->default(0);
-            $table->decimal('total_cost', 8, 2)->default(0);
+            $table->decimal('cost_per_sms', 10, 4)->default(0);
+            $table->decimal('total_cost', 10, 4)->default(0);
             $table->boolean('double_charged')->default(false);
-            $table->decimal('balance_before', 12, 2)->default(0);
-            $table->decimal('balance_after', 12, 2)->default(0);
-            $table->enum('type', ['custom', 'notification', 'marketing', 'otp', 'alert'])->default('custom');
-            $table->enum('status', ['sent', 'failed', 'pending'])->default('pending');
-            $table->text('api_response')->nullable();
+            $table->decimal('balance_before', 10, 4)->default(0);
+            $table->decimal('balance_after', 10, 4)->default(0);
+            $table->enum('type', ['invoice', 'alert', 'custom', 'low_balance'])->default('custom');
+            $table->enum('status', ['sent', 'failed', 'skipped'])->default('sent');
+            $table->string('api_response')->nullable();
             $table->timestamp('sent_at')->nullable();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
+
+            $table->index(['customer_id', 'created_at']);
+            $table->index('created_at');
         });
     }
 
@@ -717,14 +623,72 @@ Route::middleware('sms_token')->group(function () {
 ### 10. `.env` — Add environment variables
 
 ```env
-SMS_MASTER_TOKEN=your-secret-token-here
-
+# SMS SETUP
 SMSLENZ_ENABLED=true
-SMSLENZ_ENDPOINT=https://api.smslenz.lk/send
+SMSLENZ_ENDPOINT=https://www.smslenz.lk/api/send-sms
 SMSLENZ_USER_ID=your_user_id
 SMSLENZ_API_KEY=your_api_key
-SMSLENZ_SENDER_ID=your_sender_id
+SMSLENZ_SENDER_ID="GIZMO ELEC"
+
+# SECRET SMS MASTER TOKEN — only YOU know this URL
+SMS_MASTER_TOKEN=gizmo-sms-2026-secret-panel
 ```
+
+---
+
+## UI Pages & Input Fields
+
+### System Balance Card (Top)
+- Displays current balance: `Rs. XXX.XX`
+- Status badge: Active / Low Balance / No Balance
+- Button: **+ Topup GIZMO**
+
+### Stats Grid (5 cards, equal width)
+| Card | Value | Icon |
+|------|-------|------|
+| Total SMS All Time | Count | 📨 |
+| SMS This Month | Count | 📅 |
+| Revenue This Month | Rs. X.XX | 💰 |
+| Total Revenue | Rs. X.XX | 💵 |
+| Double-Charged SMS | Count | ⚡ |
+
+### SMS Rate Settings Panel (Left column)
+| Input | Type | Description |
+|-------|------|-------------|
+| Rate Per SMS Message (Rs.) | `number` step=0.01 | Cost per single SMS (160 chars) |
+| Low Balance Alert Threshold (Rs.) | `number` step=1 | Alert SMS sent below this |
+| Low Balance Alert Phone Number | `text` | Phone to receive alert SMS |
+| Double Charge When Balance = 0 | `toggle` | Toggle on/off |
+| **Save Settings** | button | Saves all settings |
+
+### SMS Activity Log Table (Right column)
+| Column | Description |
+|--------|-------------|
+| # | Log ID |
+| Phone | Recipient phone |
+| Type | invoice / alert / custom / low_balance |
+| Parts | SMS parts count |
+| Rate | Cost per SMS |
+| Cost | Total cost |
+| Bal Before → After | Balance change |
+| Status | Sent / Failed |
+| Sent At | Timestamp |
+
+**Filters:** Month picker + Phone search input
+
+### Topup Modal
+| Input | Type |
+|-------|------|
+| Amount (Rs.) | `number` step=1 |
+| Quick buttons | 100, 250, 500, 1000 |
+| **Confirm Topup** | button |
+
+### Test SMS Modal
+| Input | Type |
+|-------|------|
+| Phone Number | `text` (min 9 chars) |
+| Message | `textarea` (min 3 chars) |
+| **Send Test** | button |
 
 ---
 
@@ -735,13 +699,15 @@ Stores SMS config as key-value pairs:
 | Key | Value |
 |-----|-------|
 | `sms_system_balance` | Current balance (float) |
-| `sms_rate_per_message` | Cost per SMS (float) |
-| `sms_low_balance_threshold` | Alert threshold (float) |
+| `sms_rate_per_message` | Cost per SMS (float, default 0.70) |
+| `sms_low_balance_threshold` | Alert threshold (float, default 50.00) |
 | `sms_double_charge_enabled` | `1` or `0` |
-| `sms_sender_number` | Sender ID string |
+| `sms_sender_number` | Sender mask string (nullable, falls back to .env) |
+| `sms_low_balance_alert_phone` | Phone for low balance alerts |
+| `sms_low_balance_alerted` | `1` if already alerted (prevents duplicates) |
 
 ### `sms_logs` (new)
-Created by migration #6 above.
+Created by migration #6.
 
 ---
 
@@ -762,20 +728,3 @@ php artisan route:clear
 php artisan view:clear
 php artisan config:cache
 ```
-
----
-
-## File Summary
-
-| # | File Path | Type |
-|---|-----------|------|
-| 1 | `app/Http/Middleware/SmsTokenMiddleware.php` | New |
-| 2 | `app/Livewire/Admin/SmsAdminPanel.php` | New |
-| 3 | `resources/views/livewire/admin/sms-admin-panel.blade.php` | New |
-| 4 | `app/Services/SmsService.php` | New |
-| 5 | `app/Models/SmsLog.php` | New |
-| 6 | `database/migrations/2026_06_30_090000_create_sms_logs_table.php` | New |
-| 7 | `routes/web.php` | Modify |
-| 8 | `app/Http/Kernel.php` | Modify |
-| 9 | `config/services.php` | Modify |
-| 10 | `.env` | Modify |
