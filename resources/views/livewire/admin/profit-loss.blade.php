@@ -33,6 +33,7 @@
         .expense-icon { background: #dc3545; }
         .salary-icon { background: #ffc107; }
         .profit-icon { background: #000000; }
+        .stock-icon { background: #0d6efd; }
 
         .metric-content h6 {
             color: #6c757d;
@@ -288,7 +289,7 @@
     <div class="container-fluid mb-5">
         <div class="row">
             <!-- Total Revenue Card -->
-            <div class="col-xl-4 col-md-6 mb-3">
+            <div class="col-xl-3 col-md-6 mb-3">
                 <div class="pl-metric-card">
                     <div class="metric-icon revenue-icon">
                         <i class="fas fa-arrow-up"></i>
@@ -302,7 +303,7 @@
             </div>
 
             <!-- Total Expenses Card -->
-            <div class="col-xl-4 col-md-6 mb-3">
+            <div class="col-xl-3 col-md-6 mb-3">
                 <div class="pl-metric-card">
                     <div class="metric-icon expense-icon">
                         <i class="fas fa-arrow-down"></i>
@@ -316,7 +317,7 @@
             </div>
 
             <!-- Net Profit Card -->
-            <div class="col-xl-4 col-md-6 mb-3">
+            <div class="col-xl-3 col-md-6 mb-3">
                 <div class="pl-metric-card">
                     <div class="metric-icon {{ $netProfit >= 0 ? 'profit-icon' : '' }}" style="{{ $netProfit < 0 ? 'background: #dc3545;' : '' }}">
                         <i class="fas fa-{{ $netProfit >= 0 ? 'chart-line' : 'exclamation-triangle' }}"></i>
@@ -325,6 +326,20 @@
                         <h6>Net Profit</h6>
                         <div class="metric-value {{ $netProfit >= 0 ? 'text-success' : 'text-danger' }}">Rs. {{ number_format($netProfit, 2) }}</div>
                         <p class="metric-percentage">{{ $netProfit >= 0 ? '📈' : '📉' }} {{ $netProfitPercentage }}% margin</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock in Hand Cost Card -->
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="pl-metric-card">
+                    <div class="metric-icon stock-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h6>Stock In Hand Cost</h6>
+                        <div class="metric-value text-primary">Rs. {{ $inHandStockValue > 0 ? number_format($inHandStockValue, 2) : '0.00' }}</div>
+                        <p class="metric-percentage">📦 Current inventory valuation</p>
                     </div>
                 </div>
             </div>

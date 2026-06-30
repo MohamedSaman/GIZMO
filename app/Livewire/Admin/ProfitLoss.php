@@ -43,6 +43,7 @@ class ProfitLoss extends Component
 
     public $netProfit = 0;
     public $netProfitPercentage = 0;
+    public $inHandStockValue = 0;
 
     // Detailed data
     public $revenueBreakdown = [];
@@ -98,6 +99,7 @@ class ProfitLoss extends Component
             $this->calculateAllOutgoing();
             $this->calculateMonthlyTrends();
             $this->calculateNetProfit();
+            $this->calculateInHandStockValue();
         } catch (\Exception $e) {
             Log::error('P&L Calculation Error: ' . $e->getMessage());
         }
@@ -412,6 +414,24 @@ class ProfitLoss extends Component
         ];
 
         return view('exports.profit-loss-pdf', $data);
+    }
+
+    /**
+     * Calculate In Hand Stock Value (available stock * supplier price)
+     */
+    private function calculateInHandStockValue()
+    {
+        try {
+            $this->inHandStockValue = DB::table('product_stocks')
+                ->leftJoin('product_prices', function ($join) {
+                    $join->on('product_stocks.product_id', '=', 'product_prices.product_id')
+                         ->whereRaw('(product_stocks.variant_id = product_prices.variant_id OR (product_stocks.variant_id IS NULL AND product_prices.variant_id IS NULL))');
+                })
+                ->sum(DB::raw('COALESCE(product_stocks.available_stock, 0) * COALESCE(product_prices.supplier_price, 0)'));
+        } catch (\Exception $e) {
+            Log::error('In Hand Stock Value Calculation Error: ' . $e->getMessage());
+            $this->inHandStockValue = 0;
+        }
     }
 
     public function render()

@@ -1397,7 +1397,7 @@
                 
                 
                 <li>
-                    <a class="nav-link" href="{{ route('admin.income') }}">
+                    <a class="nav-link {{ request()->routeIs('admin.income') ? 'active' : '' }}" href="{{ route('admin.income') }}">
                         <i class="bi bi-file-earmark-bar-graph"></i> <span>Day Summary</span>
                     </a>
                 </li>
@@ -1410,14 +1410,14 @@
                     <a class="nav-link" href="{{ route('admin.analytics') }}">
                         <i class="bi bi-bar-chart"></i> <span>Analytics</span>
                     </a>
-                </li>
+                </li> -->
                 <li>
-                    <a class="nav-link" href="{{ route('admin.profit-loss') }}">
+                    <a class="nav-link {{ request()->routeIs('admin.profit-loss') ? 'active' : '' }}" href="{{ route('admin.profit-loss') }}">
                         <i class="bi bi-graph-up-arrow"></i> <span>Profit & Loss</span>
                     </a>
-                </li>-->
+                </li>
                 <li>
-                    <a class="nav-link" href="{{ route('admin.settings') }}">
+                    <a class="nav-link {{ request()->routeIs('admin.settings') ? 'active' : '' }}" href="{{ route('admin.settings') }}">
                         <i class="bi bi-gear"></i> <span>Settings</span>
                     </a>
                 </li> 
