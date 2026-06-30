@@ -21,6 +21,7 @@ class SmsAdminPanel extends Component
     public string $lowBalanceAlertPhone = '';
 
     public string $filterMonth          = '';
+    public string $filterYear           = '';
     public string $logFilterMonth       = '';
     public string $logSearch            = '';
 
@@ -36,6 +37,7 @@ class SmsAdminPanel extends Component
     public function mount(): void
     {
         $this->filterMonth    = now()->format('Y-m');
+        $this->filterYear     = now()->format('Y');
         $this->logFilterMonth = now()->format('Y-m');
         $this->loadSettings();
         $this->loadStats();
@@ -87,6 +89,17 @@ class SmsAdminPanel extends Component
 
     public function updatedFilterMonth(): void
     {
+        $this->loadStats();
+    }
+
+    public function updatedFilterYear(): void
+    {
+        // When year changes, set month to Jan of that year (or current month if same year)
+        if ($this->filterYear === now()->format('Y')) {
+            $this->filterMonth = now()->format('Y-m');
+        } else {
+            $this->filterMonth = $this->filterYear . '-01';
+        }
         $this->loadStats();
     }
 
@@ -180,11 +193,22 @@ class SmsAdminPanel extends Component
 
     public function getAvailableMonthsProperty(): array
     {
+        $year = $this->filterYear ?: now()->format('Y');
         $months = [];
-        for ($i = 0; $i < 12; $i++) {
-            $months[] = now()->subMonths($i)->format('Y-m');
+        for ($m = 1; $m <= 12; $m++) {
+            $months[] = $year . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
         }
         return $months;
+    }
+
+    public function getAvailableYearsProperty(): array
+    {
+        $currentYear = (int) now()->format('Y');
+        $years = [];
+        for ($y = $currentYear; $y >= $currentYear - 3; $y--) {
+            $years[] = (string) $y;
+        }
+        return $years;
     }
 
     public function render()

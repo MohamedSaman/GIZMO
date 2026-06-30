@@ -148,7 +148,11 @@ class SmsService
         $endpoint = config('services.smslenz.endpoint');
         $userId   = config('services.smslenz.user_id');
         $apiKey   = config('services.smslenz.api_key');
-        $senderId = Setting::where('key', 'sms_sender_number')->value('value') ?? config('services.smslenz.sender_id');
+        $senderId = Setting::where('key', 'sms_sender_number')->value('value');
+        if (empty(trim($senderId ?? ''))) {
+            $senderId = config('services.smslenz.sender_id');
+        }
+        $senderId = trim($senderId);
 
         try {
             $response = Http::asForm()->acceptJson()->post($endpoint, [
