@@ -665,12 +665,15 @@
     {{-- ══════════════════════════════════════════════════════════════════ --}}
     {{-- SMS TOPUP REQUEST MODAL (from Settings page)                       --}}
     {{-- ══════════════════════════════════════════════════════════════════ --}}
-    <div x-data="{ get open() { return $wire.get('showSmsTopupModal') } }"
-        x-show="open" x-cloak
+    <div x-data="{ open: false }"
+        @open-sms-topup-modal.window="open = true"
+        @close-sms-topup-modal.window="open = false"
+        x-show="open" x-cloak x-transition
+        x-effect="$el.style.display = open ? 'flex' : 'none'"
         wire:click="closeSmsTopupModal"
-        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; display:flex; align-items:center; justify-content:center;">
+        style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:99999; display:none; align-items:center !important; justify-content:center !important; margin:0; padding:0;">
         <div wire:click.stop
-            style="background:#fff; border-radius:16px; width:90%; max-width:440px; box-shadow:0 25px 60px rgba(0,0,0,0.4); overflow:hidden;">
+            style="background:#fff; border-radius:16px; width:90%; max-width:440px; box-shadow:0 25px 60px rgba(0,0,0,0.4); overflow:hidden; margin:auto;">
             <div style="padding:1.25rem 1.5rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; display:flex; align-items:center; justify-content:space-between;">
                 <h5 style="margin:0; font-weight:700; font-size:1.1rem;">
                     <i class="bi bi-send me-2"></i>SMS TopUp Request
@@ -696,7 +699,7 @@
                     @enderror
                 </div>
                 <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
-                    @foreach([100, 250, 500, 1000] as $q)
+                    @foreach([500, 1000, 2000, 5000] as $q)
                     <button type="button" wire:click="$set('smsTopupAmount', {{ $q }})"
                         style="flex:1; padding:0.4rem; border:1px solid #dee2e6; border-radius:8px; background:#fff; cursor:pointer; font-size:0.8rem; font-weight:600; color:#333;">Rs. {{ $q }}</button>
                     @endforeach

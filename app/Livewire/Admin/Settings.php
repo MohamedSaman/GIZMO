@@ -657,6 +657,7 @@ class Settings extends Component
     {
         $this->smsTopupAmount   = 0;
         $this->showSmsTopupModal = true;
+        $this->dispatch('open-sms-topup-modal');
     }
 
     public function closeSmsTopupModal(): void
@@ -664,6 +665,7 @@ class Settings extends Component
         $this->showSmsTopupModal  = false;
         $this->smsTopupAmount     = 0;
         $this->resetErrorBag();
+        $this->dispatch('close-sms-topup-modal');
     }
 
     public function doSmsTopup(): void
