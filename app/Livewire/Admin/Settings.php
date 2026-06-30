@@ -5,9 +5,12 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\Setting;
 use App\Models\User;
+use App\Models\Customer;
+use App\Models\SmsLog;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\StaffTypePermission;
+use App\Services\SmsService;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use App\Livewire\Concerns\WithDynamicLayout;
@@ -57,6 +60,12 @@ class Settings extends Component
     // POS Settings
     public $warranty_min_amount = 1000;
 
+    // ── SMS Integration ──────────────────────────────────────────────────
+    public string $smsFilterMonth  = '';
+    public bool   $showSmsTopupModal = false;
+    public float  $smsTopupAmount   = 0;
+    public array  $smsStats         = [];
+
     // Print Label Settings  (horizontal hang-tag: body + right-side tail)
     public $label_width         = 48;   // printable body width (mm)
     public $label_height        = 12;   // label height / feed direction (mm)
@@ -101,6 +110,8 @@ class Settings extends Component
         $this->loadPOSSettings();
         $this->loadLabelSettings();
         $this->expenseDate = now()->format('Y-m-d');
+        $this->smsFilterMonth = now()->format('Y-m');
+        $this->loadSmsStats();
     }
 
     public function loadExpenseCategories()
@@ -614,8 +625,78 @@ class Settings extends Component
         return StaffTypePermission::permissionCategories();
     }
 
+    // ── SMS Integration Methods ──────────────────────────────────────────
+
+    public function loadSmsStats(): void
+    {
+        $month = $this->smsFilterMonth;
+        $q     = SmsLog::where('created_at', 'like', $month . '%');
+
+        $this->smsStats = [
+            'total_sent'     => (clone $q)->where('status', 'sent')->sum('sms_parts'),
+            'total_cost'     => (clone $q)->where('status', 'sent')->sum('total_cost'),
+            'double_charged' => (clone $q)->where('double_charged', true)->count(),
+            'system_balance' => app(SmsService::class)->getSystemBalance(),
+        ];
+    }
+
+    public function updatedSmsFilterMonth(): void
+    {
+        $this->loadSmsStats();
+    }
+
+    public function getRecentSmsLogsProperty()
+    {
+        return SmsLog::where('created_at', 'like', $this->smsFilterMonth . '%')
+            ->latest()
+            ->take(10)
+            ->get();
+    }
+
+    public function openSmsTopupModal(): void
+    {
+        $this->smsTopupAmount   = 0;
+        $this->showSmsTopupModal = true;
+    }
+
+    public function closeSmsTopupModal(): void
+    {
+        $this->showSmsTopupModal  = false;
+        $this->smsTopupAmount     = 0;
+        $this->resetErrorBag();
+    }
+
+    public function doSmsTopup(): void
+    {
+        $this->validate(['smsTopupAmount' => 'required|numeric|min:0.01']);
+
+        try {
+            $smsService = app(SmsService::class);
+            $newBalance = $smsService->topUpSystem($this->smsTopupAmount);
+            $this->closeSmsTopupModal();
+            $this->loadSmsStats();
+            $this->js("Swal.fire('Topped Up!', 'Rs. " . number_format($this->smsTopupAmount, 2) . " added. New balance: Rs. " . number_format($newBalance, 2) . "', 'success')");
+        } catch (\Exception $e) {
+            $this->js("Swal.fire('Error!', 'Topup failed.', 'error')");
+        }
+    }
+
+    public function getAvailableSmsMonthsProperty(): array
+    {
+        $months = [];
+        for ($i = 0; $i < 6; $i++) {
+            $months[] = now()->subMonths($i)->format('Y-m');
+        }
+        return $months;
+    }
+
+    // ── End SMS Methods ──────────────────────────────────────────────────
+
     public function render()
     {
-        return view('livewire.admin.settings')->layout($this->layout);
+        return view('livewire.admin.settings', [
+            'recentSmsLogs' => $this->recentSmsLogs,
+        ])->layout($this->layout);
     }
 }
+

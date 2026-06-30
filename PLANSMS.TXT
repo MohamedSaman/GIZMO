@@ -1,0 +1,119 @@
+SMS Management System — Implementation Plan
+Overview
+Build a full SMS tracking and billing system with:
+
+Customer-facing SMS section in Settings page — customers see their total sent SMS count, topup balance, and can filter by month.
+Admin SMS Integration section in Settings — shows each customer's cost & topup balance.
+Secret super-admin-only page (accessible via a secret URL only you know) — set SMS per-message rate, view system-wide SMS counts, top up customer balances.
+Low-balance warning SMS — when a customer's balance drops below a threshold, automatically send them an SMS alert to their phone.
+Double-charge logic — when balance hits zero, SMS cost doubles automatically.
+User Review Required
+IMPORTANT
+
+Secret Page URL: I'll create a secret URL like /admin/sms-master-control/{secret_token} that only you know. The token will be stored in .env. Please confirm you're okay with this approach.
+
+IMPORTANT
+
+SMS Logs Table: There is no existing sms_logs table. I'll create a migration for it to track every sent SMS (customer_id, phone, message, cost, sent_at). Is this okay?
+
+WARNING
+
+Customer "Topup" Concept: Currently customers don't have an SMS credit balance. I'll add sms_balance and sms_rate fields. Do customers topup manually (you add credits) or pay automatically?
+
+Open Questions
+IMPORTANT
+
+Which "customer" are we talking about? The system has both customers (buyers in the store) and users (staff/admin logins). Who sees their SMS balance — the customers table people (who receive invoice SMSes) or users (staff who log in)?
+
+NOTE
+
+Based on context (invoice SMS sent to customers), I'll assume customers table is the right entity. Their phone receives SMSes, and they have a topup balance that gets deducted per SMS.
+
+NOTE
+
+Low balance threshold: I'll use a configurable threshold (default: 50 LKR). When balance drops below this, an alert SMS is sent to the customer's phone.
+
+Proposed Changes
+Database
+[NEW] Migration: sms_logs table
+Tracks every SMS sent:
+
+id, customer_id (nullable FK → customers), phone, message, sms_count (number of SMS parts), cost_per_sms, total_cost, type (invoice/alert/custom), status, sent_at, created_at
+[NEW] Migration: Add SMS fields to customers table
+sms_balance (decimal, default 0) — current credit balance
+sms_low_balance_notified (boolean) — prevent duplicate low-balance alerts
+[NEW] Migration: sms_settings table (or use existing settings)
+Actually use existing settings table with keys:
+
+sms_rate_per_message — cost per SMS
+sms_low_balance_threshold — threshold to trigger warning
+sms_double_charge_enabled — boolean
+Models
+[MODIFY] 
+Customer.php
+Add sms_balance, sms_low_balance_notified to $fillable
+Add smsLogs() hasMany relationship
+[NEW] SmsLog.php Model
+Belongs to Customer (nullable)
+Tracks all sent messages
+Services
+[MODIFY] 
+SmsService.php
+Enhance sendSms() to:
+Accept optional $customerId
+Look up SMS rate from settings
+Apply double-charge if customer balance ≤ 0
+Deduct balance
+Log to sms_logs table
+Check if balance goes below threshold → send low-balance alert SMS
+Livewire Components
+[MODIFY] 
+Settings.php
+Add SMS Integration section:
+
+Load all customers with their SMS balance and message count
+Filter by month
+Show stats per customer
+[MODIFY] 
+settings.blade.php
+Add accordion section "SMS Integration":
+
+Table of customers: name, phone, total SMS sent, balance, cost this month
+Month filter dropdown
+Topup button (opens modal to add credits)
+[NEW] SmsAdminPanel.php Livewire component (SECRET page)
+Super-admin only page for:
+
+Set SMS rate per message
+Set low balance threshold
+Toggle double charge
+View all SMS logs with filters
+Add/deduct customer topup balance
+Total SMS count system-wide
+[NEW] sms-admin-panel.blade.php view
+Dark-themed, premium dashboard with:
+
+Stats cards (total SMS, total revenue, active customers)
+Rate setting form
+Customer topup management table
+SMS logs table with month filter
+Routes
+[MODIFY] 
+web.php
+Add secret route: Route::get('/sms-control/{token}', SmsAdminPanel::class) — no auth middleware, just token check
+Add route for customer SMS stats view (inside Settings, already handled via Livewire)
+Customer-Facing (Settings page — inside sidebar Settings)
+The Settings page already exists in the admin sidebar. I'll add a new accordion section "SMS Integration" showing:
+
+Per-customer: SMS sent this month, total balance, cost
+Month filter
+Topup button for each customer
+Verification Plan
+Automated Tests
+php artisan migrate to verify migrations run cleanly
+Manual Verification
+Visit Settings → SMS Integration accordion
+Visit secret URL → SMS Master Control panel
+Send a test SMS and verify log entry created
+Manually set balance to 0 and verify double charge
+Manually set balance below threshold and verify alert SMS

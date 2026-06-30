@@ -33,6 +33,9 @@ class User extends Authenticatable
         'role',
         'contact',
         'staff_type',
+        'sms_balance',
+        'sms_low_balance_notified',
+        'sms_last_topup_at',
     ];
 
     /**
@@ -54,6 +57,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'sms_balance' => 'decimal:4',
+        'sms_low_balance_notified' => 'boolean',
+        'sms_last_topup_at' => 'datetime',
     ];
 
     /**
@@ -257,5 +263,11 @@ class User extends Authenticatable
     public function latestLocation()
     {
         return $this->hasOne(UserLocation::class, 'user_id', 'id')->latestOfMany();
+    }
+
+    // ── SMS Relationships ──────────────────────────────────────────────
+    public function smsLogs()
+    {
+        return $this->hasMany(SmsLog::class, 'user_id', 'id');
     }
 }

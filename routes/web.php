@@ -84,6 +84,7 @@ use App\Livewire\Admin\ListSupplierReturn;
 use App\Livewire\Admin\ProfitLoss;
 use App\Livewire\Admin\StaffSalesView;
 use App\Livewire\Admin\StaffPaymentApproval;
+use App\Livewire\Admin\SmsAdminPanel;
 
 // Staff Type Components
 use App\Livewire\Admin\SaleApproval;
@@ -634,3 +635,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 
 // Public Customer Order placement route
 Route::get('/create-order', \App\Livewire\CustomerOrder::class)->name('customer-order.create');
+
+// ============================================================================
+// SECRET SMS MASTER CONTROL — Only accessible with secret token
+// ============================================================================
+Route::middleware('sms_token')->group(function () {
+    Route::get('/sms-control/{token}/panel', SmsAdminPanel::class)
+        ->name('sms.master.panel');
+});

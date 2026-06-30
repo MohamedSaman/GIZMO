@@ -24,18 +24,29 @@ class Customer extends Model
         'due_amount',
         'total_due',
         'overpaid_amount',
+        'sms_balance',
+        'sms_low_balance_notified',
+        'sms_last_topup_at',
     ];
 
     protected $casts = [
-        'opening_balance' => 'decimal:2',
-        'due_amount' => 'decimal:2',
-        'total_due' => 'decimal:2',
-        'overpaid_amount' => 'decimal:2',
+        'opening_balance'         => 'decimal:2',
+        'due_amount'              => 'decimal:2',
+        'total_due'               => 'decimal:2',
+        'overpaid_amount'         => 'decimal:2',
+        'sms_balance'             => 'decimal:4',
+        'sms_low_balance_notified'=> 'boolean',
+        'sms_last_topup_at'       => 'datetime',
     ];
 
     public function sales()
     {
         return $this->hasMany(Sale::class);
+    }
+
+    public function smsLogs()
+    {
+        return $this->hasMany(\App\Models\SmsLog::class);
     }
 
     public function payments()

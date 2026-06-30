@@ -483,9 +483,227 @@
                 </div>
             </div>
         </div>
+          {{-- ══════════════════════════════════════════════════════════════════ --}}
+        {{-- SMS INTEGRATION Accordion                                           --}}
+        {{-- ══════════════════════════════════════════════════════════════════ --}}
+        <div class="accordion-item border-0 mb-4 shadow-sm rounded-4">
+            <h2 class="accordion-header" id="headingSmsIntegration">
+                <button class="accordion-button fw-semibold bg-white text-dark rounded-4 collapsed"
+                    type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseSmsIntegration" aria-expanded="false"
+                    aria-controls="collapseSmsIntegration">
+                    <i class="bi bi-chat-dots-fill fs-5 me-3 text-success"></i>
+                    SMS Integration
+                </button>
+            </h2>
+            <div id="collapseSmsIntegration" class="accordion-collapse collapse"
+                aria-labelledby="headingSmsIntegration" data-bs-parent="#settingsAccordion">
+                <div class="accordion-body">
+
+                    {{-- ── Month Filter ── --}}
+                    <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                        <label class="fw-semibold mb-0 text-dark">Filter by Month:</label>
+                        <select wire:model.live="smsFilterMonth" class="form-select" style="width:180px;">
+                            @foreach($this->availableSmsMonths as $m)
+                                <option value="{{ $m }}">{{ \Carbon\Carbon::parse($m . '-01')->format('F Y') }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- ── GIZMO System Balance Card ── --}}
+                    @php
+                        $sysBal = $smsStats['system_balance'] ?? 0;
+                        $threshold = (float) (\App\Models\Setting::where('key','sms_low_balance_threshold')->value('value') ?? 50);
+                    @endphp
+                    <div class="card border-0 shadow-sm mb-4" style="border-radius:14px; background:linear-gradient(135deg,#6366f1,#8b5cf6);">
+                        <div class="card-body text-white p-4">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                <div>
+                                    <div style="font-size:0.8rem;opacity:0.8;text-transform:uppercase;letter-spacing:1px;">System Balance</div>
+                                    <div style="font-size:2.2rem;font-weight:800;">Rs. {{ number_format($sysBal, 2) }}</div>
+                                    <div style="font-size:0.75rem;opacity:0.7;margin-top:2px;">
+                                        GIZMO — SMS Credit Balance
+                                        @if($sysBal <= 0)
+                                            <span class="badge bg-danger ms-2">No Balance</span>
+                                        @elseif($sysBal < $threshold)
+                                            <span class="badge bg-warning text-dark ms-2">Low Balance</span>
+                                        @else
+                                            <span class="badge bg-success ms-2">Active</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <button wire:click="openSmsTopupModal" class="btn btn-light btn-lg fw-bold" style="border-radius:12px;">
+                                        <i class="bi bi-plus-circle me-2"></i>Topup GIZMO
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ── Stats Row ── --}}
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 col-md-4">
+                            <div class="card border-0 shadow-sm h-100" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);border-radius:14px;">
+                                <div class="card-body text-white p-3">
+                                    <div style="font-size:1.6rem;font-weight:800;">{{ number_format($smsStats['total_sent'] ?? 0) }}</div>
+                                    <div style="font-size:0.72rem;opacity:0.85;margin-top:2px;">SMS Sent This Month</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="card border-0 shadow-sm h-100" style="background:linear-gradient(135deg,#10b981,#34d399);border-radius:14px;">
+                                <div class="card-body text-white p-3">
+                                    <div style="font-size:1.6rem;font-weight:800;">Rs. {{ number_format($smsStats['total_cost'] ?? 0, 2) }}</div>
+                                    <div style="font-size:0.72rem;opacity:0.85;margin-top:2px;">Total Cost This Month</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="card border-0 shadow-sm h-100" style="background:linear-gradient(135deg,#ef4444,#f87171);border-radius:14px;">
+                                <div class="card-body text-white p-3">
+                                    <div style="font-size:1.6rem;font-weight:800;">{{ number_format($smsStats['double_charged'] ?? 0) }}</div>
+                                    <div style="font-size:0.72rem;opacity:0.85;margin-top:2px;">Double-Charged SMS</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ── Recent SMS Logs (last 10) ── --}}
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-info"></i>Last 10 SMS Logs</h6>
+                            <span class="text-muted small">{{ \Carbon\Carbon::parse($smsFilterMonth . '-01')->format('F Y') }}</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="text-dark fw-bold">#</th>
+                                            <th class="text-dark fw-bold">Phone</th>
+                                            <th class="text-dark fw-bold">Type</th>
+                                            <th class="text-dark fw-bold text-center">Parts</th>
+                                            <th class="text-dark fw-bold">Cost</th>
+                                            <th class="text-dark fw-bold">Bal Before → After</th>
+                                            <th class="text-dark fw-bold">Status</th>
+                                            <th class="text-dark fw-bold">Sent At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($recentSmsLogs as $log)
+                                        <tr>
+                                            <td class="text-muted" style="font-size:0.75rem;">{{ $log->id }}</td>
+                                            <td class="text-muted">{{ $log->phone }}</td>
+                                            <td>
+                                                @php
+                                                    $typeColors = [
+                                                        'invoice'     => 'primary',
+                                                        'alert'       => 'warning',
+                                                        'custom'      => 'secondary',
+                                                        'low_balance' => 'danger',
+                                                    ];
+                                                    $tc = $typeColors[$log->type] ?? 'secondary';
+                                                @endphp
+                                                <span class="badge bg-{{ $tc }} bg-opacity-10 text-{{ $tc }}">
+                                                    {{ ucfirst(str_replace('_', ' ', $log->type)) }}
+                                                </span>
+                                                @if($log->double_charged)
+                                                    <span class="badge bg-danger bg-opacity-25 text-danger" style="font-size:0.6rem;">2x</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">{{ $log->sms_parts }}</td>
+                                            <td class="text-warning fw-semibold">Rs. {{ number_format($log->total_cost, 2) }}</td>
+                                            <td style="font-size:0.78rem;">
+                                                <span class="text-muted">{{ number_format($log->balance_before, 2) }}</span>
+                                                <span class="text-muted mx-1">&rarr;</span>
+                                                <span class="{{ $log->balance_after < 0 ? 'text-danger' : ($log->balance_after < 50 ? 'text-warning' : 'text-success') }} fw-bold">
+                                                    {{ number_format($log->balance_after, 2) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{{ $log->status === 'sent' ? 'success' : 'danger' }}">
+                                                    {{ ucfirst($log->status) }}
+                                                </span>
+                                            </td>
+                                            <td class="text-muted" style="font-size:0.75rem;">
+                                                {{ $log->sent_at?->format('d M H:i') ?? $log->created_at->format('d M H:i') }}
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="8" class="text-center py-4 text-muted">
+                                                <i class="bi bi-chat-dots display-6 d-block mb-2"></i>
+                                                No SMS logs for this month.
+                                            </td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 
-    {{-- Modal: Add/Edit --}}
+      
+
+    </div>{{-- end accordion --}}
+
+    {{-- ══════════════════════════════════════════════════════════════════ --}}
+    {{-- SMS TOPUP MODAL (from Settings page)                               --}}
+    {{-- ══════════════════════════════════════════════════════════════════ --}}
+    @if($showSmsTopupModal)
+    <div class="modal fade show d-block" tabindex="-1" style="background-color:rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <div class="modal-header text-white rounded-top-4" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-plus-circle me-2"></i>Top Up GIZMO SMS Balance
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" wire:click="closeSmsTopupModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Amount to Add (Rs.)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rs.</span>
+                            <input type="number" step="1" min="1" wire:model="smsTopupAmount"
+                                class="form-control @error('smsTopupAmount') is-invalid @enderror"
+                                placeholder="e.g. 500" autofocus>
+                            @error('smsTopupAmount')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    {{-- Quick amount buttons --}}
+                    <div class="d-flex gap-2">
+                        @foreach([100, 250, 500, 1000] as $q)
+                        <button wire:click="$set('smsTopupAmount', {{ $q }})"
+                            class="btn btn-outline-secondary btn-sm flex-fill">Rs. {{ $q }}</button>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button wire:click="closeSmsTopupModal" class="btn btn-secondary">Cancel</button>
+                    <button wire:click="doSmsTopup" class="btn btn-success" wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="doSmsTopup">
+                            <i class="bi bi-check-circle me-1"></i>Confirm Topup
+                        </span>
+                        <span wire:loading wire:target="doSmsTopup">
+                            <span class="spinner-border spinner-border-sm me-1"></span>Processing...
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+
     @if($showModal)
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);" wire:key="modal-{{ $isEdit ? 'edit' : 'add' }}">
         <div class="modal-dialog modal-dialog-centered">

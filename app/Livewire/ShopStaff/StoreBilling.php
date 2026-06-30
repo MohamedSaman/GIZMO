@@ -2202,10 +2202,7 @@ class StoreBilling extends Component
 
         // Validate payment method specific fields
         if ($this->paymentMethod === 'cash') {
-            if ($this->amountReceived <= 0) {
-                $this->showToast('error', 'Please enter a valid amount received.');
-                return;
-            }
+            // Allow amountReceived = 0 (treated as due sale)
         } elseif ($this->paymentMethod === 'cheque') {
             if (empty($this->cheques)) {
                 $this->showToast('error', 'Please add at least one cheque.');
@@ -2262,10 +2259,7 @@ class StoreBilling extends Component
 
         // Validate payment method specific fields
         if ($this->paymentMethod === 'cash') {
-            if ($this->amountReceived <= 0) {
-                $this->showToast('error', 'Please enter a valid amount received.');
-                return;
-            }
+            // Allow amountReceived = 0 (treated as due sale)
         } elseif ($this->paymentMethod === 'cheque') {
             if (empty($this->cheques)) {
                 $this->showToast('error', 'Please add at least one cheque.');
