@@ -1107,10 +1107,10 @@
 
                     <!-- Items -->
                     <div style="font-size: 11px;">
-                        @foreach($createdSale->items as $item)
+                        @foreach($createdSale->items as $index => $item)
                         <div style="display: flex; margin-bottom: 2px;">
                             <span style="flex: 2; font-weight: bold">
-                                {{ $item->product_name }}
+                                {{ $index + 1 }}. {{ $item->product_name }}
                                 @if($item->has_warranty)
                                 <div
                                     style="font-size: 9px; font-weight: bold; font-style: italic; color: #000000ff; margin-top: 1px;">
@@ -1143,6 +1143,11 @@
                         $totalDiscountRs = $createdSale->discount_amount;
                         $totalDiscPercentage = $originalSubtotal > 0 ? ($totalDiscountRs / $originalSubtotal * 100) : 0;
                         @endphp
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 2px; font-weight: bold;">
+                            <span>Total Items / Qty</span>
+                            <span>{{ $createdSale->items->count() }} / {{ $createdSale->items->sum('quantity') }}</span>
+                        </div>
                         <div
                             style="display: flex; justify-content: space-between; margin-bottom: 2px; font-weight: bold;">
                             <span>Sub Total</span>

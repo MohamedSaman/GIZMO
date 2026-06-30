@@ -72,6 +72,10 @@
         </tbody>
         <tfoot>
             <tr class="totals-row">
+                <td colspan="6" class="text-end"><strong>Total Items / Qty</strong></td>
+                <td class="text-end"><strong>{{ $sale->items->count() }} / {{ $sale->items->sum('quantity') }}</strong></td>
+            </tr>
+            <tr class="totals-row">
                 <td colspan="6" class="text-end"><strong>Subtotal</strong></td>
                 <td class="text-end"><strong>Rs.{{ number_format($sale->subtotal, 2) }}</strong></td>
             </tr>

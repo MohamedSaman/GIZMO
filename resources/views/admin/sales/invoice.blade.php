@@ -419,6 +419,10 @@
                     $totalDiscountRs = $originalSubtotal - $sale->total_amount;
                 @endphp
                 <tr>
+                    <td>Total Items / Qty</td>
+                    <td class="text-right">{{ $sale->items->count() }} / {{ $sale->items->sum('quantity') }}</td>
+                </tr>
+                <tr>
                     <td>Subtotal</td>
                     <td class="text-right">Rs.{{ number_format($originalSubtotal, 2) }}</td>
                 </tr>
