@@ -1132,7 +1132,7 @@
             textY += fsPx * 1.3;
         }
         if (showBarcode) {
-            textSvg += `<text x="${qrSecW + Ppx}" y="${textY + fbPx*0.1}" font-size="${fbPx}" font-family="'${ff}',monospace" fill="#333">PRD-CODE</text>`;
+            textSvg += `<text x="${qrSecW + Ppx}" y="${textY + fbPx*0.1}" font-size="${fbPx}" font-weight="bold" font-family="'${ff}',monospace" fill="#333">PRD-CODE</text>`;
             textY += fbPx * 1.3;
         }
         if (showPrice) {

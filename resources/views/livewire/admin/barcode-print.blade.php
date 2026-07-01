@@ -470,7 +470,7 @@
                     margin-bottom:0.5mm;
                 }
                 .info-code {
-                    font-size:${s.fontBarcode}pt; color:#333; line-height:1.2;
+                    font-size:${s.fontBarcode}pt; font-weight:bold; color:#333; line-height:1.2;
                     margin-bottom:0.5mm;
                     display:${s.showBarcodeText ? 'block' : 'none'};
                 }
