@@ -1057,7 +1057,7 @@ class StoreBilling extends Component
             // Apply automatic discount percentage
             $discountPercentage = 0;
             if ($value === 'retail') {
-                $discountPercentage = 10;
+                $discountPercentage = 0;
             } elseif ($value === 'wholesale') {
                 $discountPercentage = 25;
             }
@@ -1772,7 +1772,7 @@ class StoreBilling extends Component
             // Apply automatic discount percentage based on priceType
             $discountPercentage = 0;
             if ($this->priceType === 'retail') {
-                $discountPercentage = 10;
+                $discountPercentage = 0;
             } elseif ($this->priceType === 'wholesale') {
                 $discountPercentage = 25;
             }
