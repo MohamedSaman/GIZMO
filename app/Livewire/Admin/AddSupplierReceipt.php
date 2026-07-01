@@ -178,6 +178,7 @@ class AddSupplierReceipt extends Component
                 'due_amount' => $this->selectedSupplier->opening_balance,
             ]);
             $openingBalanceOrder->setAttribute('id', -1);
+            $openingBalanceOrder->setConnection($this->selectedSupplier->getConnectionName());
             $orders->prepend($openingBalanceOrder);
         }
 
