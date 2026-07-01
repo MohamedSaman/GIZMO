@@ -303,7 +303,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold small">Shop Name Font (pt)</label>
+                                        <label class="form-label fw-semibold small">Product Name Font (pt)</label>
                                         <div class="input-group input-group-sm">
                                             <input type="number" id="lbl_font_shop" value="{{ $label_font_shop }}"
                                                 class="form-control" min="1" max="30" step="0.5"
@@ -320,12 +320,22 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold small">Price Font (pt)</label>
-                                        <input type="number" id="lbl_font_price" value="{{ $label_font_price }}"
-                                            class="form-control" min="1" max="30" step="0.5"
-                                            oninput="renderSettingsPreview()">
+                                        <div class="input-group input-group-sm">
+                                            <input type="number" id="lbl_font_price" value="{{ $label_font_price }}"
+                                                class="form-control" min="1" max="30" step="0.5"
+                                                oninput="renderSettingsPreview()">
+                                            <div class="input-group-text">
+                                                <div class="form-check form-switch mb-0">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="lbl_show_price" {{ $label_show_price ? 'checked' : '' }}
+                                                        onchange="renderSettingsPreview()">
+                                                    <label class="form-check-label small" for="lbl_show_price">Show</label>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold small">Barcode Text Font (pt)</label>
+                                        <label class="form-label fw-semibold small">Product Code Font (pt)</label>
                                         <div class="input-group input-group-sm">
                                             <input type="number" id="lbl_font_barcode" value="{{ $label_font_barcode }}"
                                                 class="form-control" min="1" max="20" step="0.5"
@@ -355,7 +365,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <small class="text-muted">Max = label height ({{ $label_height }}mm). QR sits in right section.</small>
+                                        <small class="text-muted">Max = label height ({{ $label_height }}mm). QR sits in left section.</small>
                                     </div>
                                     <div class="mb-0">
                                         <label class="form-label fw-semibold small">Font Style</label>
@@ -1059,20 +1069,21 @@
         const dims  = document.getElementById('settingsPreviewDims');
         if (!el || !outer) return;
 
-        const W    = getV('lbl_width',      48);
-        const H    = getV('lbl_height',     12);
-        const P    = getV('lbl_padding',     1);
-        const TW   = getV('lbl_text_width', 35);   // fold line / text section
-        const tailW = getV('lbl_tail_width', 22);  // tail length (preview)
-        const tailH = getV('lbl_tail_height', 4);  // tail strip height (preview)
-        const fs   = getV('lbl_font_shop',    6);
-        const fp   = getV('lbl_font_price',   8);
-        const fb   = getV('lbl_font_barcode', 5);
-        const qr   = getV('lbl_qr_size',     11);
+        const W    = getV('lbl_width',      50);
+        const H    = getV('lbl_height',     30);
+        const P    = getV('lbl_padding',     1.5);
+        const TW   = getV('lbl_text_width', 32);   // text section width
+        const tailW = getV('lbl_tail_width', 0);   // tail length (preview)
+        const tailH = getV('lbl_tail_height', 0);  // tail strip height (preview)
+        const fs   = getV('lbl_font_shop',    9);
+        const fp   = getV('lbl_font_price',   11);
+        const fb   = getV('lbl_font_barcode', 8);
+        const qr   = getV('lbl_qr_size',     22);
         const ff   = (document.getElementById('lbl_font_family') || {value:'Courier New'}).value;
         const showShop    = getC('lbl_show_shop');
         const showBarcode = getC('lbl_show_barcode');
         const showQR      = getC('lbl_show_qr');
+        const showPrice   = getC('lbl_show_price');
 
         // Auto-scale to fit container (total label incl. tail)
         const totalMM = W + tailW;
@@ -1082,17 +1093,17 @@
         // Pixel sizes
         const Wpx    = W    * scale;
         const Hpx    = H    * scale;
-        const TWpx   = Math.min(TW, W) * scale;   // fold line pixel
+        const TWpx   = Math.min(TW, W) * scale;   // text section pixel width
         const tailWpx = tailW * scale;
         const tailHpx = tailH * scale;
         const tailY   = (Hpx - tailHpx) / 2;      // center tail vertically
         const Ppx     = Math.min(P, TW / 4) * scale;
 
-        // QR: capped to label height (square)
-        const qrMM  = showQR ? Math.min(qr, H) : 0;
-        const qrPx  = qrMM * scale;
+        // QR section is on the left
         const qrSecW = Wpx - TWpx;  // QR section pixel width
-        const qrX    = TWpx + (qrSecW - qrPx) / 2;
+        const qrMM  = showQR ? Math.max(0, Math.min(qr, H, W - TW)) : 0;
+        const qrPx  = qrMM * scale;
+        const qrX    = (qrSecW - qrPx) / 2;
         const qrY    = (Hpx - qrPx) / 2;
 
         // Font px: 1pt = 0.353mm
@@ -1113,17 +1124,19 @@
             qrSvg = `<rect x="${qrX}" y="${qrY}" width="${qrPx}" height="${qrPx}" fill="white" stroke="#ccc" stroke-width="0.5"/>${cells}`;
         }
 
-        // Text in left section
-        let textY = Hpx * 0.28;
+        // Text content is on the right section (starts at qrSecW)
+        let textY = Hpx * 0.3;
         let textSvg = '';
         if (showShop) {
-            textSvg += `<text x="${Ppx + 1}" y="${textY}" font-size="${fsPx}" font-weight="bold" font-family="'${ff}',monospace" fill="#000">GIZMO</text>`;
+            textSvg += `<text x="${qrSecW + Ppx}" y="${textY}" font-size="${fsPx}" font-weight="bold" font-family="'${ff}',monospace" fill="#000">Product Name</text>`;
             textY += fsPx * 1.3;
         }
-        textSvg += `<text x="${Ppx + 1}" y="${textY + fpPx*0.1}" font-size="${fpPx}" font-weight="bold" font-family="'${ff}',monospace" fill="#000">Rs.1,800</text>`;
-        textY += fpPx * 1.3;
         if (showBarcode) {
-            textSvg += `<text x="${Ppx + 1}" y="${textY + fbPx*0.1}" font-size="${fbPx}" font-family="'${ff}',monospace" fill="#333">1234567890</text>`;
+            textSvg += `<text x="${qrSecW + Ppx}" y="${textY + fbPx*0.1}" font-size="${fbPx}" font-family="'${ff}',monospace" fill="#333">PRD-CODE</text>`;
+            textY += fbPx * 1.3;
+        }
+        if (showPrice) {
+            textSvg += `<text x="${qrSecW + Ppx}" y="${textY + fpPx*0.1}" font-size="${fpPx}" font-weight="bold" font-family="'${ff}',monospace" fill="#000">Rs.1,800</text>`;
         }
 
         const totalPx = Wpx + tailWpx;
@@ -1140,8 +1153,8 @@
             <!-- Main body background -->
             <rect x="0" y="0" width="${Wpx}" height="${Hpx}" fill="white" rx="2" filter="url(#lbl-shadow)"/>
 
-            <!-- QR section subtle bg -->
-            ${showQR ? `<rect x="${TWpx}" y="0" width="${Wpx - TWpx}" height="${Hpx}" fill="#f8f8f8" rx="0"/>` : ''}
+            <!-- QR section subtle bg (on the left) -->
+            ${showQR ? `<rect x="0" y="0" width="${qrSecW}" height="${Hpx}" fill="#f8f8f8" rx="0"/>` : ''}
 
             <!-- Text content -->
             ${textSvg}
@@ -1150,7 +1163,7 @@
             ${qrSvg}
 
             <!-- Fold / section divider (dashed vertical line) -->
-            <line x1="${TWpx}" y1="0" x2="${TWpx}" y2="${Hpx}"
+            <line x1="${qrSecW}" y1="0" x2="${qrSecW}" y2="${Hpx}"
                   stroke="#aaa" stroke-width="0.8" stroke-dasharray="3,2"/>
 
             <!-- Outer border -->
@@ -1169,8 +1182,8 @@
             ` : ''}
 
             <!-- Dimension labels below SVG -->
-            <text x="${TWpx/2}" y="${Hpx+12}" text-anchor="middle" font-size="8" font-family="Arial" fill="#444">Text ${TW}mm</text>
-            <text x="${TWpx + (Wpx-TWpx)/2}" y="${Hpx+12}" text-anchor="middle" font-size="8" font-family="Arial" fill="#444">QR ${W-TW}mm</text>
+            <text x="${qrSecW/2}" y="${Hpx+12}" text-anchor="middle" font-size="8" font-family="Arial" fill="#444">QR ${W-TW}mm</text>
+            <text x="${qrSecW + TWpx/2}" y="${Hpx+12}" text-anchor="middle" font-size="8" font-family="Arial" fill="#444">Text ${TW}mm</text>
             ${tailWpx > 0 ? `<text x="${Wpx + tailWpx/2}" y="${Hpx+12}" text-anchor="middle" font-size="8" font-family="Arial" fill="#888">tail ${tailW}mm</text>` : ''}
 
             <!-- Arrow line under main body -->
@@ -1180,7 +1193,7 @@
 
         if (dims) {
             const qrSec = Math.round((W - TW) * 10) / 10;
-            dims.innerHTML = `Body: <b>${W}×${H}mm</b> &nbsp;|&nbsp; Text: <b>${TW}mm</b> &nbsp;|&nbsp; QR sec: <b>${qrSec}mm</b> &nbsp;|&nbsp; QR size: <b>${qrMM}mm</b> &nbsp;|&nbsp; ×${scale}`;
+            dims.innerHTML = `Body: <b>${W}×${H}mm</b> &nbsp;|&nbsp; QR sec: <b>${qrSec}mm</b> &nbsp;|&nbsp; Text: <b>${TW}mm</b> &nbsp;|&nbsp; QR size: <b>${qrMM}mm</b> &nbsp;|&nbsp; ×${scale}`;
         }
 
         // Warnings
@@ -1191,8 +1204,8 @@
                 msgs.push(`⚠️ Text width ${TW}mm leaves no room for QR`);
             if (qr > H)
                 msgs.push(`⚠️ QR ${qr}mm capped to label height ${H}mm`);
-            if (qrMM > (W - TW))
-                msgs.push(`⚠️ QR ${qrMM}mm wider than QR section (${W-TW}mm) — will overflow`);
+            if (qr > (W - TW))
+                msgs.push(`⚠️ QR size (${qr}mm) capped to QR section width (${W-TW}mm) to prevent overflow`);
             if (fp < 3)
                 msgs.push(`ℹ️ Price font ${fp}pt may print very small`);
             warn.innerHTML = msgs.map(m => `<div class="text-warning fw-semibold">${m}</div>`).join('');
@@ -1201,18 +1214,18 @@
 
     // ─── Apply recommended defaults based on label size ───────────────────
     function applyRecommended() {
-        const H  = getV('lbl_height', 12);
-        const W  = getV('lbl_width',  48);
+        const H  = getV('lbl_height', 30);
+        const W  = getV('lbl_width',  50);
 
-        // QR: 90% of height (square), fits in right section
-        const recQR       = Math.min(Math.floor(H * 0.90 * 2) / 2, H);
-        // Text section = 70% of width; remaining 30% for QR
-        const recTextW    = Math.round(W * 0.70 * 2) / 2;
+        // QR: 70% of height (capped at 20mm), fits in left section
+        const recQR       = Math.max(5, Math.min(20, Math.floor(H * 0.70)));
+        // Text section width leaves room for QR + 2mm margin
+        const recTextW    = Math.max(10, W - recQR - 2);
         // Fonts scale with height
-        const recFontPrice = Math.max(Math.round(H * 0.50 * 2) / 2, 2);
-        const recFontShop  = Math.max(Math.round(H * 0.38 * 2) / 2, 2);
-        const recFontBar   = Math.max(Math.round(H * 0.28 * 2) / 2, 1.5);
-        const recPad       = Math.min(1, H * 0.08);
+        const recFontPrice = Math.max(Math.round(H * 0.38 * 2) / 2, 2);
+        const recFontShop  = Math.max(Math.round(H * 0.30 * 2) / 2, 2);
+        const recFontBar   = Math.max(Math.round(H * 0.25 * 2) / 2, 1.5);
+        const recPad       = Math.min(1.5, H * 0.05);
 
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
         set('lbl_padding',    recPad);
@@ -1227,20 +1240,21 @@
     // ─── Save: collect all values in ONE single Livewire call ────────────────
     function saveLabelSettingsJS() {
         @this.call('saveLabelSettings', {
-            width:           getV('lbl_width',      48),
-            height:          getV('lbl_height',     12),
-            padding:         getV('lbl_padding',     1),
-            textWidth:       getV('lbl_text_width', 35),
-            tailWidth:       getV('lbl_tail_width', 22),
-            tailHeight:      getV('lbl_tail_height', 4),
-            fontShop:        getV('lbl_font_shop',   6),
-            fontPrice:       getV('lbl_font_price',  8),
-            fontBarcode:     getV('lbl_font_barcode',5),
-            qrSize:          getV('lbl_qr_size',    11),
+            width:           getV('lbl_width',      50),
+            height:          getV('lbl_height',     30),
+            padding:         getV('lbl_padding',     1.5),
+            textWidth:       getV('lbl_text_width', 28),
+            tailWidth:       getV('lbl_tail_width', 0),
+            tailHeight:      getV('lbl_tail_height', 0),
+            fontShop:        getV('lbl_font_shop',   9),
+            fontPrice:       getV('lbl_font_price',  11),
+            fontBarcode:     getV('lbl_font_barcode',8),
+            qrSize:          getV('lbl_qr_size',    20),
             fontFamily:      (document.getElementById('lbl_font_family') || {value:'Courier New'}).value,
             showShop:        getC('lbl_show_shop'),
             showBarcodeText: getC('lbl_show_barcode'),
-            showQR:          getC('lbl_show_qr')
+            showQR:          getC('lbl_show_qr'),
+            showPrice:       getC('lbl_show_price')
         });
     }
 

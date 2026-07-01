@@ -163,23 +163,24 @@ class BarcodePrint extends Component
     private function getLabelSettings(): array
     {
         $defaults = [
-            'label_width'           => 48,
-            'label_height'          => 12,
-            'label_padding'         => 1,
-            'label_text_width'      => 35,
-            'label_tail_width'      => 22,
-            'label_tail_height'     => 4,
+            'label_width'           => 50,
+            'label_height'          => 30,
+            'label_padding'         => 1.5,
+            'label_text_width'      => 28,
+            'label_tail_width'      => 0,
+            'label_tail_height'     => 0,
             'label_font_family'     => 'Courier New',
-            'label_font_shop'       => 6,
-            'label_font_price'      => 8,
-            'label_font_barcode'    => 5,
-            'label_qr_size'         => 11,
+            'label_font_shop'       => 9,
+            'label_font_price'      => 11,
+            'label_font_barcode'    => 8,
+            'label_qr_size'         => 20,
             'label_show_shop'       => true,
             'label_show_barcode_text' => true,
             'label_show_qr'         => true,
+            'label_show_price'      => true,
         ];
 
-        $boolKeys   = ['label_show_shop', 'label_show_barcode_text', 'label_show_qr'];
+        $boolKeys   = ['label_show_shop', 'label_show_barcode_text', 'label_show_qr', 'label_show_price'];
         $stringKeys = ['label_font_family'];
         $keys = array_keys($defaults);
 

@@ -291,7 +291,7 @@
                                 <td class="text-center">
                                     <div class="d-flex gap-1 justify-content-center">
                                         <button class="btn btn-sm btn-outline-primary"
-                                            onclick="printSingleLabel('{{ $product->barcode }}', '{{ $product->code }}', '{{ number_format($product->retail_price ?? 0, 2) }}')"
+                                            onclick="printSingleLabel('{{ $product->barcode }}', '{{ $product->code }}', '{{ number_format($product->retail_price ?? 0, 2) }}', '{{ addslashes($product->name) }}')"
                                             title="Print this label">
                                             <i class="bi bi-printer"></i>
                                         </button>
@@ -398,7 +398,7 @@
 
                     <div class="mt-3">
                         <button class="btn btn-print-all w-100"
-                            onclick="printSingleLabel('{{ $lookupProduct['barcode'] }}', '{{ $lookupProduct['code'] }}', '{{ $lookupProduct['retail_price'] }}')">
+                            onclick="printSingleLabel('{{ $lookupProduct['barcode'] }}', '{{ $lookupProduct['code'] }}', '{{ $lookupProduct['retail_price'] }}', '{{ addslashes($lookupProduct['name']) }}')">
                             <i class="bi bi-printer me-2"></i> Print Label
                         </button>
                     </div>
@@ -427,16 +427,17 @@
             qrSize:     {{ $labelSettings['label_qr_size'] }},
             showShop:        {{ $labelSettings['label_show_shop'] ? 'true' : 'false' }},
             showBarcodeText: {{ $labelSettings['label_show_barcode_text'] ? 'true' : 'false' }},
-            showQR:          {{ $labelSettings['label_show_qr'] ? 'true' : 'false' }}
+            showQR:          {{ $labelSettings['label_show_qr'] ? 'true' : 'false' }},
+            showPrice:       {{ $labelSettings['label_show_price'] ? 'true' : 'false' }}
         };
 
         function loadPrintSettings() { return LABEL_SETTINGS; }
 
         // ─── Build label CSS from settings ────────────────────────────────────
-        // Layout: horizontal hang-tag — left text section | right QR section
+        // Layout: horizontal — left QR section | right text section
         function buildLabelCSS(s) {
-            const qrMM   = s.showQR ? Math.min(s.qrSize, s.height) : 0;
             const textW  = Math.max(s.textWidth, 4);
+            const qrMM   = s.showQR ? Math.max(0, Math.min(s.qrSize, s.height, s.width - textW)) : 0;
             const qrSecW = Math.max(s.width - textW, qrMM);
             const pad    = Math.min(s.padding, textW / 4);
             return `
@@ -444,35 +445,38 @@
                 body { font-family:'${s.fontFamily || 'Courier New'}',monospace,sans-serif; margin:0; padding:0; background:white; }
                 .label-wrapper {
                     width:${s.width}mm; height:${s.height}mm;
-                    display:flex; align-items:stretch; overflow:hidden;
+                    display:flex; flex-direction:row; align-items:stretch; overflow:hidden;
                     page-break-inside:avoid;
-                }
-                .text-section {
-                    width:${textW}mm; flex-shrink:0;
-                    display:flex; flex-direction:column; justify-content:center;
-                    padding:0 ${pad}mm; overflow:hidden;
-                }
-                .info-shop {
-                    font-size:${s.fontShop}pt; font-weight:bold; color:#000;
-                    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.2;
-                    text-transform:uppercase;
-                    display:${s.showShop ? 'block' : 'none'};
-                }
-                .info-price {
-                    font-size:${s.fontPrice}pt; font-weight:bold; color:#000; line-height:1.2;
-                }
-                .info-barcode {
-                    font-size:${s.fontBarcode}pt; color:#333; line-height:1.2;
-                    display:${s.showBarcodeText ? 'block' : 'none'};
                 }
                 .qr-section {
                     width:${qrSecW}mm; flex-shrink:0;
                     display:${s.showQR ? 'flex' : 'none'};
                     align-items:center; justify-content:center;
+                    padding: ${pad}mm;
                 }
                 .qr-section canvas, .qr-section img {
                     width:${qrMM}mm !important; height:${qrMM}mm !important;
                     max-width:100%; max-height:100%;
+                }
+                .text-section {
+                    width:${textW}mm; flex-shrink:0;
+                    display:flex; flex-direction:column; justify-content:center;
+                    padding:0 ${pad}mm; overflow:hidden;
+                    text-align: left;
+                }
+                .info-name {
+                    font-size:${s.fontShop}pt; font-weight:bold; color:#000;
+                    word-wrap: break-word; overflow:hidden; line-height:1.2;
+                    margin-bottom:0.5mm;
+                }
+                .info-code {
+                    font-size:${s.fontBarcode}pt; color:#333; line-height:1.2;
+                    margin-bottom:0.5mm;
+                    display:${s.showBarcodeText ? 'block' : 'none'};
+                }
+                .info-price {
+                    font-size:${s.fontPrice}pt; font-weight:bold; color:#000; line-height:1.2;
+                    display:${s.showPrice ? 'block' : 'none'};
                 }
                 @media print {
                     body { margin:0; padding:0; }
@@ -482,9 +486,9 @@
         }
 
         // ─── Print single label ───────────────────────────────────────────────
-        function printSingleLabel(barcode, productCode, retailPrice) {
+        function printSingleLabel(barcode, productCode, retailPrice, productName) {
             const s = loadPrintSettings();
-            const qrPx = Math.round(Math.min(s.qrSize, s.height) * 3.7795);
+            const qrPx = Math.round(Math.max(0, Math.min(s.qrSize, s.height, s.width - Math.max(s.textWidth, 4))) * 3.7795);
 
             const printWindow = window.open('', '_blank', 'width=400,height=300');
             printWindow.document.write(`
@@ -496,12 +500,12 @@
                 </head>
                 <body>
                     <div class="label-wrapper">
-                        <div class="text-section">
-                            <div class="info-shop">Gizmo</div>
-                            <div class="info-price">Rs.${retailPrice}</div>
-                            <div class="info-barcode">${barcode}</div>
-                        </div>
                         <div class="qr-section" id="qrcode"></div>
+                        <div class="text-section">
+                            ${s.showShop && productName ? `<div class="info-name">${productName}</div>` : ''}
+                            ${s.showBarcodeText && productCode ? `<div class="info-code">${productCode}</div>` : ''}
+                            ${s.showPrice ? `<div class="info-price">Rs.${retailPrice}</div>` : ''}
+                        </div>
                     </div>
                     <script>
                         if (${s.showQR}) {
@@ -535,25 +539,27 @@
                 const row = cb.closest('tr');
                 if (row) {
                     const cells = row.querySelectorAll('td');
+                    const name       = cells[3] ? cells[3].textContent.trim() : '';
+                    const code       = cells[4] ? cells[4].textContent.trim() : '';
                     const barcode    = cells[5] ? cells[5].textContent.trim() : '';
                     const retailPrice = cells[7] ? cells[7].textContent.trim() : '0.00';
-                    labelData.push({ barcode, price: retailPrice });
+                    labelData.push({ barcode, price: retailPrice, name, code });
                 }
             });
 
             if (labelData.length === 0) return;
 
             const s = loadPrintSettings();
-            const qrPx = Math.round(Math.min(s.qrSize, s.height) * 3.7795);
+            const qrPx = Math.round(Math.max(0, Math.min(s.qrSize, s.height, s.width - Math.max(s.textWidth, 4))) * 3.7795);
 
             const labelsHtml = labelData.map((item, idx) => `
                 <div class="label-wrapper">
-                    <div class="text-section">
-                        <div class="info-shop">Gizmo</div>
-                        <div class="info-price">${item.price}</div>
-                        <div class="info-barcode">${item.barcode}</div>
-                    </div>
                     <div class="qr-section" id="qr-${idx}"></div>
+                    <div class="text-section">
+                        ${s.showShop && item.name ? `<div class="info-name">${item.name}</div>` : ''}
+                        ${s.showBarcodeText && item.code ? `<div class="info-code">${item.code}</div>` : ''}
+                        ${s.showPrice ? `<div class="info-price">${item.price}</div>` : ''}
+                    </div>
                 </div>
             `).join('');
 

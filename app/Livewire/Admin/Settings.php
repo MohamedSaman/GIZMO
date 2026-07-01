@@ -67,20 +67,21 @@ class Settings extends Component
     public array  $smsStats         = [];
 
     // Print Label Settings  (horizontal hang-tag: body + right-side tail)
-    public $label_width         = 48;   // printable body width (mm)
-    public $label_height        = 12;   // label height / feed direction (mm)
-    public $label_padding       = 1;    // inner horizontal padding (mm)
-    public $label_text_width    = 35;   // left text section (fold line) (mm)
-    public $label_tail_width    = 22;   // tail length for preview (mm)
-    public $label_tail_height   = 4;    // tail strip height for preview (mm)
+    public $label_width         = 50;   // printable body width (mm)
+    public $label_height        = 30;   // label height / feed direction (mm)
+    public $label_padding       = 1.5;  // inner horizontal padding (mm)
+    public $label_text_width    = 28;   // text section width (fold line) (mm)
+    public $label_tail_width    = 0;    // tail length for preview (mm)
+    public $label_tail_height   = 0;    // tail strip height for preview (mm)
     public $label_font_family   = 'Courier New';
-    public $label_font_shop     = 6;
-    public $label_font_price    = 8;
-    public $label_font_barcode  = 5;
-    public $label_qr_size       = 11;
+    public $label_font_shop     = 9;
+    public $label_font_price    = 11;
+    public $label_font_barcode  = 8;
+    public $label_qr_size       = 20;
     public $label_show_shop     = true;
     public $label_show_barcode_text = true;
     public $label_show_qr       = true;
+    public $label_show_price    = true;
 
     protected $listeners = [
         'deleteConfirmed' => 'deleteConfiguration',
@@ -148,12 +149,12 @@ class Settings extends Component
             'label_text_width', 'label_tail_width', 'label_tail_height',
             'label_font_family',
             'label_font_shop', 'label_font_price', 'label_font_barcode',
-            'label_qr_size', 'label_show_shop', 'label_show_barcode_text', 'label_show_qr',
+            'label_qr_size', 'label_show_shop', 'label_show_barcode_text', 'label_show_qr', 'label_show_price',
         ];
         foreach ($keys as $key) {
             $val = Setting::where('key', $key)->value('value');
             if ($val !== null) {
-                if (in_array($key, ['label_show_shop', 'label_show_barcode_text', 'label_show_qr'])) {
+                if (in_array($key, ['label_show_shop', 'label_show_barcode_text', 'label_show_qr', 'label_show_price'])) {
                     $this->$key = (bool) $val;
                 } elseif ($key === 'label_font_family') {
                     $this->$key = $val;
@@ -185,6 +186,7 @@ class Settings extends Component
             $this->label_show_shop     = $data['showShop']    ?? $this->label_show_shop;
             $this->label_show_barcode_text = $data['showBarcodeText'] ?? $this->label_show_barcode_text;
             $this->label_show_qr       = $data['showQR']      ?? $this->label_show_qr;
+            $this->label_show_price    = $data['showPrice']   ?? $this->label_show_price;
         }
 
         $this->validate([
@@ -215,6 +217,7 @@ class Settings extends Component
             'label_show_shop'       => $this->label_show_shop ? '1' : '0',
             'label_show_barcode_text' => $this->label_show_barcode_text ? '1' : '0',
             'label_show_qr'         => $this->label_show_qr ? '1' : '0',
+            'label_show_price'      => $this->label_show_price ? '1' : '0',
         ];
 
         foreach ($settings as $key => $value) {
