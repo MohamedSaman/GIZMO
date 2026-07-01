@@ -122,7 +122,10 @@ use App\Livewire\ShopStaff\DeliveryPacking as ShopStaffDeliveryPacking;
 use App\Http\Controllers\ProductImageController;
 
 // Public routes
-Route::get('/', CustomLogin::class)->name('welcome')->middleware('guest');
+Route::get('/', CustomLogin::class)->name('login')->middleware('guest');
+Route::get('/welcome', function () {
+    return redirect()->route('login');
+})->name('welcome');
 
 // Product Image Upload (public - accessible from phone via QR code scan)
 Route::get('/product-image/{identifier}', [ProductImageController::class, 'show'])->name('product-image.show');
