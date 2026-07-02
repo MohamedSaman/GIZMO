@@ -24,9 +24,9 @@
                 @endphp
                 <div class="payslip-container">
                     <div class="text-center mb-4">
-                        <h3 class="mb-0">Gizmo (PVT) LTD (PVT) LTD</h3>
-                        <p class="mb-0 text-muted small">103 H,Yatiyanthota Road,Seethawaka,avissawella.</p>
-                        <p class="mb-0 text-muted small">Phone: 0777005897 / 0112337242| Email: gizmoelectronicsofficial@gmail.com </p>
+                        <h3 class="mb-0">GIZMO ELECTRONICS</h3>
+                        <p class="mb-0 text-muted small">No-10 Keyzer Street, Colombo 11.</p>
+                        <p class="mb-0 text-muted small">Phone: 0777005897 / 0112337242 | Email: gizmoelectronicsofficial@gmail.com</p>
                         <h4 class="mt-3 border-bottom border-2 pb-2">SALARY PAYSLIP</h4>
                     </div>
                     <div class="card border-0 shadow-sm mb-4">

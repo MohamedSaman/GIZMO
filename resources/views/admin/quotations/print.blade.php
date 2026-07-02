@@ -245,8 +245,8 @@
             @if(file_exists(public_path('images/logo.png')))
             <img src="{{ public_path('images/logo.png') }}" alt="Company Logo" class="logo">
             @endif
-            <div class="company-name">Gizmo (PVT) LTD</div>
-            <div class="company-tagline">Gold Shop</div>
+            <div class="company-name">GIZMO ELECTRONICS</div>
+            <div class="company-tagline" style="font-size: 9px; line-height: 1.2;">Wholesale & retail dealers in all kinds of computer parts & phone accessories electronic devices</div>
             <div class="quotation-title">QUOTATION</div>
         </div>
 
@@ -352,8 +352,8 @@
 
         {{-- Company Footer --}}
         <div class="company-footer">
-            <p><strong>ADDRESS :</strong> 421/2, Doolmala, thihariya, Kalagedihena.</p>
-            <p><strong>TEL :</strong> 0777005897, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com</p>
+            <p><strong>ADDRESS :</strong> No-10 Keyzer Street, Colombo 11.</p>
+            <p><strong>TEL :</strong> 0777005897 / 0112337242, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com</p>
             <p class="small-text">This quotation is valid until {{ \Carbon\Carbon::parse($quotation->valid_until)->format('d/m/Y') }}.</p>
         </div>
     </div>

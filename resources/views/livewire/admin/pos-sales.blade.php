@@ -283,11 +283,10 @@ use App\Models\Sale;
                         <div class="receipt-header">
                             <div class="receipt-row">
                                 <div class="receipt-center">
-                                    <h2 class="mb-0">Gizmo (PVT) LTD</h2>
-                                    <p class="mb-0 text-muted" style="color:#666; font-size:12px;">Gold Shop</p>
-                                    <p style="margin:0; text-align:center;"><strong>421/2, Doolmala, thihariya, Kalagedihena.</strong></p>
-                                    <p style="margin:0; text-align:center;"><strong>TEL:</strong> 0777005897, <strong>EMAIL:</strong> gizmoelectronicsofficial@gmail.com</p>
-                                    <p style="margin:0; text-align:center;"><strong>HOTLINE:</strong> 0112337242</p>
+                                    <h2 class="mb-0">GIZMO ELECTRONICS</h2>
+                                    <p class="mb-0 text-muted" style="color:#666; font-size:9px;">Wholesale & retail dealers in all kinds of computer parts & phone accessories electronic devices</p>
+                                    <p style="margin:0; text-align:center;"><strong>No-10 Keyzer Street, Colombo 11.</strong></p>
+                                    <p style="margin:0; text-align:center;"><strong>TEL:</strong> 0777005897 / 0112337242, <strong>EMAIL:</strong> gizmoelectronicsofficial@gmail.com</p>
                                 </div>
                             </div>
                         </div>
@@ -1120,7 +1119,7 @@ use App\Models\Sale;
             <html>
             <head>
                 <meta charset="utf-8">
-                <title>Invoice - Gizmo (PVT) LTD</title>
+                <title>Invoice - GIZMO ELECTRONICS</title>
                 <style>
                     @page { 
                         size: letter portrait; 

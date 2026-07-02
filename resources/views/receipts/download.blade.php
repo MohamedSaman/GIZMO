@@ -270,8 +270,8 @@
                 </div>
                 <!-- Center: Company Name -->
                 <div style="flex: 1; text-align: center;">
-                    <h2 style="font-size: 2.5rem; letter-spacing: 2px; font-weight: bold; margin-bottom: 0;">Gizmo (PVT) LTD</h2>
-                    <p style="color: #666; font-size: 0.875rem; margin-bottom: 0;">Gold Shop</p>
+                    <h2 style="font-size: 2.5rem; letter-spacing: 2px; font-weight: bold; margin-bottom: 0;">GIZMO ELECTRONICS</h2>
+                    <p style="color: #666; font-size: 9px; margin-bottom: 0;">Wholesale & retail dealers in all kinds of computer parts & phone accessories electronic devices</p>
                 </div>
                 <!-- Right:  & Invoice -->
                 <div style="flex: 0 0 150px; text-align: right;">
@@ -420,8 +420,8 @@
                 </div>
             </div>
             <div style="border-top: 1px solid #000000; padding-top: 10px;">
-                <p style="text-align: center;"><strong>ADDRESS :</strong> 421/2, Doolmala, thihariya, Kalagedihena.</p>
-                <p style="text-align: center;"><strong>TEL :</strong> 0777005897, <strong>HOTLINE :</strong> 0112337242, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com</p>
+                <p style="text-align: center;"><strong>ADDRESS :</strong> No-10 Keyzer Street, Colombo 11.</p>
+                <p style="text-align: center;"><strong>TEL :</strong> 0777005897 / 0112337242, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com</p>
                 <p style="text-align: center; font-size: 11px; margin-top: 8px;"><strong></strong></p>
             </div>
         </div>

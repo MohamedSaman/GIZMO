@@ -24,8 +24,8 @@
 </head>
 <body>
     <div class="header">
-        <div class="company-name">Gizmo (PVT) LTD</div>
-        <div style="font-size: 12px; margin-top: 4px;"><strong>Hotline:</strong> 0112337242</div>
+        <div class="company-name">GIZMO ELECTRONICS</div>
+        <div style="font-size: 12px; margin-top: 4px;"><strong>Tel:</strong> 0777005897 / 0112337242</div>
         <div class="receipt-title">PAYMENT RECEIPT</div>
     </div>
 
@@ -164,7 +164,7 @@
 
     <div class="footer">
         <p>Thank you for your payment!</p>
-        <p><strong>Hotline:</strong> 0112337242</p>
+        <p><strong>Tel:</strong> 0777005897 / 0112337242</p>
         <p>Generated on: {{ now()->format('M d, Y h:i A') }}</p>
     </div>
 </body>

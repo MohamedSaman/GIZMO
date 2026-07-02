@@ -151,9 +151,9 @@
 <body>
     {{-- Header --}}
     <div class="header">
-        <img src="{{ public_path('images/HARDMEN') }}" alt="HARDMEN Logo">
-        <p>421/2, Doolmala, thihariya, Kalagedihena.</p>
-        <p><strong>TEL:</strong> 0777005897 | <strong>EMAIL:</strong> gizmoelectronicsofficial@gmail.com</p>
+        <img src="{{ public_path('images/logo.png') }}" alt="Gizmo Electronics Logo">
+        <p>No-10 Keyzer Street, Colombo 11.</p>
+        <p><strong>TEL:</strong> 0777005897 / 0112337242 | <strong>EMAIL:</strong> gizmoelectronicsofficial@gmail.com</p>
         <h1>CLOSE REGISTER SUMMARY</h1>
     </div>
 
@@ -262,7 +262,7 @@
     {{-- Footer --}}
     <div class="footer">
         <p>Date: {{ now()->format('d/m/Y H:i:s') }}</p>
-        <p><strong>Gizmo (PVT) LTD (PVT) LTD</strong> - Point of Sale System</p>
+        <p><strong>GIZMO ELECTRONICS</strong> - Point of Sale System</p>
     </div>
 </body>
 

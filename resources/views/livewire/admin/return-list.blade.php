@@ -133,7 +133,7 @@
                     <div class="w-100">
                         <img src="{{ asset('images/logo.png') }}" alt="Logo"
                              class="img-fluid mb-2" style="max-height:60px;">
-                        <h4 class="mb-0 fw-bold">Gizmo (PVT) LTD</h4>
+                        <h4 class="mb-0 fw-bold">GIZMO ELECTRONICS</h4>
                         
                     </div>
                     <button type="button" class="btn-close btn-close-white closebtn"
@@ -214,9 +214,8 @@
                     <div class="mt-4 text-center small">
                         
                         <p class="mb-0">
-                            <strong>ADDRESS :</strong> 421/2, Doolmala, thihariya, Kalagedihena.<br>
-                            <strong>TEL :</strong> 0777005897, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com
-                            <br><strong>HOTLINE :</strong> 0112337242
+                            <strong>ADDRESS :</strong> No-10 Keyzer Street, Colombo 11.<br>
+                            <strong>TEL :</strong> 0777005897 / 0112337242, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com
                         </p>
                         <p class="mt-1 text-muted">
                             

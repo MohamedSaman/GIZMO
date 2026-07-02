@@ -101,8 +101,8 @@
         {{-- Header --}}
         <div class="header">
             <div class="company-info">
-                <h2> Gizmo (PVT) LTD</h2>
-                <div><strong>Hotline:</strong> 0112337242</div>
+                <h2>GIZMO ELECTRONICS</h2>
+                <div><strong>Tel:</strong> 0777005897 / 0112337242</div>
             </div>
             <div class="receipt-title">PAYMENT RECEIPT</div>
         </div>
@@ -259,7 +259,7 @@
         <div class="footer">
             <p>This is a computer-generated receipt. No signature required.</p>
             <p>Thank you for your payment!</p>
-            <p><strong>Hotline:</strong> 0112337242</p>
+            <p><strong>Tel:</strong> 0777005897 / 0112337242</p>
             <p>Generated on: {{ now()->format('d-m-Y H:i:s') }}</p>
         </div>
     </div>

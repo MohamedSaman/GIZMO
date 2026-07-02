@@ -488,8 +488,8 @@
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="img-fluid" style="max-height: 55px;">
                 </div>
                 <div style="flex: 1; text-align: center;">
-                    <h3 class="mb-0 fw-bold" style="color: #333; font-size: 1.4rem; letter-spacing: 0.5px;">Gizmo (PVT) LTD</h3>
-                    <p class="text-muted small mb-0" style="font-size: 0.85rem; margin-top: 2px;">Gold Shop</p>
+                    <h3 class="mb-0 fw-bold" style="color: #333; font-size: 1.4rem; letter-spacing: 0.5px;">GIZMO ELECTRONICS</h3>
+                    <p class="text-muted small mb-0" style="font-size: 9px; margin-top: 2px;">Wholesale & retail dealers in all kinds of computer parts & phone accessories electronic devices</p>
                 </div>
                 <div style="flex: 0 0 auto; text-align: right;">
                     <h3 class="mb-0 fw-normal" style="color: #666; font-size: 1.2rem; letter-spacing: 1px;">QUOTATION</h3>
@@ -612,8 +612,8 @@
 
                     {{-- Footer Note --}}
                     <div class="text-center small text-muted mt-4 pt-3 border-top">
-                        <p class="text-center mb-0"><strong>ADDRESS :</strong> 421/2, Doolmala, thihariya, Kalagedihena.</p>
-                        <p class="text-center mb-0"><strong>TEL :</strong> 0777005897, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com</p>
+                        <p class="text-center mb-0"><strong>ADDRESS :</strong> No-10 Keyzer Street, Colombo 11.</p>
+                        <p class="text-center mb-0"><strong>TEL :</strong> 0777005897 / 0112337242, <strong>EMAIL :</strong> gizmoelectronicsofficial@gmail.com</p>
                         <p class="mb-0 mt-2"><i class="bi bi-info-circle me-1"></i> Thank you for your business!</p>
                     </div>
 

@@ -315,8 +315,8 @@
                         <img src="{{ public_path('images/logo.png') }}" alt="Logo">
                     </td>
                     <td class="company-section">
-                        <h2>Gizmo (PVT) LTD</h2>
-                        <p>Gold Shop</p>
+                        <h2>GIZMO ELECTRONICS</h2>
+                        <p style="font-size: 8px; line-height: 1.2;">Wholesale & retail dealers in all kinds of computer parts & phone accessories electronic devices</p>
                     </td>
                     <td class="invoice-section">
                         <span style="font-size:10pt; font-weight:bold;"></span>
@@ -525,8 +525,8 @@
                 </tr>
             </table>
             <div class="info-section">
-                <p><strong>ADDRESS:</strong> 421/2, Doolmala, thihariya, Kalagedihena.</p>
-                <p><strong>TEL:</strong> 0777005897 | <strong>HOTLINE:</strong> 0112337242 | <strong>EMAIL:</strong> gizmoelectronicsofficial@gmail.com</p>
+                <p><strong>ADDRESS:</strong> No-10 Keyzer Street, Colombo 11.</p>
+                <p><strong>TEL:</strong> 0777005897 / 0112337242 | <strong>EMAIL:</strong> gizmoelectronicsofficial@gmail.com</p>
                 <p style="margin-top: 6px;"><strong>Goods return will be accepted within 10 days only. Electrical and body parts non-returnable.</strong></p>
             </div>
         </div>
