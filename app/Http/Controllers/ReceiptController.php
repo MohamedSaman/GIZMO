@@ -31,4 +31,24 @@ class ReceiptController extends Controller
             return back()->with('error', 'Failed to generate PDF: ' . $e->getMessage());
         }
     }
+
+    public function downloadCustomerReceipt($id)
+    {
+        try {
+            $payment = \App\Models\Payment::with(['customer', 'allocations.sale', 'cheques'])->findOrFail($id);
+
+            $pdf = Pdf::loadView('components.customer-payment-receipt', compact('payment'))
+                ->setPaper('a4')
+                ->setOptions([
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => true,
+                    'defaultFont' => 'sans-serif'
+                ]);
+
+            return $pdf->download('customer-receipt-' . $payment->id . '.pdf');
+        } catch (\Exception $e) {
+            Log::error('Customer PDF generation failed: ' . $e->getMessage());
+            return back()->with('error', 'Failed to generate PDF: ' . $e->getMessage());
+        }
+    }
 }

@@ -194,6 +194,34 @@
 
     {{-- Individual Payment Receipt Modal --}}
     @if($showReceiptModal && $selectedPayment)
+    @php
+        $phone = '';
+        if ($selectedPayment->customer && $selectedPayment->customer->phone) {
+            $cleanPhone = preg_replace('/[^0-9]/', '', $selectedPayment->customer->phone);
+            if (strlen($cleanPhone) === 10 && strpos($cleanPhone, '0') === 0) {
+                $phone = '94' . substr($cleanPhone, 1);
+            } elseif (strlen($cleanPhone) === 9 && strpos($cleanPhone, '7') === 0) {
+                $phone = '94' . $cleanPhone;
+            } elseif (strlen($cleanPhone) >= 9) {
+                $phone = $cleanPhone;
+            }
+        }
+        
+        $receiptId = $selectedPayment->id;
+        $customerName = $selectedPayment->customer->name ?? 'Customer';
+        $paymentDate = $selectedPayment->payment_date ? date('M d, Y', strtotime($selectedPayment->payment_date)) : '-';
+        $paymentMethod = ucfirst(str_replace('_', ' ', $selectedPayment->payment_method));
+        $paymentAmount = number_format($selectedPayment->amount, 2);
+        $pdfLink = route('customer-receipts.download', $selectedPayment->id);
+        
+        $waText = "Hello {$customerName},\n\nThank you for your payment!\nHere is your receipt details:\n\n*Receipt #:* {$receiptId}\n*Date:* {$paymentDate}\n*Payment Method:* {$paymentMethod}\n*Amount:* Rs. {$paymentAmount}\n\nYou can download your PDF receipt here:\n{$pdfLink}\n\nThank you!";
+        
+        if (!empty($phone)) {
+            $waUrl = "https://wa.me/" . $phone . "?text=" . urlencode($waText);
+        } else {
+            $waUrl = "https://wa.me/?text=" . urlencode($waText);
+        }
+    @endphp
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5); z-index: 1060;">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -387,6 +415,9 @@
                     <button type="button" class="btn btn-secondary" wire:click="closeReceiptModal">
                         <i class="bi bi-x-circle me-1"></i> Close
                     </button>
+                    <a href="{{ $waUrl }}" target="_blank" class="btn text-white" style="background-color: #25D366; border-color: #25D366;">
+                        <i class="bi bi-whatsapp me-1"></i> Send Whatsapp
+                    </a>
                     <button type="button" class="btn btn-success" onclick="window.print()">
                         <i class="bi bi-printer me-1"></i> Print Receipt
                     </button>

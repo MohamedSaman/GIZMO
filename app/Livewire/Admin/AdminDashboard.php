@@ -396,6 +396,17 @@ class AdminDashboard extends Component
         // Due amount for today
         $todayDue = $todaySalesQuery->sum('due_amount');
 
+        // Today's supplier payments (Add Supplier Receipt)
+        $todaySupplierPayments = \App\Models\PurchasePayment::whereDate('payment_date', $today)
+            ->where('is_completed', 1)
+            ->sum('amount');
+
+        // Today's customer payments (Add Customer Receipt)
+        $todayCustomerPayments = Payment::whereDate('payment_date', $today)
+            ->where('is_completed', 1)
+            ->whereNull('sale_id')
+            ->sum('amount');
+
         $this->summaryData = [
             'openingBalance' => $openingBalance,
             'totalSale' => $totalSale,
@@ -409,6 +420,8 @@ class AdminDashboard extends Component
             'grossProfit' => $grossProfit,
             'netProfit' => $netProfit,
             'todayDue' => $todayDue,
+            'supplierPayments' => $todaySupplierPayments,
+            'customerPayments' => $todayCustomerPayments,
         ];
 
         $this->showTodaySummary = true;

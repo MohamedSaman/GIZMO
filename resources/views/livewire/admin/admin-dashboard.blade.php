@@ -359,6 +359,34 @@
                     </div>
                     @endif
 
+                    {{-- Payments Summary Section --}}
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <div class="p-3 rounded-3 h-100" style="background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border: 1px solid #99f6e4;">
+                                <div class="d-flex flex-column justify-content-between h-100">
+                                    <div>
+                                        <i class="bi bi-arrow-down-left-circle me-2" style="color: #0d9488; font-size: 1.1rem; vertical-align: middle;"></i>
+                                        <small class="fw-bold text-dark d-block mb-1">Customer Payments Recv</small>
+                                        <small class="text-muted d-block" style="font-size: 0.7rem;">(via Receipts)</small>
+                                    </div>
+                                    <span class="fs-6 fw-bold mt-2" style="color: #0d9488;">Rs. {{ number_format($summaryData['customerPayments'], 2) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3 h-100" style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 1px solid #fed7aa;">
+                                <div class="d-flex flex-column justify-content-between h-100">
+                                    <div>
+                                        <i class="bi bi-arrow-up-right-circle me-2" style="color: #ea580c; font-size: 1.1rem; vertical-align: middle;"></i>
+                                        <small class="fw-bold text-dark d-block mb-1">Supplier Payments Given</small>
+                                        <small class="text-muted d-block" style="font-size: 0.7rem;">(via Receipts)</small>
+                                    </div>
+                                    <span class="fs-6 fw-bold mt-2" style="color: #ea580c;">- Rs. {{ number_format($summaryData['supplierPayments'], 2) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <hr class="my-3">
 
                     {{-- Revenue --}}
@@ -409,13 +437,15 @@
                               "   💵 Cash: Rs. " . number_format($summaryData['cashSale'], 2) . "\n" .
                               "   📱 Online: Rs. " . number_format($summaryData['onlineSale'], 2) . "\n" .
                               "   🏦 Bank: Rs. " . number_format($summaryData['bankSale'], 2) . "\n\n" .
-                              "💸 *Expenses:* Rs. " . number_format($summaryData['todayExpenses'], 2) . "\n" .
+                              "📥 *Customer Payments Recv:* Rs. " . number_format($summaryData['customerPayments'], 2) . "\n" .
+                              "📤 *Supplier Payments Given:* Rs. " . number_format($summaryData['supplierPayments'], 2) . "\n\n" .
+                              "💸 *All Expenses:* Rs. " . number_format($summaryData['todayExpenses'], 2) . "\n" .
                               "⚠️ *Due Amount:* Rs. " . number_format($summaryData['todayDue'], 2) . "\n\n" .
                               "📈 *Today Revenue:* Rs. " . number_format($summaryData['todayRevenue'], 2) . "\n" .
                               "🛍️ *Product Cost:* Rs. " . number_format($summaryData['totalCost'], 2) . "\n" .
                               "💹 *Gross Profit:* Rs. " . number_format($summaryData['grossProfit'], 2) . "\n" .
                               "🏆 *Net Profit:* Rs. " . number_format($summaryData['netProfit'], 2);
-                    $waUrl = "https://wa.me/94761265772?text=" . urlencode($waText);
+                    $waUrl = "https://wa.me/94777005897?text=" . urlencode($waText);
                 @endphp
 
                 <div class="modal-footer border-top-0 pt-0 pb-3 px-4 d-flex justify-content-between">

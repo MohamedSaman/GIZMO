@@ -415,6 +415,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     // Receipt download (accessible to authenticated users)
     Route::get('/receipts/{id}/download', [ReceiptController::class, 'download'])->name('receipts.download');
+    Route::get('/customer-receipts/{id}/download', [ReceiptController::class, 'downloadCustomerReceipt'])->name('customer-receipts.download');
 
     // Export staff stock details
     Route::get('/export/staff-stock', function () {
