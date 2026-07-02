@@ -208,19 +208,21 @@
         .items-table {
             margin: 10px 0;
             font-size: 9pt;
+            border: 1px solid #000;
+            table-layout: fixed;
         }
 
         .items-table th {
             background: #e9ecef;
             padding: 8px 6px;
-            border: 1px solid #999;
+            border: 1px solid #000;
             font-weight: bold;
             text-align: left;
         }
 
         .items-table td {
             padding: 6px;
-            border: 1px solid #999;
+            border: 1px solid #000;
         }
 
         .text-center {

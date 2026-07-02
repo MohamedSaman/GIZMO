@@ -208,10 +208,9 @@
                                 .receipt-center h2 { margin: 0 0 4px 0; font-size: 2rem; letter-spacing: 2px; }
                                 .mb-0 { margin-bottom: 0; }
                                 .mb-1 { margin-bottom: 4px; }
-                                table.receipt-table { width:100%; border-collapse: collapse; margin-top: 12px; }
-                                table.receipt-table th{border-bottom: 1px solid #000; padding: 8px; text-align: left;}
-                                table.receipt-table td { border: 0px solid #000; padding: 2px; text-align: left; }
-                                table.receipt-table th { background: none; font-weight: bold; }
+                                table.receipt-table { width:100%; border-collapse: collapse; margin-top: 12px; border: 1px solid #000; }
+                                table.receipt-table th { border: 1px solid #000; padding: 6px 8px; text-align: left; background: none; font-weight: bold; }
+                                table.receipt-table td { border: 1px solid #000; padding: 6px 8px; text-align: left; }
                                 .text-end { text-align: right; }
                             </style>
 
@@ -635,20 +634,21 @@
                         width: 100%; 
                         border-collapse: collapse; 
                         margin-top: 12px; 
+                        border: 1px solid #000;
                     }
                     
                     table.receipt-table th {
-                        border-bottom: 1px solid #000; 
-                        padding: 8px; 
+                        border: 1px solid #000; 
+                        padding: 6px 8px; 
                         text-align: left;
                         font-weight: bold;
                         background: none;
                     }
                     
                     table.receipt-table td { 
-                        padding: 2px; 
+                        padding: 6px 8px; 
                         text-align: left;
-                        border: none;
+                        border: 1px solid #000;
                     }
                     
                     .text-end { 

@@ -1827,9 +1827,7 @@ class StoreBilling extends Component
                     }
                 }
                 
-                $unitPrice = $product['price'] - round($discountPrice, 2);
-                $warrantyThreshold = Setting::where('key', 'warranty_min_amount')->value('value') ?? 1000;
-                return ($unitPrice >= $warrantyThreshold) ? 6 : null;
+                return null;
             })();
 
             $newItem = [

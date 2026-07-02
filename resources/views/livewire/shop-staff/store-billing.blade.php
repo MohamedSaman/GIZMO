@@ -1045,37 +1045,36 @@
 
                     <div style="border-bottom: 1px dashed #000; margin: 8px 0;"></div>
 
-                    <!-- Table Header -->
-                    <div style="display: flex; font-weight: bold; font-size: 12px; margin-bottom: 2px;">
-                        <span style="flex: 2;">Item</span>
-                        <span style="flex: 0.5; text-align: center;">Qty</span>
-                        <span style="flex: 1; text-align: right;">Price</span>
-                    </div>
-                    <div style="border-bottom: 1px dotted #000; margin-bottom: 5px;"></div>
-
-                    <!-- Items -->
-                    <div style="font-size: 11px;">
-                        @foreach($createdSale->items as $index => $item)
-                        <div style="display: flex; margin-bottom: 2px;">
-                            <span style="flex: 2;font-weight: bold">
-                                {{ $index + 1 }}. {{ $item->product_name }}
-                                @if($item->has_warranty)
-                                <div style="font-size: 9px; font-weight: bold; font-style: italic; color: #000000ff; margin-top: 1px;">({{ $item->warranty_duration }} Warranty)</div>
-                                @endif
-                            </span>
-                            <span style="flex: 0.5; text-align: center; font-weight: bold;">{{ $item->quantity }}</span>
-                            <span style="flex: 1; text-align: right; font-weight: bold;">{{ number_format($item->unit_price, 0) }}</span>
-                        </div>
-                        @if($item->discount_per_unit > 0)
-                        <div style="display: flex; font-size: 11px; color: #000; font-weight: bold; margin-top: 1px; margin-bottom: 3px;">
-                            <span style="flex: 2; padding-left: 5px;">
-                                Disc: {{ number_format($item->discount_per_unit, 0) }}
-                                @if($item->discount_percentage > 0) ({{ number_format($item->discount_percentage, 0) }}%) @endif
-                            </span>
-                        </div>
-                        @endif
-                        @endforeach
-                    </div>
+                    <!-- Items Table -->
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 5px; margin-bottom: 5px; border: 1px solid #000; table-layout: fixed;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #000; padding: 4px 5px; text-align: left; font-size: 11px; font-weight: bold; width: 58%;">Item</th>
+                                <th style="border: 1px solid #000; padding: 4px 5px; text-align: center; font-size: 11px; font-weight: bold; width: 12%;">Qty</th>
+                                <th style="border: 1px solid #000; padding: 4px 5px; text-align: right; font-size: 11px; font-weight: bold; width: 30%;">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($createdSale->items as $index => $item)
+                            <tr>
+                                <td style="border: 1px solid #000; padding: 4px 5px; font-size: 11px; font-weight: bold; text-align: left; vertical-align: top; word-wrap: break-word;">
+                                    {{ $index + 1 }}. {{ $item->product_name }}
+                                    @if($item->has_warranty)
+                                    <div style="font-size: 9px; font-weight: bold; font-style: italic; color: #000; margin-top: 1px;">({{ $item->warranty_duration }} Warranty)</div>
+                                    @endif
+                                    @if($item->discount_per_unit > 0)
+                                    <div style="font-size: 9px; font-weight: bold; color: #000; margin-top: 2px;">
+                                        Disc: {{ number_format($item->discount_per_unit, 0) }}
+                                        @if($item->discount_percentage > 0) ({{ number_format($item->discount_percentage, 0) }}%) @endif
+                                    </div>
+                                    @endif
+                                </td>
+                                <td style="border: 1px solid #000; padding: 4px 5px; font-size: 11px; font-weight: bold; text-align: center; vertical-align: top;">{{ $item->quantity }}</td>
+                                <td style="border: 1px solid #000; padding: 4px 5px; font-size: 11px; font-weight: bold; text-align: right; vertical-align: top;">{{ number_format($item->unit_price, 0) }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
 
                     <div style="border-bottom: 1px dashed #000; margin: 8px 0;"></div>
 

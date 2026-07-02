@@ -30,6 +30,17 @@
             padding: 3mm;
             box-sizing: border-box;
         }
+        .receipt-table {
+            border: 1px solid #000;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        .receipt-table th,
+        .receipt-table td {
+            border: 1px solid #000;
+            padding: 4px 5px;
+            vertical-align: top;
+        }
         @media print {
             html, body { margin: 0; padding: 0; width: 80mm; }
         }
@@ -87,37 +98,40 @@
 
         <div style="border-bottom: 1px dashed #000; margin: 8px 0;"></div>
 
-        <!-- Table Header -->
-        <div style="display: flex; font-weight: bold; font-size: 12px; margin-bottom: 2px;">
-            <span style="flex: 2;">Item</span>
-            <span style="flex: 0.5; text-align: center;">Qty</span>
-            <span style="flex: 1; text-align: right;">Price</span>
-        </div>
-        <div style="border-bottom: 1px dotted #000; margin-bottom: 5px;"></div>
-
-        <!-- Items -->
-        <div style="font-size: 11px;">
-            @foreach($sale->items as $index => $item)
-            <div style="display: flex; margin-bottom: 2px;">
-                <span style="flex: 2; font-weight: bold;">
-                    {{ $index + 1 }}. {{ $item->product_name }}
-                    @if($item->has_warranty)
-                    <div style="font-size: 9px; font-weight: bold; font-style: italic; color: #000000ff; margin-top: 1px;">({{ $item->warranty_duration }} Warranty)</div>
-                    @endif
-                </span>
-                <span style="flex: 0.5; text-align: center; font-weight: bold;">{{ $item->quantity }}</span>
-                <span style="flex: 1; text-align: right; font-weight: bold;">{{ number_format($item->unit_price, 0) }}</span>
-            </div>
-            @if($item->discount_per_unit > 0)
-            <div style="display: flex; font-size: 11px; color: #000; font-weight: bold; margin-top: 1px; margin-bottom: 3px;">
-                <span style="flex: 2; padding-left: 5px;">
-                    Disc: {{ number_format($item->discount_per_unit, 0) }}
-                    @if($item->discount_percentage > 0) ({{ number_format($item->discount_percentage, 0) }}%) @endif
-                </span>
-            </div>
-            @endif
-            @endforeach
-        </div>
+        <!-- Table Header & Items -->
+        <table class="receipt-table" style="width: 100%; margin-top: 5px; margin-bottom: 5px;">
+            <thead>
+                <tr>
+                    <th style="text-align: left; font-size: 11px; font-weight: bold; width: 56%;">Item</th>
+                    <th style="text-align: center; font-size: 11px; font-weight: bold; width: 14%;">Qty</th>
+                    <th style="text-align: right; font-size: 11px; font-weight: bold; width: 30%;">Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($sale->items as $index => $item)
+                <tr>
+                    <td style="font-size: 11px; font-weight: bold; text-align: left; word-break: break-word;">
+                        {{ $index + 1 }}. {{ $item->product_name }}
+                        @if($item->has_warranty)
+                        <div style="font-size: 9px; font-weight: bold; font-style: italic; color: #000; margin-top: 1px;">({{ $item->warranty_duration }} Warranty)</div>
+                        @endif
+                        @if($item->discount_per_unit > 0)
+                        <div style="font-size: 9px; font-weight: bold; color: #000; margin-top: 2px;">
+                            Disc: {{ number_format($item->discount_per_unit, 0) }}
+                            @if($item->discount_percentage > 0) ({{ number_format($item->discount_percentage, 0) }}%) @endif
+                        </div>
+                        @endif
+                    </td>
+                    <td style="border: 1px solid #000; padding: 4px 5px; font-size: 11px; font-weight: bold; text-align: center; vertical-align: top;">
+                        {{ $item->quantity }}
+                    </td>
+                    <td style="border: 1px solid #000; padding: 4px 5px; font-size: 11px; font-weight: bold; text-align: right; vertical-align: top;">
+                        {{ number_format($item->unit_price, 0) }}
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
 
         <div style="border-bottom: 1px dashed #000; margin: 8px 0;"></div>
 
@@ -188,10 +202,10 @@
             @else
             @if($sale->payment_type == 'full')
             <div style="display: flex;">
-                <span style="width: 110px; font-weight: bold;">Payment Method</span>
+                    <td style="font-size: 11px; font-weight: bold; text-align: center;">
                 <span>: CASH</span>
             </div>
-            @else
+                    <td style="font-size: 11px; font-weight: bold; text-align: right;">
             <div style="display: flex;">
                 <span style="width: 110px; font-weight: bold;">Payment Method</span>
                 <span>: DUE</span>
