@@ -209,7 +209,7 @@
                                 <th class="px-3 py-2 text-left">Item Details</th>
                                 <th class="px-2 py-2 text-center">Qty</th>
                                 <th class="px-2 py-2 text-right">Price</th>
-                                <th class="px-2 py-2 text-center">Discount</th>
+                                <th class="px-2 py-2 text-center hidden">Discount</th>
                                 <th class="px-3 py-2 text-right">Subtotal</th>
                                 <th class="px-1 py-2 w-8">&nbsp;</th>
                             </tr>
@@ -303,7 +303,7 @@
                                             class="w-24 h-7 text-right text-xs font-bold bg-slate-50 border border-slate-200 rounded px-2 focus:outline-none focus:border-[#f59e0b] transition-colors" />
                                     </div>
                                 </td>
-                                <td class="px-2 py-2 text-center">
+                                <td class="px-2 py-2 text-center hidden">
                                     @php
                                     $discountType = $item['discount_type'] ?? 'fixed';
                                     $discountPercent = $item['discount_percentage'] ?? 0;
