@@ -367,7 +367,17 @@
                                             class="material-symbols-outlined text-base group-hover:scale-110 transition-transform">visibility</span>
                                         View & Pack
                                     </button>
-                                @elseif($status === 'packed')
+                                @else
+                                    <button
+                                        class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-slate-50 hover:border-slate-300 transition-all group"
+                                        wire:click="showPackingModal({{ $sale->id }})">
+                                        <span
+                                            class="material-symbols-outlined text-base group-hover:scale-110 transition-transform">visibility</span>
+                                        View
+                                    </button>
+                                @endif
+
+                                @if($status === 'packed')
                                     {{-- Packed → Direct Deliver button --}}
                                     <button
                                         class="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg shadow-sky-500/15 hover:shadow-xl transition-all group"
@@ -677,13 +687,31 @@
                         <span class="material-symbols-outlined text-sm">close</span>
                         Close
                     </button>
-                    <button
-                        class="px-6 py-2.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg shadow-violet-500/20 hover:shadow-xl transition-all flex items-center gap-2 group"
-                        wire:click="confirmStatusChange('packed', {{ $modalSale->id }})" wire:loading.attr="disabled">
-                        <span
-                            class="material-symbols-outlined text-base group-hover:scale-110 transition-transform">package_2</span>
-                        Mark as Packed
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button
+                            type="button"
+                            class="px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 uppercase tracking-wider hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center gap-2"
+                            onclick="window.open('{{ route('print.sale', $modalSale->id) }}', '_blank', 'width=800,height=600,scrollbars=yes')">
+                            <span class="material-symbols-outlined text-sm">print</span>
+                            Print
+                        </button>
+
+                        @if(($modalSale->delivery_status ?? null) === 'pending')
+                            <button
+                                class="px-6 py-2.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg shadow-violet-500/20 hover:shadow-xl transition-all flex items-center gap-2 group"
+                                wire:click="confirmStatusChange('packed', {{ $modalSale->id }})" wire:loading.attr="disabled">
+                                <span
+                                    class="material-symbols-outlined text-base group-hover:scale-110 transition-transform">package_2</span>
+                                Mark as Packed
+                            </button>
+                        @else
+                            <div
+                                class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">info</span>
+                                {{ ucfirst($modalSale->delivery_status ?? 'viewing') }}
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
