@@ -355,7 +355,7 @@ class StaffSalesList extends Component
 
     public function printInvoice($saleId)
     {
-        $sale = Sale::with(['customer', 'items', 'payments', 'returns' => function ($q) {
+        $sale = Sale::with(['customer', 'deliverySale', 'items', 'payments', 'returns' => function ($q) {
             $q->with('product');
         }])->where('user_id', Auth::id())->find($saleId);
 
@@ -364,9 +364,16 @@ class StaffSalesList extends Component
             return;
         }
 
-        // Open print page in new window
-        $printUrl = '/staff/print/sale/' . $sale->id;
-        $this->js("window.open('$printUrl', '_blank', 'width=800,height=600');");
+        // Open invoice print page in new window.
+        $printUrl = route('print.sale', $sale->id);
+        $script = "window.open(" . json_encode($printUrl) . ", '_blank', 'width=800,height=600');";
+
+        if ($sale->deliverySale) {
+            $deliveryLabelUrl = route('print.delivery-label', $sale->id);
+            $script .= "setTimeout(() => { window.open(" . json_encode($deliveryLabelUrl) . ", '_blank', 'width=500,height=700'); }, 500);";
+        }
+
+        $this->js($script);
     }
 
     public function downloadInvoice($saleId)

@@ -68,6 +68,22 @@ class SalesList extends Component
         // Initialize component
     }
 
+    private function visibleSalesQuery(array $with = [])
+    {
+        $query = Sale::query();
+
+        if (!empty($with)) {
+            $query->with($with);
+        }
+
+        if ($this->isStaff()) {
+            return $query->where('user_id', Auth::id())
+                ->where('sale_type', 'staff');
+        }
+
+        return $query->whereIn('sale_type', ['pos', 'admin', 'staff']);
+    }
+
     public function updatedSearch()
     {
         $this->resetPage();
@@ -90,7 +106,7 @@ class SalesList extends Component
 
     public function viewSale($saleId)
     {
-        $query = Sale::with([
+        $this->selectedSale = $this->visibleSalesQuery([
             'customer',
             'items',
             'user',
@@ -98,13 +114,12 @@ class SalesList extends Component
             'returns' => function ($q) {
                 $q->with('product');
             }
-        ])->where('sale_type', $this->getSaleType());
+        ])->find($saleId);
 
-        if ($this->isStaff()) {
-            $query->where('user_id', Auth::id());
+        if (!$this->selectedSale) {
+            $this->dispatch('showToast', ['type' => 'error', 'message' => 'Sale not found.']);
+            return;
         }
-
-        $this->selectedSale = $query->find($saleId);
 
         $this->showViewModal = true;
         $this->dispatch('showModal', 'viewModal');
@@ -112,11 +127,7 @@ class SalesList extends Component
 
     public function editSale($saleId)
     {
-        $query = Sale::with(['customer', 'deliverySale', 'items'])->where('sale_type', $this->getSaleType());
-        if ($this->isStaff()) {
-            $query->where('user_id', Auth::id());
-        }
-        $sale = $query->find($saleId);
+        $sale = $this->visibleSalesQuery(['customer', 'deliverySale', 'items'])->find($saleId);
 
         if ($sale) {
             $this->editSaleId = $sale->id;
@@ -161,11 +172,7 @@ class SalesList extends Component
     // Return Product Functionality
     public function returnSale($saleId)
     {
-        $query = Sale::with(['items.product', 'customer'])->where('sale_type', $this->getSaleType());
-        if ($this->isStaff()) {
-            $query->where('user_id', Auth::id());
-        }
-        $this->selectedSale = $query->find($saleId);
+        $this->selectedSale = $this->visibleSalesQuery(['items.product', 'customer'])->find($saleId);
 
         if ($this->selectedSale) {
             // Initialize return items from sale items
@@ -489,11 +496,7 @@ class SalesList extends Component
 
     public function deleteSale($saleId)
     {
-        $query = Sale::with('deliverySale')->where('sale_type', $this->getSaleType());
-        if ($this->isStaff()) {
-            $query->where('user_id', Auth::id());
-        }
-        $sale = $query->find($saleId);
+        $sale = $this->visibleSalesQuery(['deliverySale'])->find($saleId);
 
         // Block deletion if delivery status is Delivered or Cancelled
         if ($sale && $sale->deliverySale && in_array($sale->deliverySale->status, ['Delivered', 'Cancelled'])) {
@@ -540,7 +543,7 @@ class SalesList extends Component
 
     public function printInvoice($saleId)
     {
-        $sale = \App\Models\Sale::with(['customer', 'items', 'payments', 'returns' => function ($q) {
+        $sale = \App\Models\Sale::with(['customer', 'deliverySale', 'items', 'payments', 'returns' => function ($q) {
             $q->with('product');
         }])->find($saleId);
         if (!$sale) {
@@ -549,25 +552,23 @@ class SalesList extends Component
         }
         // Store sale ID in session for print route
         session(['print_sale_id' => $sale->id]);
-        // Open invoice print page in new window
+        // Open invoice print page in new window.
+        $printUrl = route('print.sale', $sale->id);
+        $script = "window.open(" . json_encode($printUrl) . ", '_blank', 'width=800,height=600');";
 
+        if ($sale->deliverySale) {
+            $deliveryLabelUrl = route('print.delivery-label', $sale->id);
+            $script .= "setTimeout(() => { window.open(" . json_encode($deliveryLabelUrl) . ", '_blank', 'width=500,height=700'); }, 500);";
+        }
 
-        // Also open delivery label print page in new window
-        $deliveryLabelUrl = route('admin.print.delivery-label', $sale->id);
-        $this->js("setTimeout(() => { window.open('$deliveryLabelUrl', '_blank', 'width=500,height=700'); }, 500);");
+        $this->js($script);
     }
 
     public function downloadInvoice($saleId)
     {
-        $query = Sale::with(['customer', 'items', 'returns' => function ($q) {
+        $sale = $this->visibleSalesQuery(['customer', 'items', 'returns' => function ($q) {
             $q->with('product');
-        }])->where('sale_type', $this->getSaleType());
-
-        if ($this->isStaff()) {
-            $query->where('user_id', Auth::id());
-        }
-
-        $sale = $query->find($saleId);
+        }])->find($saleId);
 
         if (!$sale) {
             $this->dispatch('showToast', ['type' => 'error', 'message' => 'Sale not found.']);
@@ -733,7 +734,7 @@ class SalesList extends Component
     public function updateDeliveryStatus($saleId, $status)
     {
         try {
-            $sale = Sale::with(['deliverySale', 'items'])->where('sale_type', $this->getSaleType())->find($saleId);
+            $sale = $this->visibleSalesQuery(['deliverySale', 'items'])->find($saleId);
             if ($sale && $sale->deliverySale) {
                 // Block status change if current status is Delivered or Cancelled
                 $currentStatus = $sale->deliverySale->status;
@@ -766,15 +767,7 @@ class SalesList extends Component
 
     public function getSalesProperty()
     {
-        $query = Sale::with(['customer', 'user', 'items', 'returns', 'deliverySale']);
-
-        // Filter by sale_type and user_id based on role
-        if ($this->isStaff()) {
-            $query->where('user_id', Auth::id())
-                ->where('sale_type', 'staff');
-        } else {
-            $query->whereIn('sale_type', ['pos', 'admin', 'staff']);
-        }
+        $query = $this->visibleSalesQuery(['customer', 'user', 'items', 'returns', 'deliverySale']);
 
         return $query->when($this->search, function ($query) {
             $query->where(function ($q) {
@@ -841,11 +834,7 @@ class SalesList extends Component
     public function markAsPaid($saleId)
     {
         try {
-            $query = Sale::where('sale_type', $this->getSaleType());
-            if ($this->isStaff()) {
-                $query->where('user_id', Auth::id());
-            }
-            $sale = $query->find($saleId);
+            $sale = $this->visibleSalesQuery()->find($saleId);
 
             if ($sale) {
                 $sale->update([
@@ -864,11 +853,7 @@ class SalesList extends Component
     public function markAsPending($saleId)
     {
         try {
-            $query = Sale::where('sale_type', $this->getSaleType());
-            if ($this->isStaff()) {
-                $query->where('user_id', Auth::id());
-            }
-            $sale = $query->find($saleId);
+            $sale = $this->visibleSalesQuery()->find($saleId);
 
             if ($sale) {
                 $sale->update([

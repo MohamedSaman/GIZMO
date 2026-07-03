@@ -29,7 +29,7 @@
                 </tr>
             </table>
             <div style="margin-top: 10px;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data={{ urlencode(route('admin.print.sale', $sale->id)) }}" alt="Invoice QR" style="width: 90px; height: 90px; border: 1px solid #ddd; padding: 3px; background: white;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data={{ urlencode(route('print.sale', $sale->id)) }}" alt="Invoice QR" style="width: 90px; height: 90px; border: 1px solid #ddd; padding: 3px; background: white;">
             </div>
         </div>
     </div>

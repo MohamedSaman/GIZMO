@@ -407,7 +407,7 @@ class PosSales extends Component
         // Store sale ID in session for print route
         session(['print_sale_id' => $sale->id]);
         // Open print page in new window
-        $printUrl = route('admin.print.sale', $sale->id);
+        $printUrl = route('print.sale', $sale->id);
         $this->js("window.open('$printUrl', '_blank', 'width=800,height=600');");
     }
 

@@ -482,10 +482,10 @@
 
                 {{-- Footer Buttons --}}
                 <div class="modal-footer justify-content-center flex-wrap gap-2 gap-sm-3" style="padding: 1rem 0.75rem;">
-                    <button type="button" class="btn btn-outline-primary flex-grow-1" style="font-size: 0.85rem; min-width: 120px;" onclick="window.open('/admin/print/sale/{{ $createdSale->id }}', '_blank')">
+                    <button type="button" class="btn btn-outline-primary flex-grow-1" style="font-size: 0.85rem; min-width: 120px;" onclick="window.open('{{ route('print.sale', $createdSale->id) }}', '_blank')">
                         <i class="bi bi-printer me-2"></i><span class="d-none d-sm-inline">Print</span><span class="d-sm-none">Print</span>
                     </button>
-                    <a href="/admin/print/sale/{{ $createdSale->id }}/download" class="btn btn-success flex-grow-1" style="font-size: 0.85rem; min-width: 120px;">
+                    <a href="{{ route('print.sale.download', $createdSale->id) }}" class="btn btn-success flex-grow-1" style="font-size: 0.85rem; min-width: 120px;">
                         <i class="bi bi-download me-2"></i><span class="d-none d-sm-inline">Download Invoice</span><span class="d-sm-none">Download</span>
                     </a>
                 </div>

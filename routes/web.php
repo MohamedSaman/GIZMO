@@ -241,6 +241,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // API route for products (client-side caching)
     Route::get('/api/products/all', [ProductApiController::class, 'getAllProducts'])->name('api.products.all');
 
+    // Role-agnostic print/download routes for all authenticated users.
+    Route::get('/print/sale/{id}', [PrintController::class, 'printSale'])->name('print.sale');
+    Route::get('/print/delivery-label/{id}', [PrintController::class, 'printDeliveryLabel'])->name('print.delivery-label');
+    Route::get('/print/sale/{id}/download', [PrintController::class, 'downloadSale'])->name('print.sale.download');
+    Route::get('/print/quotation/{id}', [PrintController::class, 'printQuotation'])->name('print.quotation');
+
     // !! Admin routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', AdminDashboard::class)->name('dashboard');
@@ -264,10 +270,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/view-payments', ViewPayments::class)->name('view-payments');
         Route::get('/admin/staff/{staffId}/reentry', \App\Livewire\Admin\StockReentry::class)->name('staff.reentry');
         Route::get('/store-billing', StoreBilling::class)->name('store-billing');
-        Route::get('/print/sale/{id}', [PrintController::class, 'printSale'])->name('print.sale');
-        Route::get('/print/delivery-label/{id}', [PrintController::class, 'printDeliveryLabel'])->name('print.delivery-label');
-        Route::get('/print/sale/{id}/download', [PrintController::class, 'downloadSale'])->name('print.sale.download');
-        Route::get('/print/quotation/{id}', [PrintController::class, 'printQuotation'])->name('quotation.print');
         Route::get('/due-payments', AdminDuePayments::class)->name('due-payments');
         Route::get('/staff-attendance', StaffAttendance::class)->name('staff-attendance');
         Route::get('/staff-salary', StaffSallary::class)->name('staff-salary');
@@ -343,9 +345,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/pos-sales', PosSales::class)->name('pos-sales');
         Route::get('/sales-list', \App\Livewire\Staff\StaffSalesList::class)->name('sales-list');
         Route::get('/store-billing', StoreBilling::class)->name('store-billing');
-        Route::get('/print/sale/{id}', [PrintController::class, 'printSale'])->name('print.sale');
-        Route::get('/print/delivery-label/{id}', [PrintController::class, 'printDeliveryLabel'])->name('print.delivery-label');
-        Route::get('/print/sale/{id}/download', [PrintController::class, 'downloadSale'])->name('print.sale.download');
 
         // Customers
         Route::get('/manage-customer', ManageCustomer::class)->name('manage-customer');
@@ -367,7 +366,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         // Quotations
         Route::get('/quotation-system', \App\Livewire\Staff\StaffQuotationSystem::class)->name('quotation-system');
         Route::get('/quotation-list', \App\Livewire\Staff\StaffQuotationList::class)->name('quotation-list');
-        Route::get('/print/quotation/{id}', [PrintController::class, 'printQuotation'])->name('print.quotation');
 
         // Returns
         Route::get('/return-add', \App\Livewire\Staff\StaffReturnManagement::class)->name('return-add');
@@ -634,7 +632,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::get('/sales', ShopStaffSalesList::class)->name('sales');
         Route::get('/due-sales', \App\Livewire\ShopStaff\ShopStaffDueSales::class)->name('due-sales');
         Route::get('/expenses', ShopStaffExpenses::class)->name('expenses');
-        Route::get('/print/sale/{id}', [App\Http\Controllers\Admin\PrintController::class, 'printSale'])->name('print.sale');
         Route::get('/delivery-packing', ShopStaffDeliveryPacking::class)->name('delivery-packing');
         Route::get('/manage-employees', \App\Livewire\ShopStaff\ManageEmployees::class)->name('manage-employees');
     });

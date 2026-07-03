@@ -427,7 +427,7 @@
 
                     {{-- Footer Buttons --}}
                     <div class="modal-footer justify-content-center">
-                        <button type="button" class="btn btn-outline-primary me-2" onclick="window.open('/staff/print/quotation/{{ $createdQuotation->id }}', '_blank')">
+                        <button type="button" class="btn btn-outline-primary me-2" onclick="window.open('{{ route('print.quotation', $createdQuotation->id) }}', '_blank')">
                             <i class="bi bi-printer me-2"></i>Print
                         </button>
                         <button type="button" class="btn btn-success" wire:click="downloadQuotation">
@@ -614,4 +614,3 @@
     }
 </style>
 @endpush
-

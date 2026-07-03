@@ -628,7 +628,7 @@
                     <i class="bi bi-x-circle me-2"></i>Close
                 </button>
                 @if($selectedQuotation)
-                <a href="{{ route('admin.quotation.print', $selectedQuotation->id) }}" target="_blank" class="btn btn-primary">
+                <a href="{{ route('print.quotation', $selectedQuotation->id) }}" target="_blank" class="btn btn-primary">
                     <i class="bi bi-printer me-2"></i>Print Quotation
                 </a>
                 @endif

@@ -536,7 +536,7 @@ class StaffQuotationSystem extends Component
         }
 
         // Open print page in new window
-        $printUrl = '/admin/print/quotation/' . $quotation->id;
+        $printUrl = route('print.quotation', $quotation->id);
         $this->js("window.open('$printUrl', '_blank', 'width=800,height=600');");
     }
 

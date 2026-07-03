@@ -100,7 +100,8 @@ class ShopStaffSalesList extends Component
 
         session(['print_sale_id' => $sale->id]);
 
-        $this->js("window.open('/shop-staff/print/sale/{$saleId}', '_blank', 'width=800,height=600,scrollbars=yes')");
+        $printUrl = route('print.sale', $sale->id);
+        $this->js("window.open('$printUrl', '_blank', 'width=800,height=600,scrollbars=yes')");
     }
 
     public function render()

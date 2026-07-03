@@ -2929,7 +2929,7 @@ class StoreBilling extends Component
 
         // Open print page in new window
         $this->js("
-            const printUrl = '" . route('admin.print.sale', $sale->id) . "';
+            const printUrl = '" . route('print.sale', $sale->id) . "';
             const printWindow = window.open(printUrl, '_blank', 'width=800,height=600');
             if (printWindow) {
                 printWindow.focus();

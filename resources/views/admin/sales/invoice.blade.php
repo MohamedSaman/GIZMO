@@ -342,7 +342,7 @@
                         Tel: {{ $sale->customer->phone ?? 'N/A' }}
                     </td>
                     <td style="width: 20%; text-align: center; vertical-align: middle;">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data={{ urlencode(route('admin.print.sale', $sale->id)) }}" alt="Invoice QR" style="width: 90px; height: 90px; border: 1px solid #ddd; padding: 2px;">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data={{ urlencode(route('print.sale', $sale->id)) }}" alt="Invoice QR" style="width: 90px; height: 90px; border: 1px solid #ddd; padding: 2px;">
                     </td>
                     <td class="invoice-info">
                         <table>

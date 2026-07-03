@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Label - {{ $sale->deliverySale->delivery_barcode ?? 'N/A' }}</title>
+    <title>Delivery Label - {{ $sale->deliverySale?->delivery_barcode ?? 'N/A' }}</title>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -212,7 +212,7 @@
                 </div>
                 <div class="meta">
                     <div class="method">
-                        {{ strtoupper($sale->deliverySale->delivery_method ?? 'POST') }}
+                        {{ strtoupper($sale->deliverySale?->delivery_method ?? 'POST') }}
                     </div>
                     <div class="date">
                         {{ $sale->created_at->format('d.m.Y') }}
@@ -225,7 +225,7 @@
                 <div class="customer-section">
                     <div class="to-label">TO :</div>
                     @php
-                    $details = $sale->deliverySale->customer_details ?? $sale->customer->address ?? '';
+                    $details = $sale->deliverySale?->customer_details ?? $sale->customer?->address ?? '';
                     // Try to split by common delimiters: pipe, comma, period+space, or newlines
                     $parts = preg_split('/\s*[\|]\s*|\n|\r\n/', $details);
                     // If only one part, try splitting by period followed by space and digits (phone after name)
@@ -243,7 +243,7 @@
                 <div class="barcode-section">
                     <svg id="barcode"></svg>
                     <div class="barcode-text">
-                        {{ $sale->deliverySale->delivery_barcode }}
+                        {{ $sale->deliverySale?->delivery_barcode ?? 'N/A' }}
                     </div>
                 </div>
             </div>
@@ -311,7 +311,7 @@
                     </div>
 
                     <!-- COD -->
-                    @if($sale->deliverySale && $sale->deliverySale->payment_method === 'Cash on Delivery')
+                    @if($sale->deliverySale?->payment_method === 'Cash on Delivery')
                     <div class="icon-item">
                         <div class="cod-box">
                             COD
@@ -340,7 +340,7 @@
     </div>
 
     <script>
-        JsBarcode("#barcode", "{{ $sale->deliverySale->delivery_barcode ?? 'N/A' }}", {
+        JsBarcode("#barcode", "{{ $sale->deliverySale?->delivery_barcode ?? 'N/A' }}", {
             format: "CODE128",
             width: 2,
             height: 70,

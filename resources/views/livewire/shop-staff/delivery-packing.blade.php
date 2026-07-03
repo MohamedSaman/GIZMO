@@ -317,7 +317,7 @@
                 @forelse($sales as $index => $sale)
                     @php
                         $status = $sale->delivery_status ?? 'N/A';
-                        $barcode = $sale->deliverySale->delivery_barcode ?? $sale->sale_id ?? 'N/A';
+                        $barcode = $sale->deliverySale?->delivery_barcode ?? $sale->sale_id ?? 'N/A';
                         $statusConfig = match ($status) {
                             'pending' => ['bg' => 'bg-amber-50', 'text' => 'text-amber-700', 'border' => 'border-amber-200', 'dot' => 'bg-amber-500'],
                             'packed' => ['bg' => 'bg-violet-50', 'text' => 'text-violet-700', 'border' => 'border-violet-200', 'dot' => 'bg-violet-500'],
@@ -520,7 +520,7 @@
                         <div>
                             <h2 class="text-sm font-black text-white uppercase tracking-wider">Packing Details</h2>
                             <p class="text-xs text-white/80 font-bold font-mono mt-0.5">
-                                {{ $modalSale->deliverySale->delivery_barcode ?? $modalSale->sale_id }}</p>
+                                {{ $modalSale->deliverySale?->delivery_barcode ?? $modalSale->sale_id }}</p>
                         </div>
                     </div>
                     <button

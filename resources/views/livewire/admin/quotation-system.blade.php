@@ -624,7 +624,7 @@
                         <i class="bi bi-plus-circle me-2"></i>Create New Quotation
                     </button>
                     @if($createdQuotation)
-                    <a href="{{ route('admin.quotation.print', $createdQuotation->id) }}" target="_blank" class="btn btn-success me-2">
+                    <a href="{{ route('print.quotation', $createdQuotation->id) }}" target="_blank" class="btn btn-success me-2">
                         <i class="bi bi-printer me-2"></i>Print Quotation
                     </a>
                     @endif
