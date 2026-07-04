@@ -1041,6 +1041,17 @@
                             <span style="width: 85px;">Cashier</span>
                             <span>: {{ $createdSale->user->name ?? 'Admin' }}</span>
                         </div>
+                        @if($createdSale->customer && $createdSale->customer->name !== 'Walking Customer')
+                        <div style="display: flex; margin-bottom: 2px;">
+                            <span style="width: 85px;">Customer</span>
+                            <span>: {{ $createdSale->customer->name }}</span>
+                        </div>
+                        @elseif($createdSale->walking_customer_name)
+                        <div style="display: flex; margin-bottom: 2px;">
+                            <span style="width: 85px;">Customer</span>
+                            <span>: {{ $createdSale->walking_customer_name }}</span>
+                        </div>
+                        @endif
                     </div>
 
                     <div style="border-bottom: 1px dashed #000; margin: 8px 0;"></div>
@@ -1128,6 +1139,26 @@
                               <span>DUE AMOUNT</span>
                               <span>{{ number_format($createdSale->due_amount, 0) }}</span>
                           </div>
+                          @endif
+                          @if($createdSale->customer && $createdSale->customer->name !== 'Walking Customer')
+                              @php
+                                  $totalDueBalance = floatval($createdSale->customer->total_due ?? 0);
+                              @endphp
+                              @if($totalDueBalance > 0)
+                                  @php
+                                      $previousDue = max(0, $totalDueBalance - floatval($createdSale->due_amount ?? 0));
+                                  @endphp
+                                  @if($previousDue > 0)
+                                  <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                                      <span>PREVIOUS DUE</span>
+                                      <span>{{ number_format($previousDue, 0) }}</span>
+                                  </div>
+                                  @endif
+                                  <div style="display: flex; justify-content: space-between; font-weight: bold; background-color: #f1f5f9; padding: 2px 0;">
+                                      <span>TOTAL OUTSTANDING</span>
+                                      <span>{{ number_format($totalDueBalance, 0) }}</span>
+                                  </div>
+                              @endif
                           @endif
 
                         <div style="border-bottom: 1px dashed #000; margin: 5px 0;"></div>

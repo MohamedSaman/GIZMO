@@ -186,6 +186,26 @@
                 <span>{{ number_format($sale->due_amount, 0) }}</span>
             </div>
             @endif
+            @if($sale->customer && $sale->customer->name !== 'Walking Customer')
+                @php
+                    $totalDueBalance = floatval($sale->customer->total_due ?? 0);
+                @endphp
+                @if($totalDueBalance > 0)
+                    @php
+                        $previousDue = max(0, $totalDueBalance - floatval($sale->due_amount ?? 0));
+                    @endphp
+                    @if($previousDue > 0)
+                    <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                        <span>PREVIOUS DUE</span>
+                        <span>{{ number_format($previousDue, 0) }}</span>
+                    </div>
+                    @endif
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; background-color: #f1f5f9; padding: 2px 0;">
+                        <span>TOTAL OUTSTANDING</span>
+                        <span>{{ number_format($totalDueBalance, 0) }}</span>
+                    </div>
+                @endif
+            @endif
 
             <div style="border-bottom: 1px dashed #000; margin: 5px 0;"></div>
         </div>
