@@ -614,6 +614,55 @@ class AddSupplierReceipt extends Component
             ->paginate(10);
     }
 
+    public function formatProductName($product, $unitPrice = null)
+    {
+        if (!$product) return 'N/A';
+        $name = trim($product->name ?? '');
+
+        if (!empty($product->variant_id) && $product->variant) {
+            $variantName = $product->variant->variant_name ?? null;
+            $variantValue = null;
+
+            if ($unitPrice !== null) {
+                $price = \App\Models\ProductPrice::where('product_id', $product->id)
+                    ->whereNotNull('variant_value')
+                    ->where('supplier_price', $unitPrice)
+                    ->first();
+
+                if (!$price) {
+                    $price = \App\Models\ProductPrice::where('product_id', $product->id)
+                        ->whereNotNull('variant_value')
+                        ->where('selling_price', $unitPrice)
+                        ->first();
+                }
+
+                if ($price && !empty($price->variant_value)) {
+                    $variantValue = trim($price->variant_value);
+                }
+            }
+
+            if (!$variantValue) {
+                $fallback = \App\Models\ProductPrice::where('product_id', $product->id)
+                    ->whereNotNull('variant_value')
+                    ->where('variant_value', '!=', '')
+                    ->first();
+                if ($fallback) $variantValue = trim($fallback->variant_value);
+            }
+
+            if (!empty($variantValue)) {
+                if (!empty($variantName)) {
+                    $display = trim($name . ' - ' . $variantName . ': ' . $variantValue);
+                } else {
+                    $display = trim($name . ' - ' . $variantValue);
+                }
+                // Remove accidental trailing punctuation/hyphens
+                return rtrim($display, " -:");
+            }
+        }
+
+        return rtrim($name, " -:");
+    }
+
     public function render()
     {
         return view('livewire.admin.add-supplier-receipt', [
