@@ -1096,6 +1096,28 @@ class StoreBilling extends Component
         }
     }
 
+    // Ensure amountReceived is always numeric (prevents "Unsupported operand types: string - int")
+    public function updatedAmountReceived($value)
+    {
+        if ($value === '' || is_null($value)) {
+            $this->amountReceived = 0;
+            return;
+        }
+        $clean = preg_replace('/[^0-9.]/', '', (string)$value);
+        $this->amountReceived = $clean !== '' ? (float)$clean : 0;
+    }
+
+    // Ensure bankTransferAmount is always numeric
+    public function updatedBankTransferAmount($value)
+    {
+        if ($value === '' || is_null($value)) {
+            $this->bankTransferAmount = 0;
+            return;
+        }
+        $clean = preg_replace('/[^0-9.]/', '', (string)$value);
+        $this->bankTransferAmount = $clean !== '' ? (float)$clean : 0;
+    }
+
     // Helper method to get price based on price type
     public function getPriceValue($priceRecord)
     {
@@ -2184,8 +2206,9 @@ class StoreBilling extends Component
 
         // Validate payment method specific fields
         if ($this->paymentMethod === 'cash') {
-            if ($this->amountReceived < $this->grandTotal) {
-                $this->showToast('error', 'Amount received must be at least Rs. ' . number_format($this->grandTotal, 2));
+            // Allow amountReceived = 0 (full due sale) or any partial amount (partial due sale)
+            if ((float)($this->amountReceived ?? 0) < 0) {
+                $this->showToast('error', 'Amount received cannot be negative.');
                 return;
             }
         } elseif ($this->paymentMethod === 'cheque') {
@@ -2244,8 +2267,9 @@ class StoreBilling extends Component
 
         // Validate payment method specific fields
         if ($this->paymentMethod === 'cash') {
-            if ($this->amountReceived < $this->grandTotal) {
-                $this->showToast('error', 'Amount received must be at least Rs. ' . number_format($this->grandTotal, 2));
+            // Allow amountReceived = 0 (full due sale) or any partial amount (partial due sale)
+            if ((float)($this->amountReceived ?? 0) < 0) {
+                $this->showToast('error', 'Amount received cannot be negative.');
                 return;
             }
         } elseif ($this->paymentMethod === 'cheque') {

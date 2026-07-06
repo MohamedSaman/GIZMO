@@ -421,6 +421,27 @@ use App\Models\Sale;
                                         <strong>Grand Total:</strong>
                                         <strong>Rs.{{ number_format($selectedSale->total_amount, 2) }}</strong>
                                     </div>
+                                    @if ($selectedSale->customer && $selectedSale->customer->name !== 'Walking Customer')
+                                        @php
+                                            $totalDueBalance = floatval($selectedSale->customer->total_due ?? 0);
+                                        @endphp
+                                        @if ($totalDueBalance > 0)
+                                            @php
+                                                $previousDue = max(0, $totalDueBalance - floatval($selectedSale->due_amount ?? 0));
+                                            @endphp
+                                            <hr style="margin: 8px  0;">
+                                            @if ($previousDue > 0)
+                                            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px;">
+                                                <span>Previous Due:</span>
+                                                <span>Rs.{{ number_format($previousDue, 2) }}</span>
+                                            </div>
+                                            @endif
+                                            <div style="display:flex; justify-content:space-between; font-size:13px; background:#f8f9fa; padding:4px; border-radius:4px;">
+                                                <strong style="color:#dc3545;">Total Outstanding Due:</strong>
+                                                <strong style="color:#dc3545;">Rs.{{ number_format($totalDueBalance, 2) }}</strong>
+                                            </div>
+                                        @endif
+                                    @endif
                                 </div>
                             </div>
                         </div>

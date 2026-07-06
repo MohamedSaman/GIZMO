@@ -878,29 +878,45 @@
 
                     {{-- Cash Form --}}
                     @if($paymentMethod === 'cash')
-                    <div class="space-y-3">
+                    <div class="space-y-3"
+                        x-data="{
+                            amt: {{ (float)($amountReceived ?: 0) }},
+                            grand: {{ (float)($grandTotal ?: 0) }},
+                            get due() { return Math.max(0, this.grand - this.amt); },
+                            get change() { return Math.max(0, this.amt - this.grand); },
+                            fmt(n) { return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+                        }">
                         <div>
-                            <label
-                                class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Amount
-                                Received</label>
+                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Amount Received</label>
                             <div class="relative flex items-center">
-                                <span
-                                    class="absolute left-3 text-[10px] font-black text-slate-400 pointer-events-none">Rs.</span>
-                                <input type="number"
+                                <span class="absolute left-3 text-[10px] font-black text-slate-400 pointer-events-none">Rs.</span>
+                                <input type="text"
+                                    inputmode="decimal"
                                     class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-xl font-black text-slate-800 outline-none focus:border-[#f59e0b] transition-colors"
-                                    wire:model.live="amountReceived" x-init="$nextTick(() => $el.focus())">
+                                    x-init="$nextTick(() => $el.focus())"
+                                    x-model="amt"
+                                    @input="amt = parseFloat($event.target.value) || 0"
+                                    @blur="$wire.set('amountReceived', amt || 0)"
+                                    @keydown.enter="$wire.set('amountReceived', amt || 0)">
                             </div>
+                            <p class="text-[9px] text-slate-400 mt-1">Leave empty or enter 0 to save full amount as due.</p>
                         </div>
-                        <div
+                        {{-- Dynamic due/change display driven by Alpine (no server re-render needed) --}}
+                        <div x-show="due > 0"
+                            class="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-xl">
+                            <div class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-red-500 text-base">pending_actions</span>
+                                <span class="text-[9px] font-black text-red-600 uppercase tracking-widest">Due Amount</span>
+                            </div>
+                            <span class="text-lg font-black text-red-600">Rs. <span x-text="fmt(due)"></span></span>
+                        </div>
+                        <div x-show="due <= 0"
                             class="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
                             <div class="flex items-center gap-1.5">
-                                <span
-                                    class="material-symbols-outlined text-emerald-600 text-base">currency_exchange</span>
-                                <span class="text-[9px] font-black text-emerald-700 uppercase tracking-widest">Balance
-                                    to Return</span>
+                                <span class="material-symbols-outlined text-emerald-600 text-base">currency_exchange</span>
+                                <span class="text-[9px] font-black text-emerald-700 uppercase tracking-widest">Balance to Return</span>
                             </div>
-                            <span class="text-lg font-black text-emerald-700">Rs.
-                                {{ number_format(max(0, ($amountReceived ?? 0) - $grandTotal), 2) }}</span>
+                            <span class="text-lg font-black text-emerald-700">Rs. <span x-text="fmt(change)"></span></span>
                         </div>
                     </div>
                     @endif
@@ -909,14 +925,14 @@
                     @if($paymentMethod === 'bank_transfer')
                     <div class="space-y-2.5">
                         <div>
-                            <label
-                                class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Amount</label>
+                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Amount</label>
                             <div class="relative flex items-center">
-                                <span
-                                    class="absolute left-3 text-[10px] font-black text-slate-400 pointer-events-none">Rs.</span>
-                                <input type="number"
+                                <span class="absolute left-3 text-[10px] font-black text-slate-400 pointer-events-none">Rs.</span>
+                                <input type="text"
+                                    inputmode="decimal"
                                     class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-xl font-black text-slate-800 outline-none focus:border-[#f59e0b] transition-colors"
-                                    wire:model.live="bankTransferAmount">
+                                    wire:model.lazy="bankTransferAmount"
+                                    x-init="$nextTick(() => $el.focus())">
                             </div>
                         </div>
                         <div>
@@ -1001,10 +1017,10 @@
                                 {{ $paymentMethod === 'cash' ? 'Cash Payment' : 'Bank Transfer' }}
                             </p>
                         </div>
-                        @if($paymentMethod === 'cash' && ($amountReceived ?? 0) >= $grandTotal)
+                        @if($paymentMethod === 'cash' && (float)($amountReceived ?: 0) >= (float)($grandTotal ?: 0))
                         <span
                             class="text-[9px] font-black text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Ready</span>
-                        @elseif($paymentMethod === 'bank_transfer' && $bankTransferAmount >= $grandTotal)
+                        @elseif($paymentMethod === 'bank_transfer' && (float)($bankTransferAmount ?: 0) >= (float)($grandTotal ?: 0))
                         <span
                             class="text-[9px] font-black text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Ready</span>
                         @endif
@@ -1093,6 +1109,17 @@
                             <span style="width: 85px;">Cashier</span>
                             <span>: {{ $createdSale->user->name ?? 'Admin' }}</span>
                         </div>
+                        @if($createdSale->customer && $createdSale->customer->name !== 'Walking Customer')
+                        <div style="display: flex; margin-bottom: 2px;">
+                            <span style="width: 85px;">Customer</span>
+                            <span>: {{ $createdSale->customer->name }}</span>
+                        </div>
+                        @elseif($createdSale->walking_customer_name)
+                        <div style="display: flex; margin-bottom: 2px;">
+                            <span style="width: 85px;">Customer</span>
+                            <span>: {{ $createdSale->walking_customer_name }}</span>
+                        </div>
+                        @endif
                     </div>
 
                     <div style="border-bottom: 1px dashed #000; margin: 8px 0;"></div>
@@ -1184,6 +1211,26 @@
                               <span>DUE AMOUNT</span>
                               <span>{{ number_format($createdSale->due_amount, 0) }}</span>
                           </div>
+                          @endif
+                          @if($createdSale->customer && $createdSale->customer->name !== 'Walking Customer')
+                              @php
+                                  $totalDueBalance = floatval($createdSale->customer->total_due ?? 0);
+                              @endphp
+                              @if($totalDueBalance > 0)
+                                  @php
+                                      $previousDue = max(0, $totalDueBalance - floatval($createdSale->due_amount ?? 0));
+                                  @endphp
+                                  @if($previousDue > 0)
+                                  <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                                      <span>PREVIOUS DUE</span>
+                                      <span>{{ number_format($previousDue, 0) }}</span>
+                                  </div>
+                                  @endif
+                                  <div style="display: flex; justify-content: space-between; font-weight: bold; background-color: #f1f5f9; padding: 2px 0;">
+                                      <span>TOTAL OUTSTANDING</span>
+                                      <span>{{ number_format($totalDueBalance, 0) }}</span>
+                                  </div>
+                              @endif
                           @endif
 
                         <div style="border-bottom: 1px dashed #000; margin: 5px 0;"></div>
