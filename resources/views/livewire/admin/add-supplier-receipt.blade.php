@@ -748,7 +748,7 @@
                                                     class="form-check-input" 
                                                     type="checkbox" 
                                                     {{ $isSelected ? 'checked' : '' }}
-                                                    wire:click="toggleOrderSelection({{ $order->id }})"
+                                                    wire:click.stop="toggleOrderSelection({{ $order->id }})"
                                                     style="pointer-events: auto;">
                                             </div>
                                         </td>
@@ -768,7 +768,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <button class="btn btn-outline-primary btn-sm" wire:click="viewOrderDetails({{ $order->id }})">
+                                            <button class="btn btn-outline-primary btn-sm" wire:click.stop="viewOrderDetails({{ $order->id }})">
                                                 <i class="bi bi-eye"></i> View
                                             </button>
                                         </td>
