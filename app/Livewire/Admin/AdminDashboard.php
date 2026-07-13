@@ -369,12 +369,7 @@ class AdminDashboard extends Component
         $onlineSale = $todayPayments->where('payment_method', 'online')->sum('amount');
 
         // Today's overall expenses
-        $todayAdminExpenses = Expense::where('date', $today->toDateString())->sum('amount');
-        $todayStaffExpenses = DB::table('staff_expenses')
-            ->whereDate('expense_date', $today)
-            ->where('status', 'approved')
-            ->sum('amount');
-        $todayExpenses = $todayAdminExpenses + $todayStaffExpenses;
+        $todayExpenses = Expense::where('date', $today->toDateString())->sum('amount');
 
         // Today's revenue (total sale - expenses)
         $todayRevenue = $totalSale - $todayExpenses;
