@@ -1130,7 +1130,7 @@
                             <tr>
                                 <th style="border: 1px solid #000; padding: 4px 5px; text-align: left; font-size: 11px; font-weight: bold; width: 58%;">Item</th>
                                 <th style="border: 1px solid #000; padding: 4px 5px; text-align: center; font-size: 11px; font-weight: bold; width: 12%;">Qty</th>
-                                <th style="border: 1px solid #000; padding: 4px 5px; text-align: right; font-size: 11px; font-weight: bold; width: 30%;">Price</th>
+                                <th style="border: 1px solid #000; padding: 4px 5px; text-align: right; font-size: 11px; font-weight: bold; width: 30%;">Sub Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1138,6 +1138,9 @@
                             <tr>
                                 <td style="border: 1px solid #000; padding: 4px 5px; font-size: 11px; font-weight: bold; text-align: left; vertical-align: top; word-wrap: break-word;">
                                     {{ $index + 1 }}. {{ $item->product_name }}
+                                    <div style="font-size: 9px; font-weight: normal; color: #000; margin-top: 2px;">
+                                        Price: {{ number_format($item->unit_price, 0) }}
+                                    </div>
                                     @if($item->has_warranty)
                                     <div style="font-size: 9px; font-weight: bold; font-style: italic; color: #000; margin-top: 1px;">({{ $item->warranty_duration }} Warranty)</div>
                                     @endif
@@ -1149,7 +1152,7 @@
                                     @endif
                                 </td>
                                 <td style="border: 1px solid #000; padding: 4px 5px; font-size: 11px; font-weight: bold; text-align: center; vertical-align: top;">{{ $item->quantity }}</td>
-                                <td style="border: 1px solid #000; padding: 4px 5px; font-size: 11px; font-weight: bold; text-align: right; vertical-align: top;">{{ number_format($item->unit_price, 0) }}</td>
+                                <td style="border: 1px solid #000; padding: 4px 5px; font-size: 11px; font-weight: bold; text-align: right; vertical-align: top;">{{ number_format($item->unit_price * $item->quantity, 0) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -1166,8 +1169,8 @@
                         @endphp
                         <div
                             style="display: flex; justify-content: space-between; margin-bottom: 2px; font-weight: bold;">
-                            <span>Total Items / Qty</span>
-                            <span>{{ $createdSale->items->count() }} / {{ $createdSale->items->sum('quantity') }}</span>
+                            <span>Total Items</span>
+                            <span>{{ $createdSale->items->count() }}</span>
                         </div>
                         <div
                             style="display: flex; justify-content: space-between; margin-bottom: 2px; font-weight: bold;">

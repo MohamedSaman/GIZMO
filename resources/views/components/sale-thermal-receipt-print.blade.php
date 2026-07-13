@@ -104,7 +104,7 @@
                 <tr>
                     <th style="text-align: left; font-size: 11px; font-weight: bold; width: 56%;">Item</th>
                     <th style="text-align: center; font-size: 11px; font-weight: bold; width: 14%;">Qty</th>
-                    <th style="text-align: right; font-size: 11px; font-weight: bold; width: 30%;">Price</th>
+                    <th style="text-align: right; font-size: 11px; font-weight: bold; width: 30%;">Sub Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -112,6 +112,9 @@
                 <tr>
                     <td style="font-size: 11px; font-weight: bold; text-align: left; word-break: break-word;">
                         {{ $index + 1 }}. {{ $item->product_name }}
+                        <div style="font-size: 9px; font-weight: normal; color: #000; margin-top: 2px;">
+                            Price: {{ number_format($item->unit_price, 0) }}
+                        </div>
                         @if($item->has_warranty)
                         <div style="font-size: 9px; font-weight: bold; font-style: italic; color: #000; margin-top: 1px;">({{ $item->warranty_duration }} Warranty)</div>
                         @endif
@@ -126,7 +129,7 @@
                         {{ $item->quantity }}
                     </td>
                     <td style="border: 1px solid #000; padding: 4px 5px; font-size: 11px; font-weight: bold; text-align: right; vertical-align: top;">
-                        {{ number_format($item->unit_price, 0) }}
+                        {{ number_format($item->unit_price * $item->quantity, 0) }}
                     </td>
                 </tr>
                 @endforeach
@@ -143,8 +146,8 @@
             $totalDiscPercentage = $originalSubtotal > 0 ? ($totalDiscountRs / $originalSubtotal * 100) : 0;
             @endphp
             <div style="display: flex; justify-content: space-between; margin-bottom: 2px; font-weight: bold;">
-                <span>Total Items / Qty</span>
-                <span>{{ $sale->items->count() }} / {{ $sale->items->sum('quantity') }}</span>
+                <span>Total Items</span>
+                <span>{{ $sale->items->count() }}</span>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 2px; font-weight: bold;">
                 <span>Sub Total</span>
