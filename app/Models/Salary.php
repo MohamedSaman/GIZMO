@@ -40,6 +40,7 @@ class Salary extends Model
         'overtime',
         'additional_salary',
         'net_salary',
+        'previous_advance_balance',
         'total_hours',
         'overtime_hours',
         'payment_status',
@@ -58,6 +59,7 @@ class Salary extends Model
         'deductions' => 'decimal:2',
         'overtime' => 'decimal:2',
         'additional_salary' => 'decimal:2',
+        'previous_advance_balance' => 'decimal:2',
         'net_salary' => 'decimal:2',
         'total_hours' => 'decimal:2',
         'overtime_hours' => 'decimal:2',
@@ -69,5 +71,13 @@ class Salary extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Get the payments made for this salary record.
+     */
+    public function payments()
+    {
+        return $this->hasMany(SalaryPayment::class, 'salary_id', 'salary_id');
     }
 }

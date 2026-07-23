@@ -270,4 +270,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(SmsLog::class, 'user_id', 'id');
     }
+
+    public function salaries()
+    {
+        return $this->hasMany(Salary::class, 'user_id', 'id');
+    }
 }
