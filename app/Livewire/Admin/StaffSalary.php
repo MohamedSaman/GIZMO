@@ -31,6 +31,18 @@ class StaffSalary extends Component
     public bool   $showViewModal      = false;
     public array  $viewingPayments    = [];
     public array  $viewingSalaryInfo  = [];
+    public ?int   $viewingUserId      = null;
+
+    // Edit Payment Modal
+    public bool   $showEditPayModal   = false;
+    public ?int   $editPaymentId      = null;
+    public string $editPayAmount      = '';
+    public string $editPayDate        = '';
+    public string $editPayNote        = '';
+
+    // Delete confirmation
+    public ?int   $deletePaymentId    = null;
+    public bool   $showDeleteConfirm  = false;
 
     public function mount(): void
     {
@@ -206,10 +218,13 @@ class StaffSalary extends Component
             'balance'     => $balance,
         ];
 
+        $this->viewingUserId = $userId;
+
         $this->viewingPayments = $salary->payments
             ->sortBy('payment_date')
             ->values()
             ->map(fn($p) => [
+                'id'     => $p->id,
                 'date'   => Carbon::parse($p->payment_date)->format('d M Y'),
                 'amount' => (float) $p->amount,
                 'note'   => $p->note ?? '—',
@@ -221,9 +236,101 @@ class StaffSalary extends Component
 
     public function closeViewModal(): void
     {
-        $this->showViewModal    = false;
-        $this->viewingPayments  = [];
+        $this->showViewModal     = false;
+        $this->viewingPayments   = [];
         $this->viewingSalaryInfo = [];
+        $this->viewingUserId     = null;
+    }
+
+    // ── Edit Payment ─────────────────────────────────────────────────────
+
+    public function openEditPayModal(int $paymentId): void
+    {
+        $payment = SalaryPayment::find($paymentId);
+        if (!$payment) {
+            $this->dispatch('showToast', ['type' => 'error', 'message' => 'Payment record not found.']);
+            return;
+        }
+
+        $this->editPaymentId = $paymentId;
+        $this->editPayAmount = (string) (float) $payment->amount;
+        $this->editPayDate   = Carbon::parse($payment->payment_date)->format('Y-m-d');
+        $this->editPayNote   = $payment->note ?? '';
+        $this->showEditPayModal = true;
+    }
+
+    public function updatePayment(): void
+    {
+        $this->validate([
+            'editPayAmount' => 'required|numeric|min:0.01',
+            'editPayDate'   => 'required|date',
+        ]);
+
+        try {
+            $payment = SalaryPayment::find($this->editPaymentId);
+            if (!$payment) {
+                throw new Exception('Payment not found.');
+            }
+
+            $payment->update([
+                'amount'       => (float) $this->editPayAmount,
+                'payment_date' => $this->editPayDate,
+                'note'         => $this->editPayNote ?: null,
+            ]);
+
+            $this->showEditPayModal = false;
+
+            // Refresh the view modal data if it's open
+            if ($this->showViewModal && $this->viewingUserId) {
+                $this->openViewModal($this->viewingUserId);
+            }
+
+            $this->dispatch('showToast', ['type' => 'success', 'message' => 'Payment updated successfully.']);
+        } catch (Exception $e) {
+            $this->dispatch('showToast', ['type' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function closeEditPayModal(): void
+    {
+        $this->showEditPayModal = false;
+        $this->editPaymentId   = null;
+    }
+
+    // ── Delete Payment ───────────────────────────────────────────────────
+
+    public function confirmDeletePayment(int $paymentId): void
+    {
+        $this->deletePaymentId  = $paymentId;
+        $this->showDeleteConfirm = true;
+    }
+
+    public function deletePayment(): void
+    {
+        try {
+            $payment = SalaryPayment::find($this->deletePaymentId);
+            if ($payment) {
+                $payment->delete();
+            }
+
+            $this->showDeleteConfirm = false;
+            $this->deletePaymentId   = null;
+
+            // Refresh the view modal data
+            if ($this->showViewModal && $this->viewingUserId) {
+                $this->openViewModal($this->viewingUserId);
+            }
+
+            $this->dispatch('showToast', ['type' => 'success', 'message' => 'Payment record deleted.']);
+        } catch (Exception $e) {
+            $this->dispatch('showToast', ['type' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function cancelDeletePayment(): void
+    {
+        $this->showDeleteConfirm = false;
+        $this->deletePaymentId   = null;
     }
 
     // ── Render ───────────────────────────────────────────────────────────

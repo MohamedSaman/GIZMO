@@ -310,22 +310,40 @@
                                     style="font-size:.75rem; text-transform:uppercase; letter-spacing:.4px;">Note</th>
                                 <th class="py-2 text-muted small fw-semibold text-end"
                                     style="font-size:.75rem; text-transform:uppercase; letter-spacing:.4px;">Amount</th>
+                                <th class="py-2 text-muted small fw-semibold text-center"
+                                    style="font-size:.75rem; text-transform:uppercase; letter-spacing:.4px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($viewingPayments as $pay)
-                            <tr style="border-bottom:1px solid #f1f5f9;">
+                            <tr wire:key="pay-{{ $pay['id'] }}" style="border-bottom:1px solid #f1f5f9;">
                                 <td class="py-2 text-muted small">{{ $pay['date'] }}</td>
                                 <td class="py-2 small text-dark">{{ $pay['note'] }}</td>
                                 <td class="py-2 text-end fw-bold" style="color:#2563eb;">
                                     Rs. {{ number_format($pay['amount'], 2) }}
+                                </td>
+                                <td class="py-2 text-center">
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <button class="btn btn-sm py-0 px-2"
+                                                wire:click="openEditPayModal({{ $pay['id'] }})"
+                                                title="Edit"
+                                                style="background:#eff6ff; color:#2563eb; border-radius:6px; font-size:.78rem;">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm py-0 px-2"
+                                                wire:click="confirmDeletePayment({{ $pay['id'] }})"
+                                                title="Delete"
+                                                style="background:#fee2e2; color:#dc2626; border-radius:6px; font-size:.78rem;">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach
                         </tbody>
                         <tfoot>
                             <tr style="background:#eff6ff; border-top:2px solid #bfdbfe;">
-                                <td colspan="2" class="py-2 fw-bold text-dark small">Total Paid</td>
+                                <td colspan="3" class="py-2 fw-bold text-dark small">Total Paid</td>
                                 <td class="py-2 text-end fw-bold" style="color:#16a34a;">
                                     Rs. {{ number_format($viewingSalaryInfo['paid_amount'] ?? 0, 2) }}
                                 </td>
@@ -346,6 +364,127 @@
                             style="border-radius:10px;">
                         Close
                     </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- ══════════════════════════════════════════
+         EDIT PAYMENT MODAL
+    ══════════════════════════════════════════ --}}
+    @if($showEditPayModal)
+    <div class="modal fade show d-block" tabindex="-1"
+         style="background:rgba(0,0,0,.55); z-index:1060;">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius:20px; overflow:hidden;">
+
+                <div class="px-4 pt-4 pb-3 d-flex justify-content-between align-items-center"
+                     style="background:#1e293b;">
+                    <h5 class="fw-bold text-white mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Payment
+                    </h5>
+                    <button class="btn-close btn-close-white" wire:click="closeEditPayModal"></button>
+                </div>
+
+                <div class="modal-body px-4 py-4">
+                    <form wire:submit.prevent="updatePayment">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark small">
+                                Amount <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text fw-bold"
+                                      style="background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8;">Rs.</span>
+                                <input type="number" step="0.01" min="0.01"
+                                       wire:model="editPayAmount"
+                                       class="form-control form-control-lg fw-bold"
+                                       style="border-color:#bfdbfe;"
+                                       placeholder="0.00">
+                            </div>
+                            @error('editPayAmount')
+                                <div class="text-danger mt-1 small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark small">
+                                Date <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" wire:model="editPayDate"
+                                   class="form-control" style="border-radius:10px;">
+                            @error('editPayDate')
+                                <div class="text-danger mt-1 small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark small">
+                                Note <span class="text-muted">(optional)</span>
+                            </label>
+                            <input type="text" wire:model="editPayNote"
+                                   class="form-control" style="border-radius:10px;"
+                                   placeholder="e.g. Advance, Bonus...">
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-light flex-fill"
+                                    wire:click="closeEditPayModal"
+                                    style="border-radius:10px;">Cancel</button>
+                            <button type="submit"
+                                    class="btn flex-fill fw-bold"
+                                    style="background:#2563eb; color:white; border-radius:10px;"
+                                    wire:loading.attr="disabled">
+                                <span wire:loading.remove wire:target="updatePayment">
+                                    <i class="bi bi-check-lg me-1"></i>Update
+                                </span>
+                                <span wire:loading wire:target="updatePayment">
+                                    <span class="spinner-border spinner-border-sm me-1"></span>Saving...
+                                </span>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- ══════════════════════════════════════════
+         DELETE CONFIRM MODAL
+    ══════════════════════════════════════════ --}}
+    @if($showDeleteConfirm)
+    <div class="modal fade show d-block" tabindex="-1"
+         style="background:rgba(0,0,0,.55); z-index:1060;">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:380px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius:20px; overflow:hidden;">
+
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-3" style="font-size:2.5rem; color:#dc2626;">&#9888;</div>
+                    <h5 class="fw-bold text-dark mb-2">Delete Payment?</h5>
+                    <p class="text-muted small mb-4">
+                        This payment record will be permanently deleted.<br>This action cannot be undone.
+                    </p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button class="btn btn-light px-4 fw-semibold"
+                                wire:click="cancelDeletePayment"
+                                style="border-radius:10px;">Cancel</button>
+                        <button class="btn px-4 fw-bold"
+                                wire:click="deletePayment"
+                                style="background:#dc2626; color:white; border-radius:10px;"
+                                wire:loading.attr="disabled">
+                            <span wire:loading.remove wire:target="deletePayment">
+                                <i class="bi bi-trash me-1"></i>Yes, Delete
+                            </span>
+                            <span wire:loading wire:target="deletePayment">
+                                <span class="spinner-border spinner-border-sm"></span>
+                            </span>
+                        </button>
+                    </div>
                 </div>
 
             </div>
